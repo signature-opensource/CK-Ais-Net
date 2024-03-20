@@ -17,13 +17,14 @@ namespace Ais.Net
         private static readonly byte[] VdmAscii = Encoding.ASCII.GetBytes("VDM");
         private static readonly byte[] VdoAscii = Encoding.ASCII.GetBytes("VDO");
         private readonly bool throwWhenTagBlockContainsUnknownFields;
+        private readonly TagBlockStandard tagBlockStandard;
 
         /// <summary>
         /// Creates a <see cref="NmeaLineParser"/>.
         /// </summary>
         /// <param name="line">The ASCII-encoded text containing the NMEA message.</param>
         public NmeaLineParser(ReadOnlySpan<byte> line)
-            : this(line, false)
+            : this(line, false, TagBlockStandard.Unspecified)
         {
         }
 
@@ -35,7 +36,8 @@ namespace Ais.Net
         /// Ignore non-standard and unsupported tag block field types. Useful when working with
         /// data sources that add non-standard fields.
         /// </param>
-        public NmeaLineParser(ReadOnlySpan<byte> line, bool throwWhenTagBlockContainsUnknownFields)
+        /// <param name="tagBlockStandard">Defined in whick standard the tag block is.</param>
+        public NmeaLineParser(ReadOnlySpan<byte> line, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard)
         {
             this.Line = line;
 
@@ -172,6 +174,7 @@ namespace Ais.Net
 
             this.Padding = (uint)GetSingleDigitField(ref remainingFields, true);
             this.throwWhenTagBlockContainsUnknownFields = throwWhenTagBlockContainsUnknownFields;
+            this.tagBlockStandard = tagBlockStandard;
         }
 
         /// <summary>
@@ -232,7 +235,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets the details from the tag block.
         /// </summary>
-        public NmeaTagBlockParser TagBlock => new NmeaTagBlockParser(this.TagBlockAsciiWithoutDelimiters, this.throwWhenTagBlockContainsUnknownFields);
+        public NmeaTagBlockParser TagBlock => new NmeaTagBlockParser(this.TagBlockAsciiWithoutDelimiters, this.throwWhenTagBlockContainsUnknownFields, this.tagBlockStandard);
 
         /// <summary>
         /// Gets the tag block part of the underlying data (excluding the delimiting '/'

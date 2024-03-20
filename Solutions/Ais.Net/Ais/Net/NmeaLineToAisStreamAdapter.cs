@@ -146,7 +146,7 @@ namespace Ais.Net
                         break;
                     }
 
-                    var storedParsedLine = new NmeaLineParser(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields);
+                    var storedParsedLine = new NmeaLineParser(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard);
                     totalPayloadSize += storedParsedLine.Payload.Length;
                 }
 
@@ -162,7 +162,7 @@ namespace Ais.Net
 
                         for (int i = 0; i < fragmentBuffers.Length; ++i)
                         {
-                            var storedParsedLine = new NmeaLineParser(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields);
+                            var storedParsedLine = new NmeaLineParser(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard);
                             ReadOnlySpan<byte> payload = storedParsedLine.Payload;
                             payload.CopyTo(reassemblyBuffer.Slice(reassemblyIndex, payload.Length));
                             reassemblyIndex += payload.Length;
@@ -170,7 +170,7 @@ namespace Ais.Net
                         }
 
                         this.messageProcessor.OnNext(
-                            new NmeaLineParser(fragmentBuffers[0], this.options.ThrowWhenTagBlockContainsUnknownFields),
+                            new NmeaLineParser(fragmentBuffers[0], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard),
                             reassemblyBuffer.Slice(0, totalPayloadSize),
                             finalPadding);
                         this.messagesProcessed += 1;

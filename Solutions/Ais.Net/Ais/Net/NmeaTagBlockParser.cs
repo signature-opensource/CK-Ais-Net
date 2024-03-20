@@ -19,7 +19,7 @@ namespace Ais.Net
         /// <c>/</c> delimiters.
         /// </param>
         public NmeaTagBlockParser(ReadOnlySpan<byte> source)
-            : this(source, false)
+            : this(source, false, TagBlockStandard.Unspecified)
         {
         }
 
@@ -33,7 +33,8 @@ namespace Ais.Net
         /// Ignore non-standard and unsupported tag block field types. Useful when working with
         /// data sources that add non-standard fields.
         /// </param>
-        public NmeaTagBlockParser(ReadOnlySpan<byte> source, bool throwWhenTagBlockContainsUnknownFields)
+        /// <param name="tagBlockStandard">Defined in whick standard the tag block is.</param>
+        public NmeaTagBlockParser(ReadOnlySpan<byte> source, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard)
         {
             this.SentenceGrouping = default;
             this.Source = ReadOnlySpan<byte>.Empty;
@@ -50,25 +51,35 @@ namespace Ais.Net
             {
                 char fieldType = (char)source[0];
 
-                if (source.Length < 3 || source[1] != (byte)':')
-                {
-                    throw new ArgumentException("Tag block entries should start with a type character followed by a colon, and there was no colon");
-                }
-
-                source = source.Slice(2);
-
                 switch (fieldType)
                 {
+                    case >= '1' and <= '9':
+                        if (tagBlockStandard == TagBlockStandard.Nmea)
+                        {
+                            throw new ArgumentException("Tag block sentence grouping should be <int>-<int>-<int>, but first part was not a decimal integer");
+                        }
+
+                        this.SentenceGrouping = ParseIECSentenceGrouping(ref source);
+                        break;
+
                     case 'g':
-                        this.SentenceGrouping = ParseSentenceGrouping(ref source);
+                        if (tagBlockStandard == TagBlockStandard.IEC)
+                        {
+                            throw new ArgumentException("Tag block sentence grouping should be <int>G<int>:<int>, but first part was not a decimal integer");
+                        }
+
+                        MoveAfterFieldKey(ref source);
+                        this.SentenceGrouping = ParseNmeaSentenceGrouping(ref source);
                         break;
 
                     case 's':
+                        MoveAfterFieldKey(ref source);
                         this.Source = AdvanceToNextField(ref source);
 
                         break;
 
                     case 'c':
+                        MoveAfterFieldKey(ref source);
                         if (!ParseDelimitedLong(ref source, out long timestamp))
                         {
                             throw new ArgumentException("Tag block timestamp should be int");
@@ -77,12 +88,26 @@ namespace Ais.Net
                         this.UnixTimestamp = timestamp;
                         break;
 
+                    // Both
                     case 'd':
+                    // Nmea
                     case 'n':
                     case 'r':
                     case 't':
+                    // IEC
+                    case 'x':
+                    case 'i':
                         if (throwWhenTagBlockContainsUnknownFields)
                         {
+                            if (tagBlockStandard == TagBlockStandard.Nmea && fieldType is 'x' or 'i')
+                            {
+                                throw new ArgumentException("Unknown field type in Nmea tag block: " + fieldType);
+                            }
+                            else if (tagBlockStandard == TagBlockStandard.IEC && fieldType is 'n' or 'r' or 't')
+                            {
+                                throw new ArgumentException("Unknown field type in IEC tag block: " + fieldType);
+                            }
+
                             throw new NotSupportedException("Unsupported field type: " + fieldType);
                         }
                         else
@@ -103,6 +128,16 @@ namespace Ais.Net
                         }
 
                         break;
+                }
+
+                static void MoveAfterFieldKey(ref ReadOnlySpan<byte> source)
+                {
+                    if (source.Length < 3 || source[1] != (byte)':')
+                    {
+                        throw new ArgumentException("Tag block entries should start with a type character followed by a colon, and there was no colon");
+                    }
+
+                    source = source.Slice(2);
                 }
 
                 static ReadOnlySpan<byte> AdvanceToNextField(scoped ref ReadOnlySpan<byte> source)
@@ -210,7 +245,7 @@ namespace Ais.Net
             return true;
         }
 
-        private static NmeaTagBlockSentenceGrouping ParseSentenceGrouping(ref ReadOnlySpan<byte> source)
+        private static NmeaTagBlockSentenceGrouping ParseNmeaSentenceGrouping(ref ReadOnlySpan<byte> source)
         {
             if (!ParseDelimitedInt(ref source, out int sentenceNumber, '-'))
             {
@@ -225,6 +260,26 @@ namespace Ais.Net
             if (!ParseDelimitedInt(ref source, out int groupId))
             {
                 throw new ArgumentException("Tag block sentence grouping should be <int>-<int>-<int>, but third part was not a decimal integer");
+            }
+
+            return new NmeaTagBlockSentenceGrouping(sentenceNumber, totalSentences, groupId);
+        }
+
+        private static NmeaTagBlockSentenceGrouping ParseIECSentenceGrouping(ref ReadOnlySpan<byte> source)
+        {
+            if (!ParseDelimitedInt(ref source, out int sentenceNumber, 'G'))
+            {
+                throw new ArgumentException("Tag block sentence grouping should be <int>G<int>:<int>, but first part was not a decimal integer");
+            }
+
+            if (!ParseDelimitedInt(ref source, out int totalSentences, ':'))
+            {
+                throw new ArgumentException("Tag block sentence grouping should be <int>G<int>:<int>, but second part was not a decimal integer");
+            }
+
+            if (!ParseDelimitedInt(ref source, out int groupId))
+            {
+                throw new ArgumentException("Tag block sentence grouping should be <int>G<int>:<int>, but third part was not a decimal integer");
             }
 
             return new NmeaTagBlockSentenceGrouping(sentenceNumber, totalSentences, groupId);

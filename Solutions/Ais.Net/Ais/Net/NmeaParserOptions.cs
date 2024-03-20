@@ -10,6 +10,12 @@ namespace Ais.Net
     public class NmeaParserOptions
     {
         /// <summary>
+        /// Gets or sets a value indicating which standard is used by the <seealso cref="NmeaTagBlockParser"/>
+        /// to parse the tag block.
+        /// </summary>
+        public TagBlockStandard TagBlockStandard { get; set; } = TagBlockStandard.Unspecified;
+
+        /// <summary>
         /// Gets or sets a value indicating whether the presence of non-standard or unsupported
         /// fields in an NMEA tag block should be treated as a non-recoverable error.
         /// </summary>
