@@ -3,7 +3,7 @@
 Feature: CoordinatedUniversalTimeAndDateResponseParserSpecs
     In order process AIS messages from an nm4 file
     As a developer
-    I want the CoordinatedUniversalTimeAndDateResponseParserSpecs to be able to parse the payload section of message type 4: Coordinated Universal Time and Date Response 
+    I want the CoordinatedUniversalTimeAndDateResponseParser to be able to parse the payload section of message type 4: Coordinated Universal Time and Date Response 
     
 Scenario: Message Type
     When I parse ';028j;iu<JAU80>f7>H0elQ00000' with padding 0 as a Coordinated Universal Time and Date Response 
