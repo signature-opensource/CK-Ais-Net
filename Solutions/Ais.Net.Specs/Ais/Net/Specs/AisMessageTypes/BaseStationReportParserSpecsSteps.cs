@@ -5,7 +5,7 @@
     using TechTalk.SpecFlow;
 
     [Binding]
-    internal class BaseStationReportParserSpecs
+    internal class BaseStationReportParserSpecsSteps
     {
         private ParserMaker makeParser;
 
@@ -26,97 +26,97 @@
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.RepeatIndicator is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_RepeatIndicatorIs(int repeatCount)
+        public void ThenNmeaAisBaseStationReportParser_RepeatIndicatorIs(int repeatCount)
         {
             this.Then(parser => Assert.AreEqual(repeatCount, parser.RepeatIndicator));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.Mmsi is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_MmsiIs(int mmsi)
+        public void ThenNmeaAisBaseStationReportParser_MmsiIs(int mmsi)
         {
             this.Then(parser => Assert.AreEqual(mmsi, parser.Mmsi));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.UtcYear is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_UtcYearIs(int utcYear)
+        public void ThenNmeaAisBaseStationReportParser_UtcYearIs(int utcYear)
         {
             this.Then(parser => Assert.AreEqual(utcYear, parser.UtcYear));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.UtcMonth is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_UtcMonthIs(int utcMonth)
+        public void ThenNmeaAisBaseStationReportParser_UtcMonthIs(int utcMonth)
         {
             this.Then(parser => Assert.AreEqual(utcMonth, parser.UtcMonth));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.UtcDay is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_UtcDayIs(int utcDay)
+        public void ThenNmeaAisBaseStationReportParser_UtcDayIs(int utcDay)
         {
             this.Then(parser => Assert.AreEqual(utcDay, parser.UtcDay));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.UtcHour is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_UtcHourIs(int utcHour)
+        public void ThenNmeaAisBaseStationReportParser_UtcHourIs(int utcHour)
         {
             this.Then(parser => Assert.AreEqual(utcHour, parser.UtcHour));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.UtcMinute is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_UtcMinuteIs(int utcMinute)
+        public void ThenNmeaAisBaseStationReportParser_UtcMinuteIs(int utcMinute)
         {
             this.Then(parser => Assert.AreEqual(utcMinute, parser.UtcMinute));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.UtcSecond is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_UtcSecondIs(int utcSecond)
+        public void ThenNmeaAisBaseStationReportParser_UtcSecondIs(int utcSecond)
         {
             this.Then(parser => Assert.AreEqual(utcSecond, parser.UtcSecond));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.PositionAccuracy is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_PositionAccuracyIs(bool positionAccuracy)
+        public void ThenNmeaAisBaseStationReportParser_PositionAccuracyIs(bool positionAccuracy)
         {
             this.Then(parser => Assert.AreEqual(positionAccuracy, parser.PositionAccuracy));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.Longitude10000thMins is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_Longitude10000thMinsIs(double longitude)
+        public void ThenNmeaAisBaseStationReportParser_Longitude10000thMinsIs(double longitude)
         {
             this.Then(parser => Assert.AreEqual(longitude, parser.Longitude10000thMins / 600_000d));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.Latitude10000thMins is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_Latitude10000thMinsIs(double latitude)
+        public void ThenNmeaAisBaseStationReportParser_Latitude10000thMinsIs(double latitude)
         {
             this.Then(parser => Assert.AreEqual(latitude, parser.Latitude10000thMins / 600_000d));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.PositionFixType is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_PositionFixTypeIs(EpfdFixType positionFixType)
+        public void ThenNmeaAisBaseStationReportParser_PositionFixTypeIs(EpfdFixType positionFixType)
         {
             this.Then(parser => Assert.AreEqual(positionFixType, parser.PositionFixType));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.TransmissionControlForLongRangeBroadcastMessage is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_TransmissionControlForLongRangeBroadcastMessageIs(bool transmissionControlForLongRangeBroadcastMessage)
+        public void ThenNmeaAisBaseStationReportParser_TransmissionControlForLongRangeBroadcastMessageIs(bool transmissionControlForLongRangeBroadcastMessage)
         {
             this.Then(parser => Assert.AreEqual(transmissionControlForLongRangeBroadcastMessage, parser.TransmissionControlForLongRangeBroadcastMessage));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.SpareBits139 is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_SpareBits139Is(uint spareBits139)
+        public void ThenNmeaAisBaseStationReportParser_SpareBits139Is(uint spareBits139)
         {
             this.Then(parser => Assert.AreEqual(spareBits139, parser.SpareBits139));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.RaimFlag is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_PositionFixTypeIs(bool raimFlag)
+        public void ThenNmeaAisBaseStationReportParser_PositionFixTypeIs(bool raimFlag)
         {
             this.Then(parser => Assert.AreEqual(raimFlag, parser.RaimFlag));
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.CommunicationState is (.*)")]
-        public void ThenNmeaAisAisBaseStationReportParser_PositionFixTypeIs(uint communicationState)
+        public void ThenNmeaAisBaseStationReportParser_PositionFixTypeIs(uint communicationState)
         {
             this.Then(parser => Assert.AreEqual(communicationState, parser.CommunicationState));
         }
