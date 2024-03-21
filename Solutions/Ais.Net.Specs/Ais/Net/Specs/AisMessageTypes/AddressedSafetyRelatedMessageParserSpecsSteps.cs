@@ -20,49 +20,49 @@
         }
 
         [Then(@"NmeaAisAddressedSafetyRelatedMessageParser\.Type is (.*)")]
-        public void ThenNmeaAisBaseStationReportParser_TypeIs(int messageType)
+        public void ThenNmeaAisAddressedSafetyRelatedMessageParser_TypeIs(int messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }
 
         [Then(@"NmeaAisAddressedSafetyRelatedMessageParser\.RepeatIndicator is (.*)")]
-        public void ThenNmeaAisBaseStationReportParser_RepeatIndicatorIs(int repeatCount)
+        public void ThenNmeaAisAddressedSafetyRelatedMessageParser_RepeatIndicatorIs(int repeatCount)
         {
             this.Then(parser => Assert.AreEqual(repeatCount, parser.RepeatIndicator));
         }
 
         [Then(@"NmeaAisAddressedSafetyRelatedMessageParser\.Mmsi is (.*)")]
-        public void ThenNmeaAisBaseStationReportParser_MmsiIs(int mmsi)
+        public void ThenNmeaAisAddressedSafetyRelatedMessageParser_MmsiIs(int mmsi)
         {
             this.Then(parser => Assert.AreEqual(mmsi, parser.Mmsi));
         }
 
         [Then(@"NmeaAisAddressedSafetyRelatedMessageParser\.SequenceNumber is (.*)")]
-        public void ThenNmeaAisBaseStationReportParser_SequenceNumberIs(int sequenceNumber)
+        public void ThenNmeaAisAddressedSafetyRelatedMessageParser_SequenceNumberIs(int sequenceNumber)
         {
             this.Then(parser => Assert.AreEqual(sequenceNumber, parser.SequenceNumber));
         }
 
         [Then(@"NmeaAisAddressedSafetyRelatedMessageParser\.DestinationMmsi is (.*)")]
-        public void ThenNmeaAisBaseStationReportParser_DestinationMmsiIs(int destinationMmsi)
+        public void ThenNmeaAisAddressedSafetyRelatedMessageParser_DestinationMmsiIs(int destinationMmsi)
         {
             this.Then(parser => Assert.AreEqual(destinationMmsi, parser.DestinationMmsi));
         }
 
         [Then(@"NmeaAisAddressedSafetyRelatedMessageParser\.Retransmit is (.*)")]
-        public void ThenNmeaAisBaseStationReportParser_RetransmitIs(bool retransmit)
+        public void ThenNmeaAisAddressedSafetyRelatedMessageParser_RetransmitIs(bool retransmit)
         {
             this.Then(parser => Assert.AreEqual(retransmit, parser.Retransmit));
         }
 
         [Then(@"NmeaAisAddressedSafetyRelatedMessageParser\.SpareBit71 is (.*)")]
-        public void ThenNmeaAisBaseStationReportParser_SpareBit71Is(bool spareBit71)
+        public void ThenNmeaAisAddressedSafetyRelatedMessageParser_SpareBit71Is(bool spareBit71)
         {
             this.Then(parser => Assert.AreEqual(spareBit71, parser.SpareBit71));
         }
 
         [Then(@"NmeaAisAddressedSafetyRelatedMessageParser\.SafetyRelatedText is (.*)")]
-        public void ThenNmeaAisBaseStationReportParser_SafetyRelatedTextIs(string safetyRelatedText)
+        public void ThenNmeaAisAddressedSafetyRelatedMessageParser_SafetyRelatedTextIs(string safetyRelatedText)
         {
             this.Then(parser =>
             {
