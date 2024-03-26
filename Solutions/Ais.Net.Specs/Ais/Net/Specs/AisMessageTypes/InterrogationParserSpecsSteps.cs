@@ -5,7 +5,7 @@
     using TechTalk.SpecFlow;
 
     [Binding]
-    public class InterrogationSpecsSteps
+    public class InterrogationParserSpecsSteps
     {
         private ParserMaker makeParser;
 
