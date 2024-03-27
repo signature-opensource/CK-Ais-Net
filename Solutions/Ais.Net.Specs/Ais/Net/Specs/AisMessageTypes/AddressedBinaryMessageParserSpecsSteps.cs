@@ -79,6 +79,12 @@
             this.Then(parser => Assert.AreEqual(value, parser.ApplicationDataPadding));
         }
 
+        [Then(@"NmeaAisAddressedBinaryMessageParser\.ApplicationData is (.*)")]
+        public void ThenNmeaAisAddressedBinaryMessageParser_ApplicationDataIs(string value)
+        {
+            this.Then(parser => Assert.AreEqual(value, Encoding.ASCII.GetString(parser.ApplicationData)));
+        }
+
         private void When(ParserMaker makeParser)
         {
             this.makeParser = makeParser;

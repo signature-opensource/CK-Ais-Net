@@ -21,9 +21,10 @@ Scenario: Full message
     And NmeaAisAddressedBinaryMessageParser.DAC is <dac>
     And NmeaAisAddressedBinaryMessageParser.FI is <fi>
     And NmeaAisAddressedBinaryMessageParser.ApplicationDataPadding is <applicationdatapadding>
+    And NmeaAisAddressedBinaryMessageParser.ApplicationData is <applicationdata>
 
     Examples:
-    | payload                                              | padding | type | repeatindicator | mmsi      | sequencenumber | destinationmmsi | retransmit | spare71 | dac | fi | applicationdatapadding |
-    | 6>oHhp000000>da30000@00                              | 0       | 6    | 0               | 997601504 | 0              | 0               | false      | false   | 235 | 10 | 4                      |
-    | 6>oNma0JOJtL078NuS1`s6mQ0vCv048@0002P1401`0000000000 | 0       | 6    | 0               | 997701028 | 0              | 111111111       | false      | false   | 1   | 50 | 4                      |
-    | 6>p?paQREindIt4<                                     | 0       | 6    | 0               | 998504614 | 0              | 412469099       | false      | false   | 415 | 1  | 4                      |
+    | payload                                              | padding | type | repeatindicator | mmsi      | sequencenumber | destinationmmsi | retransmit | spare71 | dac | fi | applicationdatapadding | applicationdata                        |
+    | 6>oHhp000000>da30000@00                              | 0       | 6    | 0               | 997601504 | 0              | 0               | false      | false   | 235 | 10 | 4                      | a30000@00                              |
+    | 6>oNma0JOJtL078NuS1`s6mQ0vCv048@0002P1401`0000000000 | 0       | 6    | 0               | 997701028 | 0              | 111111111       | false      | false   | 1   | 50 | 4                      | 8NuS1`s6mQ0vCv048@0002P1401`0000000000 |
+    | 6>p?paQREindIt4<                                     | 0       | 6    | 0               | 998504614 | 0              | 412469099       | false      | false   | 415 | 1  | 4                      | 4<                                     |
