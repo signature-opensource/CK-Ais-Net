@@ -3,7 +3,7 @@
 Feature: AcknowledgementParserSpecsSteps
     In order process AIS messages from an nm4 file
     As a developer
-    I want the NmeaAisAcknowledgementParser to be able to parse the payload section of message type 25: Acknowledgement Message
+    I want the NmeaAisAcknowledgementParser to be able to parse the payload section of message type 13: Acknowledgement Message
     
 Scenario: Message Type
     When I parse '=8156b@iuus2' with padding 0 as a Acknowledgement Message

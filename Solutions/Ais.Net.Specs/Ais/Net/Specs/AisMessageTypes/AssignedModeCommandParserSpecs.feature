@@ -3,7 +3,7 @@
 Feature: AssignedModeCommandParserSpecsSteps
     In order process AIS messages from an nm4 file
     As a developer
-    I want the NmeaAisAssignedModeCommandParser to be able to parse the payload section of message type 25: Assigned mode command
+    I want the NmeaAisAssignedModeCommandParser to be able to parse the payload section of message type 16: Assigned mode command
     
 Scenario: Message Type
     When I parse '@02=VgPoD@C43h00' with padding 0 as a Assigned mode command

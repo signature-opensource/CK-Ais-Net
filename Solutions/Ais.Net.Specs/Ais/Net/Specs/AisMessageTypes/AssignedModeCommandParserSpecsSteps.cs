@@ -38,7 +38,7 @@
         }
 
         [Then(@"NmeaAisAssignedModeCommandParser\.SpareBits38 is (.*)")]
-        public void ThenNmeaAisAssignedModeCommandParser_Is(uint value)
+        public void ThenNmeaAisAssignedModeCommandParser_SpareBits38Is(uint value)
         {
             this.Then(parser => Assert.AreEqual(value, parser.SpareBits38));
         }
