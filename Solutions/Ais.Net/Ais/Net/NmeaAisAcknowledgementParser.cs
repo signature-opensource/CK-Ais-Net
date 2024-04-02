@@ -48,7 +48,7 @@ namespace Ais.Net
         /// Gets the value of the bits in this message for which no standard meaning is currently
         /// defined.
         /// </summary>
-        public uint? SpareBits38 => this.bits.GetUnsignedInteger(2, 38);
+        public uint SpareBits38 => this.bits.GetUnsignedInteger(2, 38);
 
         /// <summary>
         /// Gets the MMSI number of first destination of this ACK.
