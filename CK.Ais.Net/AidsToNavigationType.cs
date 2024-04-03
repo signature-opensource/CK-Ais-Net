@@ -1,4 +1,4 @@
-﻿// <copyright file="AidsToNavigationType.cs" company="Endjin Limited">
+// <copyright file="AidsToNavigationType.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -26,7 +26,7 @@ namespace Ais.Net
         BeaconCardinalN = 9,
         BeaconCardinalE = 10,
         BeaconCardinalS = 11,
-        BeaconrdinalW = 12,
+        BeaconCardinalW = 12,
         BeaconPortHand = 13,
         BeaconStarboardHand = 14,
         BeaconPreferredChannelPortHand = 15,
