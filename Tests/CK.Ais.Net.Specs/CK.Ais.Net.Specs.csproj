@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Corvus.Testing.SpecFlow.NUnit" Version="1.6.0" />
+    <ProjectReference Include="..\..\CK.Ais.Net\CK.Ais.Net.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+    <Compile Update="Ais\Net\Specs\AisMessageTypes\PositionReportClassAParserSpecs.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PositionReportClassAParserSpecs.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Ais\Net\Specs\AisMessageTypes\PositionReportClassBParserSpecs.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PositionReportClassBParserSpecs.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Ais\Net\Specs\AisStringsSpecs.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AisStringsSpecs.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Ais\Net\Specs\AisMessageTypes\PositionReportExtendedClassBParserSpecs.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PositionReportExtendedClassBParserSpecs.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Ais\Net\Specs\AisMessageTypes\StaticAndVoyageRelatedDataParserSpecs.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StaticAndVoyageRelatedDataParserSpecs.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Ais\Net\Specs\AisMessageTypes\StaticDataReportParserSpecs.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StaticDataReportParserSpecs.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Ais\Net\Specs\NmeaAisBitVectorParserSpecs.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NmeaAisBitVectorParserSpecs.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Ais\Net\Specs\NmeaLineToAisStreamAdapterSpecs.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NmeaLineToAisStreamAdapterSpecs.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Ais\Net\Specs\NmeaStreamParserByLineSpecs.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NmeaStreamParserByLineSpecs.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Ais\Net\Specs\NmeaStreamParserByMessageSpecs.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NmeaStreamParserByMessageSpecs.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Ais\Net\Specs\ParsePayloadSpecs.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ParsePayloadSpecs.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Ais\Net\Specs\SentenceLayerSpecs.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SentenceLayerSpecs.feature</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

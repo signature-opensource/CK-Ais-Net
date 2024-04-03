@@ -1,6 +1,0 @@
-# Uncomment these once we've written our first conceptual documentation. Issue #10
-- name: Articles
-  href: articles/
-- name: Api Documentation
-  href: api/
-  homepage: articles/intro.md
