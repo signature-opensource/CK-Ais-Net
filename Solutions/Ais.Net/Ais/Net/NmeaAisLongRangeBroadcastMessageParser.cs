@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaAisLongRangeAisBroadcastParser.cs" company="Endjin Limited">
+// <copyright file="NmeaAisLongRangeBroadcastMessageParser.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -7,19 +7,19 @@ namespace Ais.Net
     using System;
 
     /// <summary>
-    /// Enables fields to be extracted from a Long Range AIS Broadcast (Message Type 27) payload in
-    /// an NMEA sentence.
+    /// Enables fields to be extracted from a Long-range Automatic Identifcation System Broadcast Message.
+    /// It parses the content of messages 27.
     /// </summary>
-    public readonly ref struct NmeaAisLongRangeAisBroadcastParser
+    public readonly ref struct NmeaAisLongRangeBroadcastMessageParser
     {
         private readonly NmeaAisBitVectorParser bits;
 
         /// <summary>
-        /// Create an <see cref="NmeaAisPositionReportClassAParser"/>.
+        /// Create an <see cref="NmeaAisLongRangeBroadcastMessageParser"/>.
         /// </summary>
         /// <param name="ascii">The ASCII-encoded message payload.</param>
         /// <param name="padding">The number of bits of padding in this payload.</param>
-        public NmeaAisLongRangeAisBroadcastParser(ReadOnlySpan<byte> ascii, uint padding)
+        public NmeaAisLongRangeBroadcastMessageParser(ReadOnlySpan<byte> ascii, uint padding)
         {
             this.bits = new NmeaAisBitVectorParser(ascii, padding);
         }
@@ -27,7 +27,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets the message type.
         /// </summary>
-        public uint MessageType => this.bits.GetUnsignedInteger(6, 0);
+        public MessageType MessageType => (MessageType)this.bits.GetUnsignedInteger(6, 0);
 
         /// <summary>
         /// Gets the number of times this message had been repeated on this broadcast.
@@ -76,21 +76,21 @@ namespace Ais.Net
         /// <summary>
         /// Gets the vessel's speed over ground, in tenths of a knot.
         /// </summary>
-        public uint SpeedOverGroundTenths => this.bits.GetUnsignedInteger(6, 79);
+        public uint SpeedOverGround => this.bits.GetUnsignedInteger(6, 79);
 
         /// <summary>
-        /// Gets the vessel's course over ground in degrees.
+        /// Gets the vessel's course over ground.
         /// </summary>
-        public uint CourseOverGroundDegrees => this.bits.GetUnsignedInteger(9, 85);
+        public uint CourseOverGround => this.bits.GetUnsignedInteger(9, 85);
 
         /// <summary>
-        /// Gets a value indicating whether position is GNSS. False if this is "current GNSS position", true if "not GNSS position".
+        /// Gets a value indicating whether the reported position latency is greater than 5 seconds.
         /// </summary>
-        public bool NotGnssPosition => this.bits.GetBit(94);
+        public bool PositionLatency => this.bits.GetBit(94);
 
         /// <summary>
-        /// Gets a value indicating whether the spare bit at offset 95 is set.
+        /// Gets a value indicating whether the spare bit at offset 94 is set.
         /// </summary>
-        public bool Spare95 => this.bits.GetBit(95);
+        public bool SpareBit94 => this.bits.GetBit(95);
     }
 }

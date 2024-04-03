@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaAisStaticDataReportParserPartA.cs" company="Endjin Limited">
+﻿// <copyright file="NmeaAisAddressedSafetyRelatedMessageParser.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -7,26 +7,21 @@ namespace Ais.Net
     using System;
 
     /// <summary>
-    /// Enables fields to be extracted from an AIS Static Data Report Part A payload in an
-    /// NMEA sentence.
-    /// It parses the content of messages 24 part A.
+    /// Enables fields to be extracted from an AIS Addressed Safety Related Message.
+    /// It parses the content of messages 12.
     /// </summary>
-    public readonly ref struct NmeaAisStaticDataReportParserPartA
+    public readonly ref struct NmeaAisAddressedSafetyRelatedMessageParser
     {
         private readonly NmeaAisBitVectorParser bits;
 
         /// <summary>
-        /// Create an <see cref="NmeaAisStaticDataReportParserPartA"/>.
+        /// Create an <see cref="NmeaAisAddressedSafetyRelatedMessageParser"/>.
         /// </summary>
         /// <param name="ascii">The ASCII-encoded message payload.</param>
         /// <param name="padding">The number of bits of padding in this payload.</param>
-        public NmeaAisStaticDataReportParserPartA(ReadOnlySpan<byte> ascii, uint padding)
+        public NmeaAisAddressedSafetyRelatedMessageParser(ReadOnlySpan<byte> ascii, uint padding)
         {
             this.bits = new NmeaAisBitVectorParser(ascii, padding);
-            if (this.PartNumber != 0)
-            {
-                throw new ArgumentException($"This is a parser for Part A (0) messages, but the part number of the message supplied is {this.PartNumber}");
-            }
         }
 
         /// <summary>
@@ -50,18 +45,28 @@ namespace Ais.Net
         public uint Mmsi => this.bits.GetUnsignedInteger(30, 8);
 
         /// <summary>
-        /// Gets the Part Number field.
+        /// Gets the sequence number.
         /// </summary>
-        public uint PartNumber => this.bits.GetUnsignedInteger(2, 38);
+        public uint SequenceNumber => this.bits.GetUnsignedInteger(2, 38);
 
         /// <summary>
-        /// Gets the Vessel Name field.
+        /// Gets the unique identifier assigned to the transponder who the message is for.
         /// </summary>
-        public NmeaAisTextFieldParser VesselName => new NmeaAisTextFieldParser(this.bits, 120, 40);
+        public uint DestinationMmsi => this.bits.GetUnsignedInteger(30, 40);
 
         /// <summary>
-        /// Gets the value of the 'spare' bits at 160.
+        /// Gets a value indicating whether the message is retransmited.
         /// </summary>
-        public uint Spare160 => this.bits.BitCount == 168 ? this.bits.GetUnsignedInteger(8, 160) : 0;
+        public bool Retransmit => this.bits.GetBit(70);
+
+        /// <summary>
+        /// Gets a value indicating whether the spare bit at offset 71 is set.
+        /// </summary>
+        public bool SpareBit71 => this.bits.GetBit(71);
+
+        /// <summary>
+        /// Gets the safety related text.
+        /// </summary>
+        public NmeaAisTextFieldParser SafetyRelatedText => new NmeaAisTextFieldParser(this.bits, this.bits.BitCount - 72, 72);
     }
 }

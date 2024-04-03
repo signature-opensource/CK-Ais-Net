@@ -24,7 +24,7 @@ namespace Ais.Net.Specs.AisMessageTypes
         }
 
         [Then(@"AisPositionReportClassAParser\.Type is (.*)")]
-        public void ThenAisPositionReportClassAParser_TypeIs(int messageType)
+        public void ThenAisPositionReportClassAParser_TypeIs(MessageType messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }

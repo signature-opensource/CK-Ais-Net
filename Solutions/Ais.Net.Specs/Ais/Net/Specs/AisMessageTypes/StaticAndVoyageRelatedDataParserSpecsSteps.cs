@@ -24,7 +24,7 @@ namespace Ais.Net.Specs.AisMessageTypes
         }
 
         [Then(@"NmeaAisStaticAndVoyageRelatedDataParser\.Type is (.*)")]
-        public void ThenNmeaAisStaticAndVoyageRelatedDataParser_TypeIs(uint messageType)
+        public void ThenNmeaAisStaticAndVoyageRelatedDataParser_TypeIs(MessageType messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }

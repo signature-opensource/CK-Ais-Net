@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaAisPositionReportClassAParser.cs" company="Endjin Limited">
+// <copyright file="NmeaAisStandardSearchAndRescueAircraftPositionReportParser.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -7,20 +7,19 @@ namespace Ais.Net
     using System;
 
     /// <summary>
-    /// Enables fields to be extracted from an AIS Position Report Class A payload in an NMEA
-    /// sentence.
-    /// It parses the content of messages 1, 2 and 3.
+    /// Enables fields to be extracted from an AIS Standard Search and Rescue Aircraft Position Report.
+    /// It parses the content of messages 9.
     /// </summary>
-    public readonly ref struct NmeaAisPositionReportClassAParser
+    public readonly ref struct NmeaAisStandardSearchAndRescueAircraftPositionReportParser
     {
         private readonly NmeaAisBitVectorParser bits;
 
         /// <summary>
-        /// Create an <see cref="NmeaAisPositionReportClassAParser"/>.
+        /// Create an <see cref="NmeaAisStandardSearchAndRescueAircraftPositionReportParser"/>.
         /// </summary>
         /// <param name="ascii">The ASCII-encoded message payload.</param>
         /// <param name="padding">The number of bits of padding in this payload.</param>
-        public NmeaAisPositionReportClassAParser(ReadOnlySpan<byte> ascii, uint padding)
+        public NmeaAisStandardSearchAndRescueAircraftPositionReportParser(ReadOnlySpan<byte> ascii, uint padding)
         {
             this.bits = new NmeaAisBitVectorParser(ascii, padding);
         }
@@ -46,19 +45,14 @@ namespace Ais.Net
         public uint Mmsi => this.bits.GetUnsignedInteger(30, 8);
 
         /// <summary>
-        /// Gets the vessel's navigation status.
+        /// Gets the altitude, derived from GNSS or barometric.
         /// </summary>
-        public NavigationStatus NavigationStatus => (NavigationStatus)this.bits.GetUnsignedInteger(4, 38);
-
-        /// <summary>
-        /// Gets the vessel's rate of turn.
-        /// </summary>
-        public int RateOfTurn => this.bits.GetSignedInteger(8, 42);
+        public uint Altitude => this.bits.GetUnsignedInteger(12, 38);
 
         /// <summary>
         /// Gets the vessel's speed over ground, in tenths of a knot.
         /// </summary>
-        public uint SpeedOverGroundTenths => this.bits.GetUnsignedInteger(10, 50);
+        public uint SpeedOverGround => this.bits.GetUnsignedInteger(10, 50);
 
         /// <summary>
         /// Gets a value indicating whether the position information is of DGPS quality.
@@ -85,46 +79,50 @@ namespace Ais.Net
         public uint CourseOverGround10thDegrees => this.bits.GetUnsignedInteger(12, 116);
 
         /// <summary>
-        /// Gets the vessel's heading in degrees.
-        /// </summary>
-        public uint TrueHeadingDegrees => this.bits.GetUnsignedInteger(9, 128);
-
-        /// <summary>
         /// Gets the seconds part of the (UTC) time at which the location was recorded.
         /// </summary>
-        public uint TimeStampSecond => this.bits.GetUnsignedInteger(6, 137);
+        public uint TimeStampSecond => this.bits.GetUnsignedInteger(6, 128);
 
         /// <summary>
-        /// Gets a value indicating which kind of manoeuvre the vessel is engaged in, if any.
+        /// Gets the type of altitude sensor.
         /// </summary>
-        public ManoeuvreIndicator ManoeuvreIndicator => (ManoeuvreIndicator)this.bits.GetUnsignedInteger(2, 143);
+        public AltitudeSensor AltitudeSensor => (AltitudeSensor)this.bits.GetUnsignedInteger(1, 134);
 
         /// <summary>
         /// Gets the value of the bits in this message for which no standard meaning is currently
         /// defined.
         /// </summary>
-        public uint SpareBits145 => this.bits.GetUnsignedInteger(3, 145);
+        public uint SpareBits135 => this.bits.GetUnsignedInteger(7, 135);
+
+        /// <summary>
+        /// Gets a value indicating whether the data terminal ready is not available.
+        /// </summary>
+        public bool DTE => this.bits.GetBit(142);
+
+        /// <summary>
+        /// Gets the value of the bits in this message for which no standard meaning is currently
+        /// defined.
+        /// </summary>
+        public uint SpareBits143 => this.bits.GetUnsignedInteger(3, 143);
+
+        /// <summary>
+        /// Gets a value indicating whether the station operate in assigned mode.
+        /// </summary>
+        public bool AssignedMode => this.bits.GetBit(146);
 
         /// <summary>
         /// Gets a value indicating whether Receiver Autonomous Integrity Monitoring is in use.
         /// </summary>
-        public bool RaimFlag => this.bits.GetBit(148);
+        public bool RaimFlag => this.bits.GetBit(147);
 
         /// <summary>
-        /// Gets a value indicating the time synchronization mechanism in use by the radio system.
+        /// Gets the communication state follows that is used.
         /// </summary>
-        public RadioSyncState RadioSyncState => (RadioSyncState)this.bits.GetUnsignedInteger(2, 149);
+        public CommunicationStateSelector CommunicationStateSelector => (CommunicationStateSelector)this.bits.GetUnsignedInteger(1, 148);
 
         /// <summary>
-        /// Gets a value indicating how many more frames are to be sent before the radio system
-        /// will need to select a new slot.
+        /// Gets the communication state, based on <see cref="CommunicationStateSelector"/>.
         /// </summary>
-        public uint RadioSlotTimeout => this.bits.GetUnsignedInteger(3, 151);
-
-        /// <summary>
-        /// Gets information from the radio diagnostic system, the interpretation of which is
-        /// determined by the value of <see cref="RadioSlotTimeout"/>.
-        /// </summary>
-        public uint RadioSubMessage => this.bits.GetUnsignedInteger(14, 154);
+        public uint CommunicationState => this.bits.GetUnsignedInteger(19, 149);
     }
 }

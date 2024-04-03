@@ -19,5 +19,6 @@ namespace Ais.Net
         IntegratedNavigationSystem = 6,
         Surveyed = 7,
         Galileo = 8,
+        InternalGnss = 15,
     }
 }
