@@ -20,7 +20,7 @@
         }
 
         [Then(@"NmeaAisBaseStationReportParser\.Type is (.*)")]
-        public void ThenNmeaAisBaseStationReportParser_TypeIs(int messageType)
+        public void ThenNmeaAisBaseStationReportParser_TypeIs(MessageType messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }

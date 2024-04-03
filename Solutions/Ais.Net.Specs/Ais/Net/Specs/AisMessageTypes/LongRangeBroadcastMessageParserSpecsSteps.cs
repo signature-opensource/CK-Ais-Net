@@ -20,7 +20,7 @@
         }
 
         [Then(@"NmeaAisLongRangeBroadcastMessageParser\.Type is (.*)")]
-        public void ThenNmeaAisLongRangeBroadcastMessageParser_TypeIs(uint messageType)
+        public void ThenNmeaAisLongRangeBroadcastMessageParser_TypeIs(MessageType messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }

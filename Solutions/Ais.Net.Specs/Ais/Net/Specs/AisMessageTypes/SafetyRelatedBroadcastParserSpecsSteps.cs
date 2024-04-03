@@ -21,7 +21,7 @@
         }
 
         [Then(@"NmeaAisSafetyRelatedBroadcastParser\.Type is (.*)")]
-        public void ThenNmeaAisSafetyRelatedBroadcastParser_TypeIs(int messageType)
+        public void ThenNmeaAisSafetyRelatedBroadcastParser_TypeIs(MessageType messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }

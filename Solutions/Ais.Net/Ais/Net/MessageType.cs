@@ -10,14 +10,22 @@ namespace Ais.Net
     public enum MessageType
     {
         /// <summary>
-        /// <list type="number">
-        /// <item>Scheduled position report;</item>
-        /// <item>Assigned scheduled position report;</item>
-        /// <item>Special position report, response to interrogation;</item>
-        /// </list>
+        /// Scheduled position report.
         /// Class A shipborne mobile equipment.
         /// </summary>
-        PositionReport = 1 | 2 | 3,
+        PositionReport1 = 1,
+
+        /// <summary>
+        /// Assigned scheduled position report.
+        /// Class A shipborne mobile equipment.
+        /// </summary>
+        PositionReport2 = 2,
+
+        /// <summary>
+        /// Special position report, response to interrogation.
+        /// Class A shipborne mobile equipment.
+        /// </summary>
+        PositionReport3 = 3,
 
         /// <summary>
         /// Position, UTC, date and current slot number of base station.

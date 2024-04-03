@@ -20,7 +20,7 @@
         }
 
         [Then(@"NmeaAisBinaryBroadcastMessageParser\.Type is (.*)")]
-        public void ThenNmeaAisBinaryBroadcastMessageParser_TypeIs(uint messageType)
+        public void ThenNmeaAisBinaryBroadcastMessageParser_TypeIs(MessageType messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }

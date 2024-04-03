@@ -88,13 +88,13 @@ namespace Ais.Net.Specs.AisMessageTypes
         }
 
         [Then(@"NmeaAisStaticDataReportParserPartA\.Type is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartA_TypeIs(int messageType)
+        public void ThenNmeaAisStaticDataReportParserPartA_TypeIs(MessageType messageType)
         {
             this.ThenPartA(parser => Assert.AreEqual(messageType, parser.MessageType));
         }
 
         [Then(@"NmeaAisStaticDataReportParserPartB\.Type is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_TypeIs(int messageType)
+        public void ThenNmeaAisStaticDataReportParserPartB_TypeIs(MessageType messageType)
         {
             this.ThenPartB(parser => Assert.AreEqual(messageType, parser.MessageType));
         }

@@ -9,6 +9,7 @@ namespace Ais.Net
     /// <summary>
     /// Enables fields to be extracted from an AIS Coordinated Universal Time and Date Inquiry in
     /// an NMEA sentence.
+    /// It parses the content of messages 10.
     /// </summary>
     public readonly ref struct NmeaAisCoordinatedUniversalTimeAndDateInquiryParser
     {
@@ -27,7 +28,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets the message type.
         /// </summary>
-        public uint MessageType => this.bits.GetUnsignedInteger(6, 0);
+        public MessageType MessageType => (MessageType)this.bits.GetUnsignedInteger(6, 0);
 
         /// <summary>
         /// Gets the number of times this message had been repeated on this broadcast.

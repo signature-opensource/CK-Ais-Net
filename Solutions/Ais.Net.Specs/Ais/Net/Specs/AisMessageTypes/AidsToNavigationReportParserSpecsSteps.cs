@@ -20,7 +20,7 @@
         }
 
         [Then(@"NmeaAisAidsToNavigationReportParser\.Type is (.*)")]
-        public void ThenNmeaAisAidsToNavigationReportParser_TypeIs(uint messageType)
+        public void ThenNmeaAisAidsToNavigationReportParser_TypeIs(MessageType messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }

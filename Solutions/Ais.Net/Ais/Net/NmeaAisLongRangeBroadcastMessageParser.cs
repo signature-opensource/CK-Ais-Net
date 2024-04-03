@@ -8,6 +8,7 @@ namespace Ais.Net
 
     /// <summary>
     /// Enables fields to be extracted from a Long-range Automatic Identifcation System Broadcast Message.
+    /// It parses the content of messages 27.
     /// </summary>
     public readonly ref struct NmeaAisLongRangeBroadcastMessageParser
     {
@@ -26,7 +27,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets the message type.
         /// </summary>
-        public uint MessageType => this.bits.GetUnsignedInteger(6, 0);
+        public MessageType MessageType => (MessageType)this.bits.GetUnsignedInteger(6, 0);
 
         /// <summary>
         /// Gets the number of times this message had been repeated on this broadcast.

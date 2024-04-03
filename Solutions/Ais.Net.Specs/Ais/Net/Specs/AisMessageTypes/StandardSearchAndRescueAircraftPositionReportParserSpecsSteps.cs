@@ -20,7 +20,7 @@
         }
 
         [Then(@"NmeaAisStandardSearchAndRescueAircraftPositionReportParser\.Type is (.*)")]
-        public void ThenNmeaAisStandardSearchAndRescueAircraftPositionReportParser_TypeIs(uint messageType)
+        public void ThenNmeaAisStandardSearchAndRescueAircraftPositionReportParser_TypeIs(MessageType messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }

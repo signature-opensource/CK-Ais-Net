@@ -20,7 +20,7 @@
         }
 
         [Then(@"NmeaAisInterrogationParser\.Type is (.*)")]
-        public void ThenNmeaAisInterrogationParser_TypeIs(int messageType)
+        public void ThenNmeaAisInterrogationParser_TypeIs(MessageType messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }

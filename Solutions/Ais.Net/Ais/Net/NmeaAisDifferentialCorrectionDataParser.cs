@@ -8,7 +8,7 @@ namespace Ais.Net
 
     /// <summary>
     /// Enables fields to be extracted from the Differential Correction Data
-    /// into an AIS Global Navigation-Satellite System Broadcast Binary Message.
+    /// into an AIS Global Navigation-Satellite System Broadcast Binary Message (message 17).
     /// </summary>
     public readonly ref struct NmeaAisDifferentialCorrectionDataParser
     {
@@ -31,7 +31,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets the message type.
         /// </summary>
-        public uint MessageType => this.bits.GetUnsignedInteger(6, this.padding);
+        public MessageType MessageType => (MessageType)this.bits.GetUnsignedInteger(6, this.padding);
 
         /// <summary>
         /// Gets the station identifier.

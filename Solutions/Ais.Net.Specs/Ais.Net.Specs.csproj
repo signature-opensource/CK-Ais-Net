@@ -24,11 +24,6 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Ais\Net\Specs\AisMessageTypes\LongRangeAisBroadcastParserSpecs.feature.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>LongRangeAisBroadcastParserSpecs.feature</DependentUpon>
-    </Compile>
     <Compile Update="Ais\Net\Specs\AisMessageTypes\PositionReportClassAParserSpecs.feature.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

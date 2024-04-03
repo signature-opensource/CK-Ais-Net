@@ -20,7 +20,7 @@
         }
 
         [Then(@"NmeaAisGlobalNavigationSatelliteSystemBroadcastBinaryMessageParser\.Type is (.*)")]
-        public void ThenNmeaAisGlobalNavigationSatelliteSystemBroadcastBinaryMessageParser_TypeIs(uint messageType)
+        public void ThenNmeaAisGlobalNavigationSatelliteSystemBroadcastBinaryMessageParser_TypeIs(MessageType messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }

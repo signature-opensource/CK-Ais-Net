@@ -20,7 +20,7 @@
         }
 
         [Then(@"NmeaAisCoordinatedUniversalTimeAndDateResponseParser\.Type is (.*)")]
-        public void ThenNmeaAisCoordinatedUniversalTimeAndDateResponseParser_TypeIs(int messageType)
+        public void ThenNmeaAisCoordinatedUniversalTimeAndDateResponseParser_TypeIs(MessageType messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }

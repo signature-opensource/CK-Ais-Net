@@ -20,7 +20,7 @@
         }
 
         [Then(@"NmeaAisSingleSlotBinaryParser\.Type is (.*)")]
-        public void ThenNmeaAisSingleSlotBinaryParser_TypeIs(uint messageType)
+        public void ThenNmeaAisSingleSlotBinaryParser_TypeIs(MessageType messageType)
         {
             this.Then(parser =>
             {

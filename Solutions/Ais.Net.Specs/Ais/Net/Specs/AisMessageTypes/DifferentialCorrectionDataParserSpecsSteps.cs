@@ -25,7 +25,7 @@
         }
 
         [Then(@"NmeaAisDifferentialCorrectionDataParser\.MessageType is (.*)")]
-        public void ThenNmeaAisDifferentialCorrectionDataParser_TypeIs(uint messageType)
+        public void ThenNmeaAisDifferentialCorrectionDataParser_TypeIs(MessageType messageType)
         {
             this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
         }
