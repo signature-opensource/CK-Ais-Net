@@ -842,17 +842,17 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Part B: Spare")]
+        [NUnit.Framework.DescriptionAttribute("Part B: EpfdFixType")]
         [NUnit.Framework.TestCaseAttribute("H000004000000000000000000000", "0", "0", null)]
-        [NUnit.Framework.TestCaseAttribute("H000004000000000000000000001", "0", "1", null)]
-        public void PartBSpare(string payload, string padding, string spare, string[] exampleTags)
+        [NUnit.Framework.TestCaseAttribute("H000004000000000000000000001", "0", "0", null)]
+        public void PartBEpfdFixType(string payload, string padding, string epfdfixtype, string[] exampleTags)
         {
             string[] tagsOfScenario = exampleTags;
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             argumentsOfScenario.Add("payload", payload);
             argumentsOfScenario.Add("padding", padding);
-            argumentsOfScenario.Add("spare", spare);
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Part B: Spare", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            argumentsOfScenario.Add("epfdfixtype", epfdfixtype);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Part B: EpfdFixType", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 286
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -867,6 +867,38 @@ this.ScenarioInitialize(scenarioInfo);
     testRunner.When(string.Format("I parse \'{0}\' with padding {1} as Static Data Report Part B", payload, padding), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 288
+    testRunner.Then(string.Format("NmeaAisStaticDataReportParserPartB.EpfdFixType is {0}", epfdfixtype), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Part B: Spare")]
+        [NUnit.Framework.TestCaseAttribute("H000004000000000000000000000", "0", "0", null)]
+        [NUnit.Framework.TestCaseAttribute("H000004000000000000000000001", "0", "1", null)]
+        public void PartBSpare(string payload, string padding, string spare, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            argumentsOfScenario.Add("padding", padding);
+            argumentsOfScenario.Add("spare", spare);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Part B: Spare", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 295
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 296
+    testRunner.When(string.Format("I parse \'{0}\' with padding {1} as Static Data Report Part B", payload, padding), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 297
     testRunner.Then(string.Format("NmeaAisStaticDataReportParserPartB.Spare is {0}", spare), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }

@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaAisStaticDataReportParserPartB.cs" company="Endjin Limited">
+// <copyright file="NmeaAisStaticDataReportParserPartB.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -115,8 +115,13 @@ namespace Ais.Net
         public uint MothershipMmsi => this.bits.GetUnsignedInteger(30, 132);
 
         /// <summary>
+        /// Gets the position fix type.
+        /// </summary>
+        public EpfdFixType EpfdFixType => (EpfdFixType)this.bits.GetUnsignedInteger( 4, 162 );
+
+        /// <summary>
         /// Gets the value of the 'spare' bits at 162.
         /// </summary>
-        public uint Spare162 => this.bits.GetUnsignedInteger(6, 162);
+        public uint Spare162 => this.bits.GetUnsignedInteger(2, 166);
     }
 }

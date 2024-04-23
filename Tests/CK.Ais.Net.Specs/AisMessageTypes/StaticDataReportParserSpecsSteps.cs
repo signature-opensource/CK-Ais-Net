@@ -1,4 +1,4 @@
-﻿// <copyright file="StaticDataReportParserSpecsSteps.cs" company="Endjin Limited">
+// <copyright file="StaticDataReportParserSpecsSteps.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -211,6 +211,12 @@ namespace Ais.Net.Specs.AisMessageTypes
         public void ThenNmeaAisStaticDataReportParserPartB_MothershipMmsiIs(uint mmsi)
         {
             this.ThenPartB(parser => Assert.AreEqual(mmsi, parser.MothershipMmsi));
+        }
+
+        [Then( @"NmeaAisStaticDataReportParserPartB\.EpfdFixType is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_EpfdFixTypeIs(EpfdFixType mmsi)
+        {
+            this.ThenPartB(parser => Assert.AreEqual(mmsi, parser.EpfdFixType));
         }
 
         [Then(@"NmeaAisStaticDataReportParserPartB\.Spare is (.*)")]
