@@ -1,4 +1,4 @@
-﻿# Copyright (c) Endjin Limited. All rights reserved.
+# Copyright (c) Endjin Limited. All rights reserved.
 #
 # Contains data under the Norwegian licence for Open Government data (NLOD) distributed by
 # the Norwegian Costal Administration - https://ais.kystverket.no/
@@ -282,6 +282,15 @@ Scenario Outline: Part B: Mothership MMSI
     | H000004000000000000000000000 | 0       | 0         |
     | H000004000000000000000000010 | 0       | 1         |
     | H000004000000000000000roVRi0 | 0       | 987654321 |
+
+Scenario Outline: Part B: EpfdFixType
+    When I parse '<payload>' with padding <padding> as Static Data Report Part B
+    Then NmeaAisStaticDataReportParserPartB.EpfdFixType is <epfdfixtype>
+
+    Examples:
+    | payload                      | padding | epfdfixtype |
+    | H000004000000000000000000000 | 0       | 0           |
+    | H000004000000000000000000001 | 0       | 0           |
 
 Scenario Outline: Part B: Spare
     When I parse '<payload>' with padding <padding> as Static Data Report Part B
