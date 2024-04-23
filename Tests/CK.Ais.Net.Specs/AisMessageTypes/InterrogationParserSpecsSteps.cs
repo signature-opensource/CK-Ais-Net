@@ -1,4 +1,4 @@
-﻿namespace Ais.Net.Specs.AisMessageTypes
+namespace Ais.Net.Specs.AisMessageTypes
 {
     using System.Text;
     using NUnit.Framework;
@@ -50,7 +50,7 @@
         }
 
         [Then(@"NmeaAisInterrogationParser\.MessageType11 is (.*)")]
-        public void ThenNmeaAisInterrogationParser_MessageType11Is(uint value)
+        public void ThenNmeaAisInterrogationParser_MessageType11Is(MessageType value)
         {
             this.Then(parser => Assert.AreEqual(value, parser.MessageType11));
         }
@@ -68,7 +68,7 @@
         }
 
         [Then(@"NmeaAisInterrogationParser\.MessageType12 is (.*)")]
-        public void ThenNmeaAisInterrogationParser_MessageType12Is(uint? value)
+        public void ThenNmeaAisInterrogationParser_MessageType12Is(MessageType? value)
         {
             this.Then(parser => Assert.AreEqual(value, parser.MessageType12));
         }
