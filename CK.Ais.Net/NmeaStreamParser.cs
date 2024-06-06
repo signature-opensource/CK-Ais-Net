@@ -24,11 +24,9 @@ namespace Ais.Net
         /// <remarks>
         /// This reassembles AIS messages that have been split over multiple NMEA lines.
         /// </remarks>
-        public static Task ParseFileAsync(
-            string path,
-            INmeaAisMessageStreamProcessor processor)
+        public static Task ParseFileAsync( string path, INmeaAisMessageStreamProcessor processor )
         {
-            return ParseFileAsync(path, processor, new NmeaParserOptions());
+            return ParseFileAsync( path, processor, new NmeaParserOptions() );
         }
 
         /// <summary>
@@ -41,13 +39,12 @@ namespace Ais.Net
         /// <remarks>
         /// This reassembles AIS messages that have been split over multiple NMEA lines.
         /// </remarks>
-        public static async Task ParseFileAsync(
-            string path,
-            INmeaAisMessageStreamProcessor processor,
-            NmeaParserOptions options)
+        public static async Task ParseFileAsync( string path,
+                                                 INmeaAisMessageStreamProcessor processor,
+                                                 NmeaParserOptions options )
         {
-            using var adapter = new NmeaLineToAisStreamAdapter(processor, options);
-            await ParseFileAsync(path, adapter, options).ConfigureAwait(false);
+            using var adapter = new NmeaLineToAisStreamAdapter( processor, options );
+            await ParseFileAsync( path, adapter, options ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -56,11 +53,9 @@ namespace Ais.Net
         /// <param name="path">Path of the file to process.</param>
         /// <param name="processor">Handler for the parsed lines.</param>
         /// <returns>A task that completes when the stream has been processed.</returns>
-        public static Task ParseFileAsync(
-            string path,
-            INmeaLineStreamProcessor processor)
+        public static Task ParseFileAsync( string path, INmeaLineStreamProcessor processor )
         {
-            return ParseFileAsync(path, processor, new NmeaParserOptions());
+            return ParseFileAsync( path, processor, new NmeaParserOptions() );
         }
 
         /// <summary>
@@ -70,14 +65,13 @@ namespace Ais.Net
         /// <param name="processor">Handler for the parsed lines.</param>
         /// <param name="options">Configures parser behaviour.</param>
         /// <returns>A task that completes when the stream has been processed.</returns>
-        public static async Task ParseFileAsync(
-            string path,
-            INmeaLineStreamProcessor processor,
-            NmeaParserOptions options)
+        public static async Task ParseFileAsync( string path,
+                                                 INmeaLineStreamProcessor processor,
+                                                 NmeaParserOptions options )
         {
             // This turns off internal file stream buffering
-            using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 1, useAsync: true);
-            await ParseStreamAsync(file, processor, options).ConfigureAwait(false);
+            using var file = new FileStream( path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 1, useAsync: true );
+            await ParseStreamAsync( file, processor, options ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -86,11 +80,9 @@ namespace Ais.Net
         /// <param name="stream">The stream to process.</param>
         /// <param name="processor">Handler for the parsed lines.</param>
         /// <returns>A task that completes when the stream has been processed.</returns>
-        public static Task ParseStreamAsync(
-            Stream stream,
-            INmeaLineStreamProcessor processor)
+        public static Task ParseStreamAsync( Stream stream, INmeaLineStreamProcessor processor )
         {
-            return ParseStreamAsync(stream, processor, new NmeaParserOptions());
+            return ParseStreamAsync( stream, processor, new NmeaParserOptions() );
         }
 
         /// <summary>
@@ -100,12 +92,11 @@ namespace Ais.Net
         /// <param name="processor">Handler for the parsed lines.</param>
         /// <param name="options">Configures parser behaviour.</param>
         /// <returns>A task that completes when the stream has been processed.</returns>
-        public static Task ParseStreamAsync(
-            Stream stream,
-            INmeaLineStreamProcessor processor,
-            NmeaParserOptions options)
+        public static Task ParseStreamAsync( Stream stream,
+                                             INmeaLineStreamProcessor processor,
+                                             NmeaParserOptions options )
         {
-            var reader = PipeReader.Create(stream, new StreamPipeReaderOptions(bufferSize: 64 * 1024));
+            var reader = PipeReader.Create( stream, new StreamPipeReaderOptions( bufferSize: 64 * 1024 ) );
             return ParseAsync( reader, processor, options );
         }
 
@@ -116,7 +107,9 @@ namespace Ais.Net
         /// <param name="processor">Handler for the parsed lines.</param>
         /// <param name="options">Configures parser behaviour.</param>
         /// <returns>A task that completes when the stream has been processed.</returns>
-        public static async Task ParseAsync( PipeReader reader, INmeaLineStreamProcessor processor, NmeaParserOptions options )
+        public static async Task ParseAsync( PipeReader reader,
+                                             INmeaLineStreamProcessor processor,
+                                             NmeaParserOptions options )
         {
             int lines = 0;
             int ticksAtStart = Environment.TickCount;
@@ -124,7 +117,6 @@ namespace Ais.Net
 
             try
             {
-
                 byte[] splitLineBuffer = new byte[1000];
                 while( true )
                 {

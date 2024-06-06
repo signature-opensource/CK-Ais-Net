@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaTagBlockParser.cs" company="Endjin Limited">
+// <copyright file="NmeaTagBlockParser.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -39,6 +39,7 @@ namespace Ais.Net
             this.SentenceGrouping = default;
             this.Source = ReadOnlySpan<byte>.Empty;
             this.UnixTimestamp = default;
+            this.TextString = ReadOnlySpan<byte>.Empty;
 
             if (source[source.Length - 3] != (byte)'*')
             {
@@ -88,22 +89,40 @@ namespace Ais.Net
                         this.UnixTimestamp = timestamp;
                         break;
 
+                    case 'i':
+                        if (tagBlockStandard == TagBlockStandard.Nmea)
+                        {
+                            throw new ArgumentException( "Unknown field type in Nmea tag block: i" );
+                        }
+
+                        MoveAfterFieldKey(ref source);
+                        this.TextString = AdvanceToNextField(ref source);
+                        break;
+
+                    case 't':
+                        if (tagBlockStandard == TagBlockStandard.IEC)
+                        {
+                            throw new ArgumentException("Unknown field type in IEC tag block: t");
+                        }
+
+                        MoveAfterFieldKey(ref source);
+                        this.TextString = AdvanceToNextField(ref source);
+                        break;
+
                     // Both
                     case 'd':
                     // Nmea
                     case 'n':
                     case 'r':
-                    case 't':
                     // IEC
                     case 'x':
-                    case 'i':
                         if (throwWhenTagBlockContainsUnknownFields)
                         {
-                            if (tagBlockStandard == TagBlockStandard.Nmea && fieldType is 'x' or 'i')
+                            if (tagBlockStandard == TagBlockStandard.Nmea && fieldType is 'x')
                             {
                                 throw new ArgumentException("Unknown field type in Nmea tag block: " + fieldType);
                             }
-                            else if (tagBlockStandard == TagBlockStandard.IEC && fieldType is 'n' or 'r' or 't')
+                            else if (tagBlockStandard == TagBlockStandard.IEC && fieldType is 'n' or 'r')
                             {
                                 throw new ArgumentException("Unknown field type in IEC tag block: " + fieldType);
                             }
@@ -174,6 +193,11 @@ namespace Ais.Net
         /// Gets the unix timestamp, if present, null otherwise.
         /// </summary>
         public long? UnixTimestamp { get; }
+
+        /// <summary>
+        /// Gets the 
+        /// </summary>
+        public ReadOnlySpan<byte> TextString { get; }
 
         private static bool GetEnd(ref ReadOnlySpan<byte> source, char? delimiter, out int length)
         {

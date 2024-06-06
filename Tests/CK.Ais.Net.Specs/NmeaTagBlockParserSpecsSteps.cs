@@ -1,4 +1,4 @@
-﻿namespace Ais.Net.Specs
+namespace Ais.Net.Specs
 {
     using System.IO;
     using System.Text;
@@ -84,6 +84,12 @@
         {
             NmeaAisMessageStreamProcessorBindings.ErrorReport call = this.messageProcessor.OnErrorCalls[errorCallNumber];
             Assert.AreEqual(errorMessage, call.Error.Message);
+        }
+
+        [Then("the TextString is (.*)")]
+        public void TheTheTextStringIs(string text)
+        {
+            this.Then(parser => Assert.AreEqual(text, Encoding.ASCII.GetString(parser.TextString)));
         }
 
         private void When(string messageLine, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard)
