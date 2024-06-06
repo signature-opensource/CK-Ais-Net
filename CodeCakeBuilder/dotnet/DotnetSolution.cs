@@ -121,7 +121,7 @@ namespace CodeCake
         {
             if( testProjects == null )
             {
-                testProjects = Projects.Where( p => p.Name.EndsWith( ".Tests" ) || p.Name.EndsWith( ".Specs" ) );
+                testProjects = Projects.Where( p => p.Name.EndsWith( ".Tests" ) );
             }
 
             foreach( SolutionProject project in testProjects )
