@@ -1,4 +1,4 @@
-﻿// <copyright file="SentenceLayerSpecsSteps.cs" company="Endjin Limited">
+// <copyright file="SentenceLayerSpecsSteps.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -13,9 +13,9 @@ namespace Ais.Net.Specs
     {
         private ParserMaker makeParser;
 
-        private delegate NmeaLineParser ParserMaker();
+        private delegate NmeaLineParser<DefaultExtraFieldParser> ParserMaker();
 
-        private delegate void ParserTest(NmeaLineParser parser);
+        private delegate void ParserTest(NmeaLineParser<DefaultExtraFieldParser> parser);
 
         [When("I parse a message with no tag block")]
         public void WhenIParseAMessageWithNoTagBlock()
@@ -165,7 +165,7 @@ namespace Ais.Net.Specs
 
         private void When(string messageLine)
         {
-            this.When(() => new NmeaLineParser(Encoding.ASCII.GetBytes(messageLine)));
+            this.When(() => new NmeaLineParser<DefaultExtraFieldParser>(Encoding.ASCII.GetBytes(messageLine)));
         }
 
         private void When(ParserMaker makeParser)
@@ -175,7 +175,7 @@ namespace Ais.Net.Specs
 
         private void Then(ParserTest test)
         {
-            NmeaLineParser parser = this.makeParser();
+            NmeaLineParser<DefaultExtraFieldParser> parser = this.makeParser();
             test(parser);
         }
     }
