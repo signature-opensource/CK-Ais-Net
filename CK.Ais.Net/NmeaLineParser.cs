@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaLineParser.cs" company="Endjin Limited">
+// <copyright file="NmeaLineParser.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -10,7 +10,8 @@ namespace Ais.Net
     /// <summary>
     /// Parses a line of ASCII-encoded text containing an NMEA message.
     /// </summary>
-    public readonly ref struct NmeaLineParser
+    public readonly ref struct NmeaLineParser<TExtraFieldParser>
+        where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
     {
         private const byte ExclamationMark = (byte)'!';
         private const byte TagBlockMarker = (byte)'\\';
@@ -235,7 +236,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets the details from the tag block.
         /// </summary>
-        public NmeaTagBlockParser TagBlock => new NmeaTagBlockParser(this.TagBlockAsciiWithoutDelimiters, this.throwWhenTagBlockContainsUnknownFields, this.tagBlockStandard);
+        public NmeaTagBlockParser<TExtraFieldParser> TagBlock => new(this.TagBlockAsciiWithoutDelimiters, this.throwWhenTagBlockContainsUnknownFields, this.tagBlockStandard);
 
         /// <summary>
         /// Gets the tag block part of the underlying data (excluding the delimiting '/'

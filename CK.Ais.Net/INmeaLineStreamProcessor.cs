@@ -17,13 +17,6 @@ namespace Ais.Net
     public interface INmeaLineStreamProcessor
     {
         /// <summary>
-        /// Called for each non-empty line.
-        /// </summary>
-        /// <param name="parsedLine">The parsed line.</param>
-        /// <param name="lineNumber">The 1-based line number.</param>
-        void OnNext(in NmeaLineParser parsedLine, int lineNumber);
-
-        /// <summary>
         /// Called when a line cannot be parsed, e.g. it does not contain a well-formed NMEA
         /// message.
         /// </summary>
