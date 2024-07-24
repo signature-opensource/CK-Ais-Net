@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaLineToAisStreamAdapter.cs" company="Endjin Limited">
+// <copyright file="NmeaLineToAisStreamAdapter.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -89,6 +89,7 @@ namespace Ais.Net
                 int groupId;
                 int sentencesInGroup;
                 int oneBasedSentenceNumber;
+                bool isDesyncGroup = false;
                 if (sentenceGroupHeaderPresent)
                 {
                     NmeaTagBlockSentenceGrouping sentenceGrouping = parsedLine.TagBlock.SentenceGrouping.Value;
@@ -96,17 +97,18 @@ namespace Ais.Net
                     groupId = sentenceGrouping.GroupId;
                     oneBasedSentenceNumber = sentenceGrouping.SentenceNumber;
                     sentencesInGroup = sentenceGrouping.SentencesInGroup;
+                    isDesyncGroup = sentencesInGroup != parsedLine.TotalFragmentCount;
                 }
                 else
                 {
-                    isLastSentenceInGroup = parsedLine.FragmentNumberOneBased == parsedLine.TotalFragmentCount;
                     groupId = parsedLine.MultiSequenceMessageId[0];
                     oneBasedSentenceNumber = parsedLine.FragmentNumberOneBased;
                     sentencesInGroup = parsedLine.TotalFragmentCount;
                 }
 
                 isLastSentenceInGroup = oneBasedSentenceNumber == sentencesInGroup;
-                if (!isLastSentenceInGroup && parsedLine.Padding != 0)
+                // TODO: Manage the case when only the first line of the group have a sentence and it's have a padding of 0.
+                if (!isDesyncGroup && !isLastSentenceInGroup && parsedLine.Padding != 0)
                 {
                     this.messageProcessor.OnError(
                         parsedLine.Line,
@@ -116,9 +118,7 @@ namespace Ais.Net
 
                 if (!this.messageFragments.TryGetValue(groupId, out FragmentedMessage fragments))
                 {
-                    fragments = new FragmentedMessage(
-                        sentencesInGroup,
-                        lineNumber);
+                    fragments = new FragmentedMessage(sentencesInGroup, lineNumber);
                     this.messageFragments.Add(groupId, fragments);
                 }
 
@@ -137,7 +137,7 @@ namespace Ais.Net
 
                 bool allFragmentsReceived = true;
                 int totalPayloadSize = 0;
-
+                int fragmentsWithSentences = 0;
                 for (int i = 0; i < fragmentBuffers.Length; ++i)
                 {
                     if (fragmentBuffers[i] == null)
@@ -146,12 +146,22 @@ namespace Ais.Net
                         break;
                     }
 
-                    var storedParsedLine = new NmeaLineParser(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard);
+                    var storedParsedLine = new NmeaLineParser(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard, this.options.EmptyGroupTolerance);
                     totalPayloadSize += storedParsedLine.Payload.Length;
+
+                    if (storedParsedLine.Sentence.Length > 0) fragmentsWithSentences++;
                 }
 
                 if (allFragmentsReceived)
                 {
+                    bool fixGrouping = false;
+                    NmeaTagBlockSentenceGrouping? customGroup = null;
+                    if (fragmentsWithSentences < fragmentBuffers.Length && this.options.EmptyGroupTolerance == EmptyGroupTolerance.AutoFix)
+                    {
+                        fixGrouping = true;
+                        if (fragmentsWithSentences > 1) customGroup = new NmeaTagBlockSentenceGrouping(1, fragmentsWithSentences, groupId);
+                    }
+
                     byte[] reassemblyUnderlyingArray = null;
                     try
                     {
@@ -162,15 +172,18 @@ namespace Ais.Net
 
                         for (int i = 0; i < fragmentBuffers.Length; ++i)
                         {
-                            var storedParsedLine = new NmeaLineParser(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard);
+                            var storedParsedLine = new NmeaLineParser(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard, this.options.EmptyGroupTolerance);
                             ReadOnlySpan<byte> payload = storedParsedLine.Payload;
                             payload.CopyTo(reassemblyBuffer.Slice(reassemblyIndex, payload.Length));
                             reassemblyIndex += payload.Length;
-                            finalPadding = storedParsedLine.Padding;
+                            if (payload.Length > 0) finalPadding = storedParsedLine.Padding;
                         }
 
+                        var lineParser = new NmeaLineParser(fragmentBuffers[0], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard, this.options.EmptyGroupTolerance);
+                        if (fixGrouping) lineParser = NmeaLineParser.OverrideGrouping(lineParser, customGroup);
+
                         this.messageProcessor.OnNext(
-                            new NmeaLineParser(fragmentBuffers[0], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard),
+                            lineParser,
                             reassemblyBuffer.Slice(0, totalPayloadSize),
                             finalPadding);
                         this.messagesProcessed += 1;
@@ -290,7 +303,7 @@ namespace Ais.Net
             this.messageFragments.Remove(groupId);
         }
 
-        private struct FragmentedMessage
+        private readonly struct FragmentedMessage
         {
             public FragmentedMessage(
                 int count,
@@ -343,7 +356,7 @@ namespace Ais.Net
             /// the line is longer than it needs to be.
             /// </para>
             /// </remarks>
-            public Span<byte[]> Buffers => this.RentedBufferArray.AsSpan().Slice(0, this.BufferCount);
+            public readonly Span<byte[]> Buffers => this.RentedBufferArray.AsSpan().Slice(0, this.BufferCount);
 
             public int LineNumber { get; }
         }

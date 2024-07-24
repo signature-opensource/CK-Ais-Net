@@ -174,7 +174,7 @@ namespace Ais.Net
                         {
                             try
                             {
-                                var parsedLine = new NmeaLineParser( lineSpan, options.ThrowWhenTagBlockContainsUnknownFields, options.TagBlockStandard );
+                                var parsedLine = new NmeaLineParser( lineSpan, options.ThrowWhenTagBlockContainsUnknownFields, options.TagBlockStandard, options.EmptyGroupTolerance );
 
                                 processor.OnNext( parsedLine, lines + 1 );
                             }

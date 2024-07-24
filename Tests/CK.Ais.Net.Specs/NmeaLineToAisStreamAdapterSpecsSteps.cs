@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaLineToAisStreamAdapterSpecsSteps.cs" company="Endjin Limited">
+// <copyright file="NmeaLineToAisStreamAdapterSpecsSteps.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -51,11 +51,17 @@ namespace Ais.Net.Specs
             this.parserOptions.MaximumUnmatchedFragmentAge = maximumUnmatchedFragmentAge;
         }
 
+        [Given("I have configured a empty group tolerance of (.*)")]
+        public void GivenIHaveConfiguredAMaximumUnmatchedFragmentAgeOf(EmptyGroupTolerance tolerance)
+        {
+            this.parserOptions.EmptyGroupTolerance = tolerance;
+        }
+
         [When("the line to message adapter receives '(.*)'")]
         public void WhenTheLineToMessageAdapterReceives(string line)
         {
             byte[] ascii = Encoding.ASCII.GetBytes(line);
-            var lineParser = new NmeaLineParser(ascii);
+            var lineParser = new NmeaLineParser(ascii, this.parserOptions.ThrowWhenTagBlockContainsUnknownFields, this.parserOptions.TagBlockStandard, this.parserOptions.EmptyGroupTolerance);
             this.Adapter.OnNext(lineParser, this.lineNumber++);
         }
 
@@ -65,6 +71,22 @@ namespace Ais.Net.Specs
             byte[] ascii = Encoding.ASCII.GetBytes(line);
             this.exceptionProvidedToProcessor = new ArgumentException("That was never 5 minutes");
             this.Adapter.OnError(ascii, this.exceptionProvidedToProcessor, lineNumber);
+        }
+
+        [When( "the line to message adapter receives an error report for invalid content '(.*)' with line number (.*)" )]
+        public void WhenTheLineToMessageAdapterReceivesAnErrorReportForInvalidContentWithLineNumber(string line, int lineNumber)
+        {
+            byte[] ascii = Encoding.ASCII.GetBytes(line);
+            try
+            {
+                var lineParser = new NmeaLineParser(ascii, this.parserOptions.ThrowWhenTagBlockContainsUnknownFields, this.parserOptions.TagBlockStandard, this.parserOptions.EmptyGroupTolerance);
+                Assert.Fail($"No throw when parsing line '{line}'.");
+            }
+            catch(Exception e)
+            {
+                this.exceptionProvidedToProcessor = e;
+                this.Adapter.OnError(ascii, this.exceptionProvidedToProcessor, lineNumber);
+            }
         }
 
         [When("the line to message adapter receives a progress report of (.*), (.*), (.*), (.*), (.*)")]

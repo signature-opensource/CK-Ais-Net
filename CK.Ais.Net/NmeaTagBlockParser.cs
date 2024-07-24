@@ -179,6 +179,14 @@ namespace Ais.Net
             }
         }
 
+        private NmeaTagBlockParser(NmeaTagBlockParser parser, NmeaTagBlockSentenceGrouping? grouping)
+        {
+            this.SentenceGrouping = grouping;
+            this.Source = parser.Source;
+            this.UnixTimestamp = parser.UnixTimestamp;
+            this.TextString = parser.TextString;
+        }
+
         /// <summary>
         /// Gets the sentence grouping information for fragmented messages, if present, null otherwise.
         /// </summary>
@@ -198,6 +206,9 @@ namespace Ais.Net
         /// Gets the 
         /// </summary>
         public ReadOnlySpan<byte> TextString { get; }
+
+        internal static NmeaTagBlockParser OverrideGrouping(NmeaTagBlockParser parser, NmeaTagBlockSentenceGrouping? grouping)
+            => new NmeaTagBlockParser(parser, grouping);
 
         private static bool GetEnd(ref ReadOnlySpan<byte> source, char? delimiter, out int length)
         {
