@@ -149,7 +149,7 @@ namespace Ais.Net
                         break;
                     }
 
-                    var storedParsedLine = new NmeaLineParser<TExtraFieldParser>(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard);
+                    var storedParsedLine = new NmeaLineParser<TExtraFieldParser>(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard, this.options.EmptyGroupTolerance);
                     totalPayloadSize += storedParsedLine.Payload.Length;
 
                     if (storedParsedLine.Sentence.Length > 0) fragmentsWithSentences++;
@@ -183,7 +183,7 @@ namespace Ais.Net
                         }
 
                         var lineParser = new NmeaLineParser<TExtraFieldParser>(fragmentBuffers[0], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard, this.options.EmptyGroupTolerance);
-                        if (fixGrouping) lineParser = NmeaLineParser.OverrideGrouping(lineParser, customGroup);
+                        if (fixGrouping) lineParser = NmeaLineParser<TExtraFieldParser>.OverrideGrouping(lineParser, customGroup);
 
                         this.messageProcessor.OnNext(
                             lineParser,

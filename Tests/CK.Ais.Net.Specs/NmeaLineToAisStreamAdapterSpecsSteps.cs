@@ -79,7 +79,7 @@ namespace Ais.Net.Specs
             byte[] ascii = Encoding.ASCII.GetBytes(line);
             try
             {
-                var lineParser = new NmeaLineParser(ascii, this.parserOptions.ThrowWhenTagBlockContainsUnknownFields, this.parserOptions.TagBlockStandard, this.parserOptions.EmptyGroupTolerance);
+                var lineParser = new NmeaLineParser<DefaultExtraFieldParser>(ascii, this.parserOptions.ThrowWhenTagBlockContainsUnknownFields, this.parserOptions.TagBlockStandard, this.parserOptions.EmptyGroupTolerance);
                 Assert.Fail($"No throw when parsing line '{line}'.");
             }
             catch(Exception e)

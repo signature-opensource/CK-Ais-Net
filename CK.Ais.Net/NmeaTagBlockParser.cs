@@ -43,6 +43,10 @@ namespace Ais.Net
             this.Source = ReadOnlySpan<byte>.Empty;
             this.UnixTimestamp = default;
             this.TextString = ReadOnlySpan<byte>.Empty;
+            // For the moment, we use the default constructor of the extra field parser. 
+            // If we need to use a specific instance of the extra field parser, with a constructor that take parameters,
+            // we will need to add a TExtraFieldParser parameter in the constructor of the NmeaTagBlockParser.
+            this.ExtraFieldParser = default;
 
             if (span[span.Length - 3] != (byte)'*')
             {
@@ -181,7 +185,10 @@ namespace Ais.Net
             }
         }
 
-        private NmeaTagBlockParser(NmeaTagBlockParser parser, NmeaTagBlockSentenceGrouping? grouping)
+        internal static NmeaTagBlockParser<TExtraFieldParser> OverrideGrouping(NmeaTagBlockParser<TExtraFieldParser> parser, NmeaTagBlockSentenceGrouping? grouping)
+            => new NmeaTagBlockParser<TExtraFieldParser>(parser, grouping);
+
+        private NmeaTagBlockParser(NmeaTagBlockParser<TExtraFieldParser> parser, NmeaTagBlockSentenceGrouping? grouping)
         {
             this.SentenceGrouping = grouping;
             this.Source = parser.Source;
@@ -213,9 +220,6 @@ namespace Ais.Net
         /// Gets the text string.
         /// </summary>
         public ReadOnlySpan<byte> TextString { get; }
-
-        internal static NmeaTagBlockParser OverrideGrouping(NmeaTagBlockParser parser, NmeaTagBlockSentenceGrouping? grouping)
-            => new NmeaTagBlockParser(parser, grouping);
 
         /// <summary>
         /// Gets the extra field parser, if a non standard field type is found and can be parsed.

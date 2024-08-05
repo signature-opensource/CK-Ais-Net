@@ -57,7 +57,7 @@ namespace Ais.Net
                 }
 
                 this.TagBlockAsciiWithoutDelimiters = line.Slice(1, tagBlockEndIndex);
-                this.TagBlock = new NmeaTagBlockParser(this.TagBlockAsciiWithoutDelimiters, throwWhenTagBlockContainsUnknownFields, tagBlockStandard);
+                this.TagBlock = new NmeaTagBlockParser<TExtraFieldParser>(this.TagBlockAsciiWithoutDelimiters, throwWhenTagBlockContainsUnknownFields, tagBlockStandard);
 
                 sentenceStartIndex = tagBlockEndIndex + 2;
             }
@@ -267,7 +267,10 @@ namespace Ais.Net
         /// </summary>
         public bool IsFixedMessage { get; }
 
-        private NmeaLineParser(NmeaLineParser parser, NmeaTagBlockSentenceGrouping? grouping)
+        internal static NmeaLineParser<TExtraFieldParser> OverrideGrouping(NmeaLineParser<TExtraFieldParser> lineParser, NmeaTagBlockSentenceGrouping? grouping)
+            => new NmeaLineParser<TExtraFieldParser>(lineParser, grouping);
+
+        private NmeaLineParser(NmeaLineParser<TExtraFieldParser> parser, NmeaTagBlockSentenceGrouping? grouping)
         {
             AisTalker = parser.AisTalker;
             ChannelCode = parser.ChannelCode;
@@ -278,14 +281,11 @@ namespace Ais.Net
             Padding = parser.Padding;
             Payload = parser.Payload;
             Sentence = parser.Sentence;
-            TagBlock = NmeaTagBlockParser.OverrideGrouping(parser.TagBlock, grouping);
+            TagBlock = NmeaTagBlockParser<TExtraFieldParser>.OverrideGrouping(parser.TagBlock, grouping);
             TagBlockAsciiWithoutDelimiters = parser.TagBlockAsciiWithoutDelimiters;
             TotalFragmentCount = grouping.HasValue ? grouping.Value.SentencesInGroup : 1;
             IsFixedMessage = true;
         }
-
-        internal static NmeaLineParser OverrideGrouping(NmeaLineParser lineParser, NmeaTagBlockSentenceGrouping? grouping)
-            => new NmeaLineParser(lineParser, grouping);
 
         private static int GetSingleDigitField(ref ReadOnlySpan<byte> fields, bool required)
         {
@@ -314,13 +314,11 @@ namespace Ais.Net
         }
 
         /// <summary>
-        /// Cette méthode vérifie que la partie après le tag block (la sentence) contient quelque chose.
-        /// Quand on parse la donnée directement depuis le stream source, la <paramref name="sentence"/> ira jusqu'à la fin de la trame NMEA.
-        /// Quand on est dans un groupe, la trame va se trouver dans un tableau de `byte` proposé par le `ArrayPool`, or le tableu de `byte` peut dépasser la taille d'origine du message.
-        /// Ici, on considère qu'il y a une sentence quand il y a la <paramref name="sentence"/> n'est pas vide et que tous ses bytes ne sont pas à leur valeur par défaut.
-        /// </summary>
-        /// <param name="sentence">La partie après le tag block.</param>
-        /// <returns></returns>
+        /// This method checks that the sentence (after the tag block) is not empty.
+        /// When we parse the data from the source stream, the <paramref name="sentence"/> will go to the end of the NMEA sentence.
+        /// When the frame is in a group, it well be in a `byte` provided by the `ArrayPool`, but the `byte` array may exceed the originale message size.
+        /// Here a sentence is considered to exist when the <paramref name="sentence"/> is not empty and all its bytes are not at theur default value.
+        /// <param name="sentence">The part following the tag block.</param>
         private static bool HasSentence( ReadOnlySpan<byte> sentence )
         {
             for( int i = 0; i < sentence.Length; i++ )
