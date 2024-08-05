@@ -9,14 +9,19 @@ namespace Ais.Net
     using System.Collections.Generic;
     using System.Linq;
 
+    public interface INmeaLineToAisStreamAdapter : INmeaLineStreamProcessor, IDisposable
+    {
+    }
+
     /// <summary>
     /// Processes NMEA message lines, and passes their payloads as complete AIS messages to an
     /// <see cref="INmeaAisMessageStreamProcessor"/>, reassembling any messages that were split
     /// across multiple NMEA lines.
     /// </summary>
-    public class NmeaLineToAisStreamAdapter : INmeaLineStreamProcessor, IDisposable
+    public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProcessor<TExtraFieldParser>, INmeaLineToAisStreamAdapter
+        where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
     {
-        private readonly INmeaAisMessageStreamProcessor messageProcessor;
+        private readonly INmeaAisMessageStreamProcessor<TExtraFieldParser> messageProcessor;
         private readonly NmeaParserOptions options;
         private readonly Dictionary<int, FragmentedMessage> messageFragments = new Dictionary<int, FragmentedMessage>();
         private int messagesProcessed = 0;
@@ -28,7 +33,7 @@ namespace Ais.Net
         /// <param name="messageProcessor">
         /// The message process to which complete AIS messages are to be passed.
         /// </param>
-        public NmeaLineToAisStreamAdapter(INmeaAisMessageStreamProcessor messageProcessor)
+        public NmeaLineToAisStreamAdapter(INmeaAisMessageStreamProcessor<TExtraFieldParser> messageProcessor)
             : this(messageProcessor, new NmeaParserOptions())
         {
         }
@@ -40,9 +45,7 @@ namespace Ais.Net
         /// The message process to which complete AIS messages are to be passed.
         /// </param>
         /// <param name="options">Configures parser behaviour.</param>
-        public NmeaLineToAisStreamAdapter(
-            INmeaAisMessageStreamProcessor messageProcessor,
-            NmeaParserOptions options)
+        public NmeaLineToAisStreamAdapter(INmeaAisMessageStreamProcessor<TExtraFieldParser> messageProcessor, NmeaParserOptions options)
         {
             this.messageProcessor = messageProcessor;
             this.options = options;
@@ -62,7 +65,7 @@ namespace Ais.Net
         }
 
         /// <inheritdoc/>
-        public void OnNext(in NmeaLineParser parsedLine, int lineNumber)
+        public void OnNext(in NmeaLineParser<TExtraFieldParser> parsedLine, int lineNumber)
         {
             // Work out whether this is a fragmented message.
             // There are two different ways to indicate fragmentation: in the AIS sentence, or in
@@ -146,7 +149,7 @@ namespace Ais.Net
                         break;
                     }
 
-                    var storedParsedLine = new NmeaLineParser(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard, this.options.EmptyGroupTolerance);
+                    var storedParsedLine = new NmeaLineParser<TExtraFieldParser>(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard);
                     totalPayloadSize += storedParsedLine.Payload.Length;
 
                     if (storedParsedLine.Sentence.Length > 0) fragmentsWithSentences++;
@@ -172,14 +175,14 @@ namespace Ais.Net
 
                         for (int i = 0; i < fragmentBuffers.Length; ++i)
                         {
-                            var storedParsedLine = new NmeaLineParser(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard, this.options.EmptyGroupTolerance);
+                            var storedParsedLine = new NmeaLineParser<TExtraFieldParser>(fragmentBuffers[i], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard, this.options.EmptyGroupTolerance);
                             ReadOnlySpan<byte> payload = storedParsedLine.Payload;
                             payload.CopyTo(reassemblyBuffer.Slice(reassemblyIndex, payload.Length));
                             reassemblyIndex += payload.Length;
                             if (payload.Length > 0) finalPadding = storedParsedLine.Padding;
                         }
 
-                        var lineParser = new NmeaLineParser(fragmentBuffers[0], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard, this.options.EmptyGroupTolerance);
+                        var lineParser = new NmeaLineParser<TExtraFieldParser>(fragmentBuffers[0], this.options.ThrowWhenTagBlockContainsUnknownFields, this.options.TagBlockStandard, this.options.EmptyGroupTolerance);
                         if (fixGrouping) lineParser = NmeaLineParser.OverrideGrouping(lineParser, customGroup);
 
                         this.messageProcessor.OnNext(

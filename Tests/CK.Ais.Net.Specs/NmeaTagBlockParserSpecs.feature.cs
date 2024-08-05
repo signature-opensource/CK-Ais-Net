@@ -496,6 +496,75 @@ this.ScenarioInitialize(scenarioInfo);
             }
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Nmea tag block Extra Fields but no parser")]
+        public void NmeaTagBlockExtraFieldsButNoParser()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Nmea tag block Extra Fields but no parser", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 109
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 110
+  testRunner.Given("the line \'\\s:KIN1B,c:1716810431,q:mt-pt-ct-st-kt*78\\!AIVDM,1,1,,B,100BkthL2fmlG@@" +
+                        "iC=w2CQfF0Gh8,0*38\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 111
+ testRunner.When("I parse the content by message with throwWhenTagBlockContainsUnknownFields of tru" +
+                        "e and tagBlockStandard of 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 112
+ testRunner.Then("the message error report 0 should include the error message \'Unknown field type: " +
+                        "q\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Nmea tag block Extra Fields with extra parser")]
+        [NUnit.Framework.TestCaseAttribute("s:KIN1B,c:1716810431,q:mt-pt-ct-st-kt*78", "mt-pt-ct-st-kt", "", null)]
+        [NUnit.Framework.TestCaseAttribute("s:KIN1B,c:1716810431,q:mt-pt-ct-st-kt,v:123*28", "mt-pt-ct-st-kt", "123", null)]
+        public void NmeaTagBlockExtraFieldsWithExtraParser(string payload, string qvalue, string vvalue, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            argumentsOfScenario.Add("qvalue", qvalue);
+            argumentsOfScenario.Add("vvalue", vvalue);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Nmea tag block Extra Fields with extra parser", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 114
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 115
+ testRunner.When(string.Format("I parse \'{0}\' with throwWhenTagBlockContainsUnknownFields of true, tagBlockStanda" +
+                            "rd of 0 and extra parser", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 116
+  testRunner.Then(string.Format("the extra field parser q value is \'{0}\'", qvalue), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 117
+  testRunner.And(string.Format("the extra field parser v value is \'{0}\'", vvalue), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

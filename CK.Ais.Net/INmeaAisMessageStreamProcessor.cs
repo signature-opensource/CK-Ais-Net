@@ -1,4 +1,4 @@
-﻿// <copyright file="INmeaAisMessageStreamProcessor.cs" company="Endjin Limited">
+// <copyright file="INmeaAisMessageStreamProcessor.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -13,7 +13,8 @@ namespace Ais.Net
     /// In cases where AIS messages have been fragmented across multiple lines, they will be
     /// reassembled and passed to implementors of this interface as single messages.
     /// </remarks>
-    public interface INmeaAisMessageStreamProcessor
+    public interface INmeaAisMessageStreamProcessor<TExtraFieldParser>
+        where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
     {
         /// <summary>
         /// Called for each complete AIS message.
@@ -29,7 +30,7 @@ namespace Ais.Net
         /// block of data.
         /// </remarks>
         void OnNext(
-            in NmeaLineParser firstLine,
+            in NmeaLineParser<TExtraFieldParser> firstLine,
             in ReadOnlySpan<byte> asciiPayload,
             uint padding);
 

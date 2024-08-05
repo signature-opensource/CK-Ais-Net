@@ -10,23 +10,24 @@ namespace Ais.Net
     /// <summary>
     /// Extracts data from the Tag Block section of an NMEA message.
     /// </summary>
-    public readonly ref struct NmeaTagBlockParser
+    public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
+        where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
     {
         /// <summary>
         /// Creates a <see cref="NmeaTagBlockParser"/>.
         /// </summary>
-        /// <param name="source">The ASCII-encoded tag block, without the leading and trailing
+        /// <param name="span">The ASCII-encoded tag block, without the leading and trailing
         /// <c>/</c> delimiters.
         /// </param>
-        public NmeaTagBlockParser(ReadOnlySpan<byte> source)
-            : this(source, false, TagBlockStandard.Unspecified)
+        public NmeaTagBlockParser(ReadOnlySpan<byte> span)
+            : this(span, false, TagBlockStandard.Unspecified)
         {
         }
 
         /// <summary>
         /// Creates a <see cref="NmeaTagBlockParser"/>.
         /// </summary>
-        /// <param name="source">The ASCII-encoded tag block, without the leading and trailing
+        /// <param name="span">The ASCII-encoded tag block, without the leading and trailing
         /// <c>/</c> delimiters.
         /// </param>
         /// <param name="throwWhenTagBlockContainsUnknownFields">
@@ -34,23 +35,25 @@ namespace Ais.Net
         /// data sources that add non-standard fields.
         /// </param>
         /// <param name="tagBlockStandard">Defined in whick standard the tag block is.</param>
-        public NmeaTagBlockParser(ReadOnlySpan<byte> source, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard)
+        /// <param name="parserExtension">An optional parser extension if an unknown field type is found.</param>
+        public NmeaTagBlockParser(ReadOnlySpan<byte> span, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard)
         {
+            this.OriginalSpan = span;
             this.SentenceGrouping = default;
             this.Source = ReadOnlySpan<byte>.Empty;
             this.UnixTimestamp = default;
             this.TextString = ReadOnlySpan<byte>.Empty;
 
-            if (source[source.Length - 3] != (byte)'*')
+            if (span[span.Length - 3] != (byte)'*')
             {
                 throw new ArgumentException("Tag blocks should end with *XX where XX is a two-digit hexadecimal checksum");
             }
 
-            source = source.Slice(0, source.Length - 3);
+            span = span.Slice(0, span.Length - 3);
 
-            while (source.Length > 0)
+            while (span.Length > 0)
             {
-                char fieldType = (char)source[0];
+                char fieldType = (char)span[0];
 
                 switch (fieldType)
                 {
@@ -60,7 +63,7 @@ namespace Ais.Net
                             throw new ArgumentException("Tag block sentence grouping should be <int>-<int>-<int>, but first part was not a decimal integer");
                         }
 
-                        this.SentenceGrouping = ParseIECSentenceGrouping(ref source);
+                        this.SentenceGrouping = ParseIECSentenceGrouping(ref span);
                         break;
 
                     case 'g':
@@ -69,19 +72,19 @@ namespace Ais.Net
                             throw new ArgumentException("Tag block sentence grouping should be <int>G<int>:<int>, but first part was not a decimal integer");
                         }
 
-                        MoveAfterFieldKey(ref source);
-                        this.SentenceGrouping = ParseNmeaSentenceGrouping(ref source);
+                        MoveAfterFieldKey(ref span);
+                        this.SentenceGrouping = ParseNmeaSentenceGrouping(ref span);
                         break;
 
                     case 's':
-                        MoveAfterFieldKey(ref source);
-                        this.Source = AdvanceToNextField(ref source);
+                        MoveAfterFieldKey(ref span);
+                        this.Source = AdvanceToNextField(ref span);
 
                         break;
 
                     case 'c':
-                        MoveAfterFieldKey(ref source);
-                        if (!ParseDelimitedLong(ref source, out long timestamp))
+                        MoveAfterFieldKey(ref span);
+                        if (!ParseDelimitedLong(ref span, out long timestamp))
                         {
                             throw new ArgumentException("Tag block timestamp should be int");
                         }
@@ -95,8 +98,8 @@ namespace Ais.Net
                             throw new ArgumentException( "Unknown field type in Nmea tag block: i" );
                         }
 
-                        MoveAfterFieldKey(ref source);
-                        this.TextString = AdvanceToNextField(ref source);
+                        MoveAfterFieldKey(ref span);
+                        this.TextString = AdvanceToNextField(ref span);
                         break;
 
                     case 't':
@@ -105,8 +108,8 @@ namespace Ais.Net
                             throw new ArgumentException("Unknown field type in IEC tag block: t");
                         }
 
-                        MoveAfterFieldKey(ref source);
-                        this.TextString = AdvanceToNextField(ref source);
+                        MoveAfterFieldKey(ref span);
+                        this.TextString = AdvanceToNextField(ref span);
                         break;
 
                     // Both
@@ -129,23 +132,22 @@ namespace Ais.Net
 
                             throw new NotSupportedException("Unsupported field type: " + fieldType);
                         }
-                        else
-                        {
-                            AdvanceToNextField(ref source);
-                        }
-
+                        AdvanceToNextField(ref span);
                         break;
 
                     default:
-                        if (throwWhenTagBlockContainsUnknownFields)
+                        var field = AdvanceToNextField(ref span);
+                        var offset = OriginalSpan.Length - (field.Length + span.Length + 3 /* checksum */);
+                        if( span.Length > 0 )
+                        {
+                            // Include the ',' between field and span.
+                            offset--;
+                        }
+                        if (!this.ExtraFieldParser.TryParseField(OriginalSpan, field, offset)
+                            && throwWhenTagBlockContainsUnknownFields)
                         {
                             throw new ArgumentException("Unknown field type: " + fieldType);
                         }
-                        else
-                        {
-                            AdvanceToNextField(ref source);
-                        }
-
                         break;
                 }
 
@@ -188,12 +190,17 @@ namespace Ais.Net
         }
 
         /// <summary>
+        /// Gets the original span ending with the *XX (checksum).
+        /// </summary>
+        public ReadOnlySpan<byte> OriginalSpan { get; }
+
+        /// <summary>
         /// Gets the sentence grouping information for fragmented messages, if present, null otherwise.
         /// </summary>
         public NmeaTagBlockSentenceGrouping? SentenceGrouping { get; }
 
         /// <summary>
-        /// Gets the underlying data that was passed at construction.
+        /// Gets the 's' tag content (can be empty).
         /// </summary>
         public ReadOnlySpan<byte> Source { get; }
 
@@ -203,12 +210,17 @@ namespace Ais.Net
         public long? UnixTimestamp { get; }
 
         /// <summary>
-        /// Gets the 
+        /// Gets the text string.
         /// </summary>
         public ReadOnlySpan<byte> TextString { get; }
 
         internal static NmeaTagBlockParser OverrideGrouping(NmeaTagBlockParser parser, NmeaTagBlockSentenceGrouping? grouping)
             => new NmeaTagBlockParser(parser, grouping);
+
+        /// <summary>
+        /// Gets the extra field parser, if a non standard field type is found and can be parsed.
+        /// </summary>
+        public readonly TExtraFieldParser ExtraFieldParser;
 
         private static bool GetEnd(ref ReadOnlySpan<byte> source, char? delimiter, out int length)
         {

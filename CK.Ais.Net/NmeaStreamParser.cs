@@ -24,7 +24,8 @@ namespace Ais.Net
         /// <remarks>
         /// This reassembles AIS messages that have been split over multiple NMEA lines.
         /// </remarks>
-        public static Task ParseFileAsync( string path, INmeaAisMessageStreamProcessor processor )
+        public static Task ParseFileAsync<TExtraFieldParser>( string path, INmeaAisMessageStreamProcessor<TExtraFieldParser> processor )
+            where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
         {
             return ParseFileAsync( path, processor, new NmeaParserOptions() );
         }
@@ -39,11 +40,12 @@ namespace Ais.Net
         /// <remarks>
         /// This reassembles AIS messages that have been split over multiple NMEA lines.
         /// </remarks>
-        public static async Task ParseFileAsync( string path,
-                                                 INmeaAisMessageStreamProcessor processor,
+        public static async Task ParseFileAsync<TExtraFieldParser>( string path,
+                                                 INmeaAisMessageStreamProcessor<TExtraFieldParser> processor,
                                                  NmeaParserOptions options )
+            where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
         {
-            using var adapter = new NmeaLineToAisStreamAdapter( processor, options );
+            using var adapter = new NmeaLineToAisStreamAdapter<TExtraFieldParser>( processor, options );
             await ParseFileAsync( path, adapter, options ).ConfigureAwait( false );
         }
 
@@ -53,7 +55,8 @@ namespace Ais.Net
         /// <param name="path">Path of the file to process.</param>
         /// <param name="processor">Handler for the parsed lines.</param>
         /// <returns>A task that completes when the stream has been processed.</returns>
-        public static Task ParseFileAsync( string path, INmeaLineStreamProcessor processor )
+        public static Task ParseFileAsync<TExtraFieldParser>( string path, INmeaLineStreamProcessor<TExtraFieldParser> processor )
+            where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
         {
             return ParseFileAsync( path, processor, new NmeaParserOptions() );
         }
@@ -65,9 +68,10 @@ namespace Ais.Net
         /// <param name="processor">Handler for the parsed lines.</param>
         /// <param name="options">Configures parser behaviour.</param>
         /// <returns>A task that completes when the stream has been processed.</returns>
-        public static async Task ParseFileAsync( string path,
-                                                 INmeaLineStreamProcessor processor,
+        public static async Task ParseFileAsync<TExtraFieldParser>( string path,
+                                                 INmeaLineStreamProcessor<TExtraFieldParser> processor,
                                                  NmeaParserOptions options )
+            where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
         {
             // This turns off internal file stream buffering
             using var file = new FileStream( path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 1, useAsync: true );
@@ -80,7 +84,8 @@ namespace Ais.Net
         /// <param name="stream">The stream to process.</param>
         /// <param name="processor">Handler for the parsed lines.</param>
         /// <returns>A task that completes when the stream has been processed.</returns>
-        public static Task ParseStreamAsync( Stream stream, INmeaLineStreamProcessor processor )
+        public static Task ParseStreamAsync<TExtraFieldParser>( Stream stream, INmeaLineStreamProcessor<TExtraFieldParser> processor )
+            where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
         {
             return ParseStreamAsync( stream, processor, new NmeaParserOptions() );
         }
@@ -92,9 +97,10 @@ namespace Ais.Net
         /// <param name="processor">Handler for the parsed lines.</param>
         /// <param name="options">Configures parser behaviour.</param>
         /// <returns>A task that completes when the stream has been processed.</returns>
-        public static Task ParseStreamAsync( Stream stream,
-                                             INmeaLineStreamProcessor processor,
+        public static Task ParseStreamAsync<TExtraFieldParser>( Stream stream,
+                                             INmeaLineStreamProcessor<TExtraFieldParser> processor,
                                              NmeaParserOptions options )
+            where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
         {
             var reader = PipeReader.Create( stream, new StreamPipeReaderOptions( bufferSize: 64 * 1024 ) );
             return ParseAsync( reader, processor, options );
@@ -107,9 +113,10 @@ namespace Ais.Net
         /// <param name="processor">Handler for the parsed lines.</param>
         /// <param name="options">Configures parser behaviour.</param>
         /// <returns>A task that completes when the stream has been processed.</returns>
-        public static async Task ParseAsync( PipeReader reader,
-                                             INmeaLineStreamProcessor processor,
+        public static async Task ParseAsync<TExtraFieldParser>( PipeReader reader,
+                                             INmeaLineStreamProcessor<TExtraFieldParser> processor,
                                              NmeaParserOptions options )
+            where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
         {
             int lines = 0;
             int ticksAtStart = Environment.TickCount;
@@ -174,7 +181,7 @@ namespace Ais.Net
                         {
                             try
                             {
-                                var parsedLine = new NmeaLineParser( lineSpan, options.ThrowWhenTagBlockContainsUnknownFields, options.TagBlockStandard, options.EmptyGroupTolerance );
+                                var parsedLine = new NmeaLineParser<TExtraFieldParser>( lineSpan, options.ThrowWhenTagBlockContainsUnknownFields, options.TagBlockStandard, options.EmptyGroupTolerance );
 
                                 processor.OnNext( parsedLine, lines + 1 );
                             }
