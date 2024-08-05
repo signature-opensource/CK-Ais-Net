@@ -748,7 +748,7 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 this.ScenarioStart();
 #line 201
- testRunner.Given("a line \'\\s:42,c:1567684904,q:u*38\\!AIVDM,1,1,,A,B\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("a line \'\\s:42,c:1567684904*38\\!AIVDM,1,1,,A,B\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 202
  testRunner.When("I parse the content by message", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
@@ -761,7 +761,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
 #line 206
  testRunner.And("the message error report 0 should include the problematic line \'\\s:42,c:156768490" +
-                        "4,q:u*38\\!AIVDM,1,1,,A,B\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+                        "4*38\\!AIVDM,1,1,,A,B\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 207
  testRunner.And("the message error report 0 should include an exception reporting that the message" +

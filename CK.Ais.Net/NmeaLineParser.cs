@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaLineParser.cs" company="Endjin Limited">
+// <copyright file="NmeaLineParser.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -24,7 +24,7 @@ namespace Ais.Net
         /// </summary>
         /// <param name="line">The ASCII-encoded text containing the NMEA message.</param>
         public NmeaLineParser(ReadOnlySpan<byte> line)
-            : this(line, false, TagBlockStandard.Unspecified)
+            : this(line, false, TagBlockStandard.Unspecified, EmptyGroupTolerance.None)
         {
         }
 
@@ -37,8 +37,11 @@ namespace Ais.Net
         /// data sources that add non-standard fields.
         /// </param>
         /// <param name="tagBlockStandard">Defined in whick standard the tag block is.</param>
-        public NmeaLineParser(ReadOnlySpan<byte> line, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard)
+        /// <param name="emptyGroupTolerance">The empty group tolerance.</param>
+        public NmeaLineParser(ReadOnlySpan<byte> line, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard, EmptyGroupTolerance emptyGroupTolerance)
         {
+            this.throwWhenTagBlockContainsUnknownFields = throwWhenTagBlockContainsUnknownFields;
+            this.tagBlockStandard = tagBlockStandard;
             this.Line = line;
 
             int sentenceStartIndex = 0;
@@ -53,6 +56,7 @@ namespace Ais.Net
                 }
 
                 this.TagBlockAsciiWithoutDelimiters = line.Slice(1, tagBlockEndIndex);
+                this.TagBlock = new NmeaTagBlockParser(this.TagBlockAsciiWithoutDelimiters, throwWhenTagBlockContainsUnknownFields, tagBlockStandard);
 
                 sentenceStartIndex = tagBlockEndIndex + 2;
             }
@@ -67,6 +71,16 @@ namespace Ais.Net
             }
 
             this.Sentence = line.Slice(sentenceStartIndex);
+
+            if (!this.TagBlockAsciiWithoutDelimiters.IsEmpty &&
+                this.TagBlock.SentenceGrouping.HasValue &&
+                !HasSentence(Sentence) &&
+                emptyGroupTolerance >= EmptyGroupTolerance.Allow)
+            {
+                this.Sentence = ReadOnlySpan<byte>.Empty;
+                this.Payload = ReadOnlySpan<byte>.Empty;
+                return;
+            }
 
             // Need at least the exclamation mark, talker, and origin (e.g. !AIVDM), then
             // the two fragment fields are non-optional. The multi-sequence message ID is
@@ -173,8 +187,6 @@ namespace Ais.Net
             }
 
             this.Padding = (uint)GetSingleDigitField(ref remainingFields, true);
-            this.throwWhenTagBlockContainsUnknownFields = throwWhenTagBlockContainsUnknownFields;
-            this.tagBlockStandard = tagBlockStandard;
         }
 
         /// <summary>
@@ -235,7 +247,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets the details from the tag block.
         /// </summary>
-        public NmeaTagBlockParser TagBlock => new NmeaTagBlockParser(this.TagBlockAsciiWithoutDelimiters, this.throwWhenTagBlockContainsUnknownFields, this.tagBlockStandard);
+        public NmeaTagBlockParser TagBlock { get; }
 
         /// <summary>
         /// Gets the tag block part of the underlying data (excluding the delimiting '/'
@@ -248,6 +260,31 @@ namespace Ais.Net
         /// part.
         /// </summary>
         public int TotalFragmentCount { get; }
+
+        /// <summary>
+        /// Indicate if the message is a fragment from a group with fragments with empty sentence.
+        /// </summary>
+        public bool IsFixedMessage { get; }
+
+        private NmeaLineParser(NmeaLineParser parser, NmeaTagBlockSentenceGrouping? grouping)
+        {
+            AisTalker = parser.AisTalker;
+            ChannelCode = parser.ChannelCode;
+            DataOrigin = parser.DataOrigin;
+            FragmentNumberOneBased = grouping.HasValue ? grouping.Value.SentenceNumber : 1;
+            Line = parser.Line;
+            MultiSequenceMessageId = parser.MultiSequenceMessageId;
+            Padding = parser.Padding;
+            Payload = parser.Payload;
+            Sentence = parser.Sentence;
+            TagBlock = NmeaTagBlockParser.OverrideGrouping(parser.TagBlock, grouping);
+            TagBlockAsciiWithoutDelimiters = parser.TagBlockAsciiWithoutDelimiters;
+            TotalFragmentCount = grouping.HasValue ? grouping.Value.SentencesInGroup : 1;
+            IsFixedMessage = true;
+        }
+
+        internal static NmeaLineParser OverrideGrouping(NmeaLineParser lineParser, NmeaTagBlockSentenceGrouping? grouping)
+            => new NmeaLineParser(lineParser, grouping);
 
         private static int GetSingleDigitField(ref ReadOnlySpan<byte> fields, bool required)
         {
@@ -273,6 +310,23 @@ namespace Ais.Net
             fields = fields.Slice(2);
 
             return result;
+        }
+
+        /// <summary>
+        /// Cette méthode vérifie que la partie après le tag block (la sentence) contient quelque chose.
+        /// Quand on parse la donnée directement depuis le stream source, la <paramref name="sentence"/> ira jusqu'à la fin de la trame NMEA.
+        /// Quand on est dans un groupe, la trame va se trouver dans un tableau de `byte` proposé par le `ArrayPool`, or le tableu de `byte` peut dépasser la taille d'origine du message.
+        /// Ici, on considère qu'il y a une sentence quand il y a la <paramref name="sentence"/> n'est pas vide et que tous ses bytes ne sont pas à leur valeur par défaut.
+        /// </summary>
+        /// <param name="sentence">La partie après le tag block.</param>
+        /// <returns></returns>
+        private static bool HasSentence( ReadOnlySpan<byte> sentence )
+        {
+            for( int i = 0; i < sentence.Length; i++ )
+            {
+                if( sentence[i] is not default( byte ) ) return true;
+            }
+            return false;
         }
     }
 }

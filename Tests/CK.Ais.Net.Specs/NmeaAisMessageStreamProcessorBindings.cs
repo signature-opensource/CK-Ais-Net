@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaLineToAisStreamAdapterSpecsSteps.cs" company="Endjin Limited">
+// <copyright file="NmeaLineToAisStreamAdapterSpecsSteps.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -55,6 +55,18 @@ namespace Ais.Net.Specs
         public void ThenInAisMessageTheTimestampFromTheFirstNMEALineShouldBe(int callIndex, int timestamp)
         {
             Assert.AreEqual(timestamp, this.OnNextCalls[callIndex].UnixTimestamp);
+        }
+
+        [Then( "in ais message (.*) the isfixedmessage from the first NMEA line should be (.*)" )]
+        public void ThenInAisMessageTheIsfixedmessageFromTheFirstNMEALineShouldBe(int callIndex, bool isfixedmessage)
+        {
+            Assert.AreEqual(isfixedmessage, this.OnNextCalls[callIndex].IsFixedMessage);
+        }
+
+        [Then( "in ais message (.*) the sentencesingroup from the first NMEA line should be (.*)" )]
+        public void ThenInAisMessageTheSentencesInGroupFromTheFirstNMEALineShouldBe(int callIndex, int sentencesInGroup)
+        {
+            Assert.AreEqual(sentencesInGroup, this.OnNextCalls[callIndex].SentencesInGroup);
         }
 
         [Then("INmeaAisMessageStreamProcessor.Progress should have been called (.*) times")]
@@ -115,6 +127,13 @@ namespace Ais.Net.Specs
             Assert.AreEqual(lineNumber, call.LineNumber);
         }
 
+        [Then( "the message error report (.*) should include an exception reporting that the message appears to be missing some characters" )]
+        public void ThenTheMessageErrorReportShouldIncludeAnExceptionReportingThatTheMessageAppearsToBeMissingSomeCharacters(int errorCallNumber)
+        {
+            NmeaAisMessageStreamProcessorBindings.ErrorReport call = this.OnErrorCalls[errorCallNumber];
+            Assert.AreEqual("Invalid data. The message appears to be missing some characters - it may have been corrupted or truncated.", call.Error.Message);
+        }
+
         [Then("progress report (.*) was (.*), (.*), (.*), (.*), (.*), (.*), (.*)")]
         public void ThenProgressReportWasFalse(
             int callIndex,
@@ -142,12 +161,16 @@ namespace Ais.Net.Specs
                 long? unixTimestamp,
                 int source,
                 string asciiPayload,
-                uint padding)
+                uint padding,
+                bool isFixedMessage,
+                int sentencesInGroup)
             {
                 this.UnixTimestamp = unixTimestamp;
                 this.Source = source;
                 this.AsciiPayload = asciiPayload;
                 this.Padding = padding;
+                this.IsFixedMessage = isFixedMessage;
+                this.SentencesInGroup = sentencesInGroup;
             }
 
             public long? UnixTimestamp { get; }
@@ -157,6 +180,10 @@ namespace Ais.Net.Specs
             public string AsciiPayload { get; }
 
             public uint Padding { get; }
+
+            public bool IsFixedMessage { get; }
+
+            public int SentencesInGroup { get; }
         }
 
         public class ProgressReport
@@ -250,7 +277,9 @@ namespace Ais.Net.Specs
                     firstLine.TagBlock.UnixTimestamp,
                     Utf8Parser.TryParse(firstLine.TagBlock.Source, out int sourceId, out _) ? sourceId : throw new ArgumentException("Test must supply valid source"),
                     Encoding.ASCII.GetString(asciiPayload),
-                    padding));
+                    padding,
+                    firstLine.IsFixedMessage,
+                    firstLine.TagBlock.SentenceGrouping.HasValue ? firstLine.TagBlock.SentenceGrouping.Value.SentencesInGroup : 0));
             }
 
             public void Progress(

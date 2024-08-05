@@ -1,4 +1,4 @@
-﻿# Copyright (c) Endjin Limited. All rights reserved.
+# Copyright (c) Endjin Limited. All rights reserved.
 #
 # Contains data under the Norwegian licence for Open Government data (NLOD) distributed by
 # the Norwegian Costal Administration - https://ais.kystverket.no/
@@ -198,12 +198,12 @@ Scenario: Single unparseable line
 
 Scenario: Single truncated line
 	# ais.kystverket.no
-	Given a line '\s:42,c:1567684904,q:u*38\!AIVDM,1,1,,A,B'
+	Given a line '\s:42,c:1567684904*38\!AIVDM,1,1,,A,B'
 	When I parse the content by message
 	Then INmeaAisMessageStreamProcessor.OnNext should have been called 0 times
 	Then INmeaAisMessageStreamProcessor.OnError should have been called 1 time
 	# ais.kystverket.no
-	And the message error report 0 should include the problematic line '\s:42,c:1567684904,q:u*38\!AIVDM,1,1,,A,B'
+	And the message error report 0 should include the problematic line '\s:42,c:1567684904*38\!AIVDM,1,1,,A,B'
 	And the message error report 0 should include an exception reporting that the message appears to be incomplete
 	And the message error report 0 should include the line number 1
 	And INmeaAisMessageStreamProcessor.OnComplete should have been called

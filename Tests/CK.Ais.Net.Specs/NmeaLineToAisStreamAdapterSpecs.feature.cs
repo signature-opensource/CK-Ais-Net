@@ -1214,6 +1214,222 @@ this.ScenarioInitialize(scenarioInfo);
             }
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Tree-fragment message with only one sentence and auto fix group")]
+        public void Tree_FragmentMessageWithOnlyOneSentenceAndAutoFixGroup()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Tree-fragment message with only one sentence and auto fix group", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 358
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 359
+  testRunner.Given("I have configured a empty group tolerance of 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 360
+ testRunner.When("the line to message adapter receives \'\\g:1-3-1481,s:99,c:1718701847*41\\!AIVDM,1,1" +
+                        ",,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 361
+ testRunner.And("the line to message adapter receives \'\\g:2-3-1481*50\\\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 362
+ testRunner.And("the line to message adapter receives \'\\g:3-3-1481*51\\\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 363
+ testRunner.Then("INmeaAisMessageStreamProcessor.OnNext should have been called 1 times", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 364
+    testRunner.And("in ais message 0 the payload should be \'13Ef?<3006wt9WlEMhi1S6uJ00Rq\' with paddin" +
+                        "g of 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 365
+    testRunner.And("in ais message 0 the source from the first NMEA line should be 99", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 366
+    testRunner.And("in ais message 0 the timestamp from the first NMEA line should be 1718701847", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 367
+    testRunner.And("in ais message 0 the isfixedmessage from the first NMEA line should be true", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 368
+    testRunner.And("in ais message 0 the sentencesingroup from the first NMEA line should be 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Tree-fragment message with two sentences and auto fix group")]
+        public void Tree_FragmentMessageWithTwoSentencesAndAutoFixGroup()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Tree-fragment message with two sentences and auto fix group", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 370
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 371
+  testRunner.Given("I have configured a empty group tolerance of 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 372
+ testRunner.When("the line to message adapter receives \'\\g:1-3-1481,s:99,c:1718701847*41\\!AIVDM,2,1" +
+                        ",8,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*7A\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 373
+ testRunner.And("the line to message adapter receives \'\\g:2-3-1481*50\\!AIVDM,2,2,8,B,T`0@n888880,2" +
+                        "*3D\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 374
+ testRunner.And("the line to message adapter receives \'\\g:3-3-1481*51\\\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 375
+ testRunner.Then("INmeaAisMessageStreamProcessor.OnNext should have been called 1 times", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 376
+    testRunner.And("in ais message 0 the payload should be \'13Ef?<3006wt9WlEMhi1S6uJ00RqT`0@n888880\' " +
+                        "with padding of 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 377
+    testRunner.And("in ais message 0 the source from the first NMEA line should be 99", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 378
+    testRunner.And("in ais message 0 the timestamp from the first NMEA line should be 1718701847", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 379
+    testRunner.And("in ais message 0 the isfixedmessage from the first NMEA line should be true", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 380
+    testRunner.And("in ais message 0 the sentencesingroup from the first NMEA line should be 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Tree-fragment message with only one sentence and allow empty sentence")]
+        public void Tree_FragmentMessageWithOnlyOneSentenceAndAllowEmptySentence()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Tree-fragment message with only one sentence and allow empty sentence", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 382
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 383
+  testRunner.Given("I have configured a empty group tolerance of 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 384
+ testRunner.When("the line to message adapter receives \'\\g:1-3-1481,s:99,c:1718701847*41\\!AIVDM,1,1" +
+                        ",,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 385
+ testRunner.And("the line to message adapter receives \'\\g:2-3-1481*50\\\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 386
+ testRunner.And("the line to message adapter receives \'\\g:3-3-1481*51\\\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 387
+ testRunner.Then("INmeaAisMessageStreamProcessor.OnNext should have been called 1 times", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 388
+    testRunner.And("in ais message 0 the payload should be \'13Ef?<3006wt9WlEMhi1S6uJ00Rq\' with paddin" +
+                        "g of 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 389
+    testRunner.And("in ais message 0 the source from the first NMEA line should be 99", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 390
+    testRunner.And("in ais message 0 the timestamp from the first NMEA line should be 1718701847", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 391
+    testRunner.And("in ais message 0 the isfixedmessage from the first NMEA line should be false", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 392
+    testRunner.And("in ais message 0 the sentencesingroup from the first NMEA line should be 3", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Tree-fragment message with only one sentence and empty sentence is not allowed")]
+        public void Tree_FragmentMessageWithOnlyOneSentenceAndEmptySentenceIsNotAllowed()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Tree-fragment message with only one sentence and empty sentence is not allowed", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 394
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 395
+  testRunner.Given("I have configured a empty group tolerance of 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 396
+  testRunner.When("the line to message adapter receives \'\\g:1-3-1481,s:99,c:1718701847*41\\!AIVDM,1,1" +
+                        ",,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 397
+  testRunner.And("the line to message adapter receives an error report for invalid content \'\\g:2-3-" +
+                        "1481*50\\\' with line number 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 398
+  testRunner.And("the line to message adapter receives an error report for invalid content \'\\g:3-3-" +
+                        "1481*51\\\' with line number 3", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 403
+ testRunner.Then("INmeaAisMessageStreamProcessor.OnNext should have been called 0 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 404
+ testRunner.And("INmeaAisMessageStreamProcessor.OnError should have been called 2 times", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 405
+ testRunner.And("the message error report 0 should include the problematic line \'\\g:2-3-1481*50\\\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 406
+ testRunner.And("the message error report 0 should include an exception reporting that the message" +
+                        " appears to be missing some characters", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 407
+ testRunner.And("the message error report 1 should include the problematic line \'\\g:3-3-1481*51\\\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 408
+ testRunner.And("the message error report 1 should include an exception reporting that the message" +
+                        " appears to be missing some characters", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore
