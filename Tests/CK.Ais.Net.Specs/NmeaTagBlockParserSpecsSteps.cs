@@ -12,8 +12,8 @@ namespace Ais.Net.Specs
     public class NmeaTagBlockParserSpecsSteps
     {
         readonly StringBuilder _content = new StringBuilder();
-        readonly NmeaAisMessageStreamProcessorBindings<DefaultExtraFieldParser> _messageProcessor = new();
-        readonly NmeaAisMessageStreamProcessorBindings<ExtraFieldParser> _messageProcessorExtra = new();
+        readonly NmeaAisMessageStreamProcessorBindings _messageProcessor = new();
+        readonly NmeaAisMessageStreamProcessorBindings _messageProcessorExtra = new();
 
         ParserMaker _makeParser;
         ExtraParserMaker _makeExtraParser;

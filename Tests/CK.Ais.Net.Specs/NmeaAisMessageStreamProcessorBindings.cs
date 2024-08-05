@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaLineToAisStreamAdapterSpecsSteps.cs" company="Endjin Limited">
+// <copyright file="NmeaLineToAisStreamAdapterSpecsSteps.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -8,20 +8,21 @@ namespace Ais.Net.Specs
     using System.Buffers.Text;
     using System.Collections.Generic;
     using System.Text;
+    using Microsoft.VisualBasic.FileIO;
     using NUnit.Framework;
     using TechTalk.SpecFlow;
 
     [Binding]
     public class NmeaAisMessageStreamProcessorBindings
     {
-        private readonly MessageProcessor processor;
+        private readonly MessageProcessor<DefaultExtraFieldParser> processor;
 
         public NmeaAisMessageStreamProcessorBindings()
         {
-            this.processor = new MessageProcessor(this);
+            this.processor = new MessageProcessor<DefaultExtraFieldParser>(this);
         }
 
-        public INmeaAisMessageStreamProcessor Processor => this.processor;
+        public INmeaAisMessageStreamProcessor<DefaultExtraFieldParser> Processor => this.processor;
 
         public List<Message> OnNextCalls { get; } = new List<Message>();
 
@@ -212,7 +213,8 @@ namespace Ais.Net.Specs
             public int LineNumber { get; }
         }
 
-        private class MessageProcessor : INmeaAisMessageStreamProcessor
+        private class MessageProcessor<TExtraFieldParser> : INmeaAisMessageStreamProcessor<TExtraFieldParser>
+            where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
         {
             private readonly NmeaAisMessageStreamProcessorBindings parent;
 
@@ -237,7 +239,7 @@ namespace Ais.Net.Specs
             }
 
             public void OnNext(
-                in NmeaLineParser firstLine,
+                in NmeaLineParser<TExtraFieldParser> firstLine,
                 in ReadOnlySpan<byte> asciiPayload,
                 uint padding)
             {

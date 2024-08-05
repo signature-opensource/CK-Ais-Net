@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaStreamParserSpecsSteps.cs" company="Endjin Limited">
+// <copyright file="NmeaStreamParserSpecsSteps.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -9,6 +9,7 @@ namespace Ais.Net.Specs
     using System.IO;
     using System.Text;
     using System.Threading.Tasks;
+    using Microsoft.VisualBasic.FileIO;
     using NUnit.Framework;
     using TechTalk.SpecFlow;
 
@@ -16,7 +17,7 @@ namespace Ais.Net.Specs
     public class NmeaStreamParserSpecsSteps
     {
         private readonly StringBuilder content = new StringBuilder();
-        private readonly LineProcessor lineProcessor = new LineProcessor();
+        private readonly LineProcessor<DefaultExtraFieldParser> lineProcessor = new();
         private readonly NmeaAisMessageStreamProcessorBindings messageProcessor;
 
         public NmeaStreamParserSpecsSteps(NmeaAisMessageStreamProcessorBindings messageProcessor)
@@ -53,7 +54,7 @@ namespace Ais.Net.Specs
         [When("I parse the content by line")]
         public async Task WhenIParseTheContentByLineAsync()
         {
-            await NmeaStreamParser.ParseStreamAsync(
+            await NmeaStreamParser.ParseStreamAsync<DefaultExtraFieldParser>(
                 new MemoryStream(Encoding.ASCII.GetBytes(this.content.ToString())),
                 this.lineProcessor).ConfigureAwait(false);
         }
@@ -63,7 +64,7 @@ namespace Ais.Net.Specs
         {
             await NmeaStreamParser.ParseStreamAsync(
                 new MemoryStream(Encoding.ASCII.GetBytes(this.content.ToString())),
-                new NmeaLineToAisStreamAdapter(this.messageProcessor.Processor)).ConfigureAwait(false);
+                new NmeaLineToAisStreamAdapter<DefaultExtraFieldParser>(this.messageProcessor.Processor)).ConfigureAwait(false);
         }
 
         [When("I parse the content by message with exceptions disabled")]
@@ -72,7 +73,7 @@ namespace Ais.Net.Specs
             var options = new NmeaParserOptions { ThrowWhenTagBlockContainsUnknownFields = false };
             await NmeaStreamParser.ParseStreamAsync(
                 new MemoryStream(Encoding.ASCII.GetBytes(this.content.ToString())),
-                new NmeaLineToAisStreamAdapter(this.messageProcessor.Processor, options),
+                new NmeaLineToAisStreamAdapter<DefaultExtraFieldParser>(this.messageProcessor.Processor, options),
                 options).ConfigureAwait(false);
         }
 
@@ -105,7 +106,7 @@ namespace Ais.Net.Specs
         [Then("line (.*) should have a tag block of '(.*)' and a sentence of '(.*)'")]
         public void ThenLineShouldHaveATagBlockOfAndASentenceOf(int line, string tagBlock, string sentence)
         {
-            LineProcessor.Line call = this.lineProcessor.OnNextCalls[line];
+            LineProcessor<DefaultExtraFieldParser>.Line call = this.lineProcessor.OnNextCalls[line];
             Assert.AreEqual(tagBlock, call.TagBlock);
             Assert.AreEqual(sentence, call.Sentence);
         }
@@ -113,14 +114,14 @@ namespace Ais.Net.Specs
         [Then("the line error report (.*) should include the problematic line '(.*)'")]
         public void ThenTheLineErrorReportShouldIncludeTheProblematicLine(int errorCallNumber, string line)
         {
-            LineProcessor.ErrorReport call = this.lineProcessor.OnErrorCalls[errorCallNumber];
+            LineProcessor<DefaultExtraFieldParser>.ErrorReport call = this.lineProcessor.OnErrorCalls[errorCallNumber];
             Assert.AreEqual(line, call.Line);
         }
 
         [Then("the line error report (.*) should include an exception reporting that the expected exclamation mark is missing")]
         public void ThenTheLineErrorReportShouldIncludeAnExceptionReportingThatTheExpectedExclamationMarkIsMissing(int errorCallNumber)
         {
-            LineProcessor.ErrorReport call = this.lineProcessor.OnErrorCalls[errorCallNumber];
+            LineProcessor<DefaultExtraFieldParser>.ErrorReport call = this.lineProcessor.OnErrorCalls[errorCallNumber];
             Assert.IsInstanceOf<ArgumentException>(call.Error);
 
             var e = (ArgumentException)call.Error;
@@ -192,11 +193,12 @@ namespace Ais.Net.Specs
         [Then("the line error report (.*) should include the line number (.*)")]
         public void ThenTheLineErrorReportShouldIncludeTheLineNumber(int errorCallNumber, int lineNumber)
         {
-            LineProcessor.ErrorReport call = this.lineProcessor.OnErrorCalls[errorCallNumber];
+            LineProcessor<DefaultExtraFieldParser>.ErrorReport call = this.lineProcessor.OnErrorCalls[errorCallNumber];
             Assert.AreEqual(lineNumber, call.LineNumber);
         }
 
-        private class LineProcessor : INmeaLineStreamProcessor
+        private class LineProcessor<TExtraFieldParser> : INmeaLineStreamProcessor<TExtraFieldParser>
+            where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
         {
             public bool IsComplete { get; private set; }
 
@@ -219,7 +221,7 @@ namespace Ais.Net.Specs
                 this.OnErrorCalls.Add(new ErrorReport(Encoding.ASCII.GetString(line), error, lineNumber));
             }
 
-            public void OnNext(in NmeaLineParser value, int lineNumber)
+            public void OnNext(in NmeaLineParser<TExtraFieldParser> value, int lineNumber)
             {
                 if (this.IsComplete)
                 {

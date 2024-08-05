@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaLineToAisStreamAdapterSpecsSteps.cs" company="Endjin Limited">
+// <copyright file="NmeaLineToAisStreamAdapterSpecsSteps.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -14,7 +14,7 @@ namespace Ais.Net.Specs
     {
         private readonly NmeaAisMessageStreamProcessorBindings processorBindings;
         private readonly NmeaParserOptions parserOptions = new NmeaParserOptions();
-        private NmeaLineToAisStreamAdapter adapter;
+        private NmeaLineToAisStreamAdapter<DefaultExtraFieldParser> adapter;
         private bool adapterOnCompleteCalled = false;
         private Exception exceptionProvidedToProcessor;
         private int lineNumber = 1;
@@ -24,8 +24,8 @@ namespace Ais.Net.Specs
             this.processorBindings = processorBindings;
         }
 
-        private NmeaLineToAisStreamAdapter Adapter =>
-            this.adapter ??= new NmeaLineToAisStreamAdapter(this.processorBindings.Processor, this.parserOptions);
+        private NmeaLineToAisStreamAdapter<DefaultExtraFieldParser> Adapter =>
+            this.adapter ??= new NmeaLineToAisStreamAdapter<DefaultExtraFieldParser>(this.processorBindings.Processor, this.parserOptions);
 
         [Then("the message error report (.*) should include the exception reported by the line stream parser")]
         public void ThenTheMessageErrorReportShouldIncludeTheExceptionReportedByTheLineStreamParser(int errorCallNumber)
@@ -55,7 +55,7 @@ namespace Ais.Net.Specs
         public void WhenTheLineToMessageAdapterReceives(string line)
         {
             byte[] ascii = Encoding.ASCII.GetBytes(line);
-            var lineParser = new NmeaLineParser(ascii);
+            var lineParser = new NmeaLineParser<DefaultExtraFieldParser>(ascii);
             this.Adapter.OnNext(lineParser, this.lineNumber++);
         }
 
