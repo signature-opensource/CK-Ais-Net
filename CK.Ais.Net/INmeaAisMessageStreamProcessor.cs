@@ -2,10 +2,10 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace Ais.Net
 {
-    using System;
-
     /// <summary>
     /// Receives AIS messages parsed from  an NMEA file by <see cref="NmeaStreamParser"/>.
     /// </summary>
@@ -32,7 +32,7 @@ namespace Ais.Net
         void OnNext(
             in NmeaLineParser<TExtraFieldParser> firstLine,
             in ReadOnlySpan<byte> asciiPayload,
-            uint padding);
+            uint padding );
 
         /// <summary>
         /// Called when a line cannot be parsed, e.g. it does not contain a well-formed NMEA
@@ -41,7 +41,7 @@ namespace Ais.Net
         /// <param name="line">The line that cannot be parsed.</param>
         /// <param name="error">An exception describing the problem.</param>
         /// <param name="lineNumber">The 1-based line number on which the error was detected.</param>
-        void OnError(in ReadOnlySpan<byte> line, Exception error, int lineNumber);
+        void OnError( in ReadOnlySpan<byte> line, Exception error, int lineNumber );
 
         /// <summary>
         /// Called when all lines have been processed.
@@ -65,6 +65,6 @@ namespace Ais.Net
             int totalTicks,
             int nmeaLinesSinceLastUpdate,
             int aisMessagesSinceLastUpdate,
-            int ticksSinceLastUpdate);
+            int ticksSinceLastUpdate );
     }
 }

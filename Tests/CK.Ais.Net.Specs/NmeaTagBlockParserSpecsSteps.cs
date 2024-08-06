@@ -1,9 +1,9 @@
+using NUnit.Framework;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
 using TechTalk.SpecFlow;
 
 namespace Ais.Net.Specs
@@ -11,12 +11,11 @@ namespace Ais.Net.Specs
     [Binding]
     public class NmeaTagBlockParserSpecsSteps
     {
-        readonly StringBuilder _content = new StringBuilder();
+        readonly StringBuilder _content = new();
         readonly NmeaAisMessageStreamProcessorBindings _messageProcessor = new();
-        readonly NmeaAisMessageStreamProcessorBindings _messageProcessorExtra = new();
 
-        ParserMaker _makeParser;
-        ExtraParserMaker _makeExtraParser;
+        ParserMaker? _makeParser;
+        ExtraParserMaker? _makeExtraParser;
 
         delegate NmeaTagBlockParser<DefaultExtraFieldParser> ParserMaker();
         delegate NmeaTagBlockParser<ExtraFieldParser> ExtraParserMaker();
@@ -64,7 +63,7 @@ namespace Ais.Net.Specs
             Then( parser =>
             {
                 Assert.IsTrue( parser.UnixTimestamp.HasValue );
-                Assert.AreEqual( source, parser.UnixTimestamp.Value );
+                Assert.AreEqual( source, parser.UnixTimestamp!.Value );
             } );
         }
 
@@ -74,7 +73,7 @@ namespace Ais.Net.Specs
             Then( parser =>
             {
                 Assert.IsTrue( parser.SentenceGrouping.HasValue );
-                Assert.AreEqual( sentenceNumber, parser.SentenceGrouping.Value.SentenceNumber );
+                Assert.AreEqual( sentenceNumber, parser.SentenceGrouping!.Value.SentenceNumber );
                 Assert.AreEqual( sentencesInGroup, parser.SentenceGrouping.Value.SentencesInGroup );
                 Assert.AreEqual( groupId, parser.SentenceGrouping.Value.GroupId );
             } );
@@ -123,12 +122,14 @@ namespace Ais.Net.Specs
 
         void Then( ParserTest test )
         {
+            if( _makeParser is null ) throw new InvalidOperationException( $"Then step must be called." );
             NmeaTagBlockParser<DefaultExtraFieldParser> parser = _makeParser();
             test( parser );
         }
 
         void ThenExtra( ParserTestExtra test )
         {
+            if( _makeExtraParser is null ) throw new InvalidOperationException( $"Then Extra step must be called." );
             NmeaTagBlockParser<ExtraFieldParser> parser = _makeExtraParser();
             test( parser );
         }

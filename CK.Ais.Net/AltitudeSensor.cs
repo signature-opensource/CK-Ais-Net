@@ -1,4 +1,4 @@
-﻿// <copyright file="AltitudeSensor.cs" company="Endjin Limited">
+// <copyright file="AltitudeSensor.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -9,7 +9,6 @@ namespace Ais.Net
     /// </summary>
     public enum AltitudeSensor
     {
-#pragma warning disable CS1591, SA1602 // XML comments. The names are from the spec, and they're all the information we have
         Gnss = 0,
         BarometricSource = 1,
     }

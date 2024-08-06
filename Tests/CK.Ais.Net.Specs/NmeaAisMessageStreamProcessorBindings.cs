@@ -2,140 +2,139 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
+using NUnit.Framework;
+using System;
+using System.Buffers.Text;
+using System.Collections.Generic;
+using System.Text;
+using TechTalk.SpecFlow;
+
 namespace Ais.Net.Specs
 {
-    using System;
-    using System.Buffers.Text;
-    using System.Collections.Generic;
-    using System.Text;
-    using Microsoft.VisualBasic.FileIO;
-    using NUnit.Framework;
-    using TechTalk.SpecFlow;
-
     [Binding]
     public class NmeaAisMessageStreamProcessorBindings
     {
-        private readonly MessageProcessor<DefaultExtraFieldParser> processor;
+        readonly MessageProcessor<DefaultExtraFieldParser> _processor;
 
         public NmeaAisMessageStreamProcessorBindings()
         {
-            this.processor = new MessageProcessor<DefaultExtraFieldParser>(this);
+            _processor = new MessageProcessor<DefaultExtraFieldParser>( this );
         }
 
-        public INmeaAisMessageStreamProcessor<DefaultExtraFieldParser> Processor => this.processor;
+        public INmeaAisMessageStreamProcessor<DefaultExtraFieldParser> Processor => _processor;
 
-        public List<Message> OnNextCalls { get; } = new List<Message>();
+        public List<Message> OnNextCalls { get; } = [];
 
-        public List<ProgressReport> ProgressCalls { get; } = new List<ProgressReport>();
+        public List<ProgressReport> ProgressCalls { get; } = [];
 
-        public List<ErrorReport> OnErrorCalls { get; } = new List<ErrorReport>();
+        public List<ErrorReport> OnErrorCalls { get; } = [];
 
         public bool IsComplete { get; private set; }
 
-        [Then("INmeaAisMessageStreamProcessor.OnNext should have been called (.*) time")]
-        [Then("INmeaAisMessageStreamProcessor.OnNext should have been called (.*) times")]
-        public void ThenTheAisMessageProcessorShouldReceiveMessages(int messageCount)
+        [Then( "INmeaAisMessageStreamProcessor.OnNext should have been called (.*) time" )]
+        [Then( "INmeaAisMessageStreamProcessor.OnNext should have been called (.*) times" )]
+        public void ThenTheAisMessageProcessorShouldReceiveMessages( int messageCount )
         {
-            Assert.AreEqual(messageCount, this.OnNextCalls.Count);
+            Assert.AreEqual( messageCount, OnNextCalls.Count );
         }
 
-        [Then("in ais message (.*) the payload should be '(.*)' with padding of (.*)")]
-        public void ThenAisPayloadShouldBeWithPaddingOf(int callIndex, string payloadAscii, int padding)
+        [Then( "in ais message (.*) the payload should be '(.*)' with padding of (.*)" )]
+        public void ThenAisPayloadShouldBeWithPaddingOf( int callIndex, string payloadAscii, int padding )
         {
-            Assert.AreEqual(payloadAscii, this.OnNextCalls[callIndex].AsciiPayload);
-            Assert.AreEqual(padding, this.OnNextCalls[callIndex].Padding);
+            Assert.AreEqual( payloadAscii, OnNextCalls[callIndex].AsciiPayload );
+            Assert.AreEqual( padding, OnNextCalls[callIndex].Padding );
         }
 
-        [Then("in ais message (.*) the source from the first NMEA line should be (.*)")]
-        public void ThenInAisMessageTheSourceFromTheFirstNMEALineShouldBe(int callIndex, int source)
+        [Then( "in ais message (.*) the source from the first NMEA line should be (.*)" )]
+        public void ThenInAisMessageTheSourceFromTheFirstNMEALineShouldBe( int callIndex, int source )
         {
-            Assert.AreEqual(source, this.OnNextCalls[callIndex].Source);
+            Assert.AreEqual( source, OnNextCalls[callIndex].Source );
         }
 
-        [Then("in ais message (.*) the timestamp from the first NMEA line should be (.*)")]
-        public void ThenInAisMessageTheTimestampFromTheFirstNMEALineShouldBe(int callIndex, int timestamp)
+        [Then( "in ais message (.*) the timestamp from the first NMEA line should be (.*)" )]
+        public void ThenInAisMessageTheTimestampFromTheFirstNMEALineShouldBe( int callIndex, int timestamp )
         {
-            Assert.AreEqual(timestamp, this.OnNextCalls[callIndex].UnixTimestamp);
+            Assert.AreEqual( timestamp, OnNextCalls[callIndex].UnixTimestamp );
         }
 
         [Then( "in ais message (.*) the isfixedmessage from the first NMEA line should be (.*)" )]
-        public void ThenInAisMessageTheIsfixedmessageFromTheFirstNMEALineShouldBe(int callIndex, bool isfixedmessage)
+        public void ThenInAisMessageTheIsfixedmessageFromTheFirstNMEALineShouldBe( int callIndex, bool isfixedmessage )
         {
-            Assert.AreEqual(isfixedmessage, this.OnNextCalls[callIndex].IsFixedMessage);
+            Assert.AreEqual( isfixedmessage, OnNextCalls[callIndex].IsFixedMessage );
         }
 
         [Then( "in ais message (.*) the sentencesingroup from the first NMEA line should be (.*)" )]
-        public void ThenInAisMessageTheSentencesInGroupFromTheFirstNMEALineShouldBe(int callIndex, int sentencesInGroup)
+        public void ThenInAisMessageTheSentencesInGroupFromTheFirstNMEALineShouldBe( int callIndex, int sentencesInGroup )
         {
-            Assert.AreEqual(sentencesInGroup, this.OnNextCalls[callIndex].SentencesInGroup);
+            Assert.AreEqual( sentencesInGroup, OnNextCalls[callIndex].SentencesInGroup );
         }
 
-        [Then("INmeaAisMessageStreamProcessor.Progress should have been called (.*) times")]
-        public void ThenTheAisMessageProcessorShouldReceiveProgressReports(int callCount)
+        [Then( "INmeaAisMessageStreamProcessor.Progress should have been called (.*) times" )]
+        public void ThenTheAisMessageProcessorShouldReceiveProgressReports( int callCount )
         {
-            Assert.AreEqual(callCount, this.ProgressCalls.Count);
+            Assert.AreEqual( callCount, ProgressCalls.Count );
         }
 
-        [Then("INmeaAisMessageStreamProcessor.OnError should have been called (.*) times")]
-        [Then("INmeaAisMessageStreamProcessor.OnError should have been called (.*) time")]
-        public void ThenTheAisMessageProcessorShouldReceiveAnErrorReport(int errorCount)
+        [Then( "INmeaAisMessageStreamProcessor.OnError should have been called (.*) times" )]
+        [Then( "INmeaAisMessageStreamProcessor.OnError should have been called (.*) time" )]
+        public void ThenTheAisMessageProcessorShouldReceiveAnErrorReport( int errorCount )
         {
-            Assert.AreEqual(errorCount, this.OnErrorCalls.Count);
+            Assert.AreEqual( errorCount, OnErrorCalls.Count );
         }
 
-        [Then("the message error report (.*) should include the problematic line '(.*)'")]
-        public void ThenTheMessageErrorReportShouldIncludeTheProblematicLine(int errorCallNumber, string line)
+        [Then( "the message error report (.*) should include the problematic line '(.*)'" )]
+        public void ThenTheMessageErrorReportShouldIncludeTheProblematicLine( int errorCallNumber, string line )
         {
-            NmeaAisMessageStreamProcessorBindings.ErrorReport call = this.OnErrorCalls[errorCallNumber];
-            Assert.AreEqual(line, call.Line);
+            ErrorReport call = OnErrorCalls[errorCallNumber];
+            Assert.AreEqual( line, call.Line );
         }
 
-        [Then("the message error report (.*) should include an exception reporting unexpected padding on a non-terminal message fragment")]
-        public void ThenTheMessageErrorReportShouldIncludeAnExceptionReportingUnexpectedPaddingOnANon_TerminalMessageFragment(int errorCallNumber)
+        [Then( "the message error report (.*) should include an exception reporting unexpected padding on a non-terminal message fragment" )]
+        public void ThenTheMessageErrorReportShouldIncludeAnExceptionReportingUnexpectedPaddingOnANon_TerminalMessageFragment( int errorCallNumber )
         {
-            NmeaAisMessageStreamProcessorBindings.ErrorReport call = this.OnErrorCalls[errorCallNumber];
-            Assert.IsInstanceOf<ArgumentException>(call.Error);
+            ErrorReport call = OnErrorCalls[errorCallNumber];
+            Assert.IsInstanceOf<ArgumentException>( call.Error );
 
             var e = (ArgumentException)call.Error;
-            Assert.AreEqual("Can only handle non-zero padding on the final message in a fragment", e.Message);
+            Assert.AreEqual( "Can only handle non-zero padding on the final message in a fragment", e.Message );
         }
 
-        [Then("the message error report (.*) should include an exception reporting that it has received two message fragments with the same group id and position")]
-        public void ThenTheMessageErrorReportShouldIncludeAnExceptionReportingThatItHasReceivedTwoMessageFragmentsWithTheSameGroupIdAndPosition(int errorCallNumber)
+        [Then( "the message error report (.*) should include an exception reporting that it has received two message fragments with the same group id and position" )]
+        public void ThenTheMessageErrorReportShouldIncludeAnExceptionReportingThatItHasReceivedTwoMessageFragmentsWithTheSameGroupIdAndPosition( int errorCallNumber )
         {
-            NmeaAisMessageStreamProcessorBindings.ErrorReport call = this.OnErrorCalls[errorCallNumber];
-            Assert.IsInstanceOf<ArgumentException>(call.Error);
+            ErrorReport call = OnErrorCalls[errorCallNumber];
+            Assert.IsInstanceOf<ArgumentException>( call.Error );
 
             var e = (ArgumentException)call.Error;
             const string expectedStart = "Already received sentence ";
-            Assert.AreEqual(expectedStart, e.Message.Substring(0, expectedStart.Length));
+            Assert.AreEqual( expectedStart, e.Message.Substring( 0, expectedStart.Length ) );
         }
 
-        [Then("the message error report (.*) should include an exception reporting that it received an incomplete set of fragments for a message")]
-        public void ThenTheMessageErrorReportShouldIncludeAnExceptionReportingThatItReceivedAnIncompleteSetOfFragmentsForAMessage(int errorCallNumber)
+        [Then( "the message error report (.*) should include an exception reporting that it received an incomplete set of fragments for a message" )]
+        public void ThenTheMessageErrorReportShouldIncludeAnExceptionReportingThatItReceivedAnIncompleteSetOfFragmentsForAMessage( int errorCallNumber )
         {
-            NmeaAisMessageStreamProcessorBindings.ErrorReport call = this.OnErrorCalls[errorCallNumber];
-            Assert.IsInstanceOf<ArgumentException>(call.Error);
+            ErrorReport call = OnErrorCalls[errorCallNumber];
+            Assert.IsInstanceOf<ArgumentException>( call.Error );
 
             var e = (ArgumentException)call.Error;
-            Assert.AreEqual("Received incomplete fragmented message.", e.Message);
+            Assert.AreEqual( "Received incomplete fragmented message.", e.Message );
         }
 
-        [Then("the message error report (.*) should include the line number (.*)")]
-        public void ThenTheMessageErrorReportShouldIncludeTheLineNumber(int errorCallNumber, int lineNumber)
+        [Then( "the message error report (.*) should include the line number (.*)" )]
+        public void ThenTheMessageErrorReportShouldIncludeTheLineNumber( int errorCallNumber, int lineNumber )
         {
-            NmeaAisMessageStreamProcessorBindings.ErrorReport call = this.OnErrorCalls[errorCallNumber];
-            Assert.AreEqual(lineNumber, call.LineNumber);
+            ErrorReport call = OnErrorCalls[errorCallNumber];
+            Assert.AreEqual( lineNumber, call.LineNumber );
         }
 
         [Then( "the message error report (.*) should include an exception reporting that the message appears to be missing some characters" )]
-        public void ThenTheMessageErrorReportShouldIncludeAnExceptionReportingThatTheMessageAppearsToBeMissingSomeCharacters(int errorCallNumber)
+        public void ThenTheMessageErrorReportShouldIncludeAnExceptionReportingThatTheMessageAppearsToBeMissingSomeCharacters( int errorCallNumber )
         {
-            NmeaAisMessageStreamProcessorBindings.ErrorReport call = this.OnErrorCalls[errorCallNumber];
-            Assert.AreEqual("Invalid data. The message appears to be missing some characters - it may have been corrupted or truncated.", call.Error.Message);
+            ErrorReport call = OnErrorCalls[errorCallNumber];
+            Assert.AreEqual( "Invalid data. The message appears to be missing some characters - it may have been corrupted or truncated.", call.Error.Message );
         }
 
-        [Then("progress report (.*) was (.*), (.*), (.*), (.*), (.*), (.*), (.*)")]
+        [Then( "progress report (.*) was (.*), (.*), (.*), (.*), (.*), (.*), (.*)" )]
         public void ThenProgressReportWasFalse(
             int callIndex,
             bool done,
@@ -144,16 +143,16 @@ namespace Ais.Net.Specs
             int totalTicks,
             int nmeaLinesSinceLastUpdate,
             int aisMessagesSinceLastUpdate,
-            int ticksSinceLastUpdate)
+            int ticksSinceLastUpdate )
         {
-            NmeaAisMessageStreamProcessorBindings.ProgressReport call = this.ProgressCalls[callIndex];
-            Assert.AreEqual(done, call.Done);
-            Assert.AreEqual(totalNmeaLines, call.TotalNmeaLines);
-            Assert.AreEqual(totalAisMessages, call.TotalAisMessages);
-            Assert.AreEqual(totalTicks, call.TotalTicks);
-            Assert.AreEqual(nmeaLinesSinceLastUpdate, call.NmeaLinesSinceLastUpdate);
-            Assert.AreEqual(aisMessagesSinceLastUpdate, call.AisMessagesSinceLastUpdate);
-            Assert.AreEqual(ticksSinceLastUpdate, call.TicksSinceLastUpdate);
+            ProgressReport call = ProgressCalls[callIndex];
+            Assert.AreEqual( done, call.Done );
+            Assert.AreEqual( totalNmeaLines, call.TotalNmeaLines );
+            Assert.AreEqual( totalAisMessages, call.TotalAisMessages );
+            Assert.AreEqual( totalTicks, call.TotalTicks );
+            Assert.AreEqual( nmeaLinesSinceLastUpdate, call.NmeaLinesSinceLastUpdate );
+            Assert.AreEqual( aisMessagesSinceLastUpdate, call.AisMessagesSinceLastUpdate );
+            Assert.AreEqual( ticksSinceLastUpdate, call.TicksSinceLastUpdate );
         }
 
         public class Message
@@ -164,14 +163,14 @@ namespace Ais.Net.Specs
                 string asciiPayload,
                 uint padding,
                 bool isFixedMessage,
-                int sentencesInGroup)
+                int sentencesInGroup )
             {
-                this.UnixTimestamp = unixTimestamp;
-                this.Source = source;
-                this.AsciiPayload = asciiPayload;
-                this.Padding = padding;
-                this.IsFixedMessage = isFixedMessage;
-                this.SentencesInGroup = sentencesInGroup;
+                UnixTimestamp = unixTimestamp;
+                Source = source;
+                AsciiPayload = asciiPayload;
+                Padding = padding;
+                IsFixedMessage = isFixedMessage;
+                SentencesInGroup = sentencesInGroup;
             }
 
             public long? UnixTimestamp { get; }
@@ -196,15 +195,15 @@ namespace Ais.Net.Specs
                 int totalTicks,
                 int nmeaLinesSinceLastUpdate,
                 int aisMessagesSinceLastUpdate,
-                int ticksSinceLastUpdate)
+                int ticksSinceLastUpdate )
             {
-                this.Done = done;
-                this.TotalNmeaLines = totalNmeaLines;
-                this.TotalAisMessages = totalAisMessages;
-                this.TotalTicks = totalTicks;
-                this.TicksSinceLastUpdate = ticksSinceLastUpdate;
-                this.NmeaLinesSinceLastUpdate = nmeaLinesSinceLastUpdate;
-                this.AisMessagesSinceLastUpdate = aisMessagesSinceLastUpdate;
+                Done = done;
+                TotalNmeaLines = totalNmeaLines;
+                TotalAisMessages = totalAisMessages;
+                TotalTicks = totalTicks;
+                TicksSinceLastUpdate = ticksSinceLastUpdate;
+                NmeaLinesSinceLastUpdate = nmeaLinesSinceLastUpdate;
+                AisMessagesSinceLastUpdate = aisMessagesSinceLastUpdate;
             }
 
             public bool Done { get; }
@@ -226,11 +225,11 @@ namespace Ais.Net.Specs
 
         public class ErrorReport
         {
-            public ErrorReport(string line, Exception error, int lineNumber)
+            public ErrorReport( string line, Exception error, int lineNumber )
             {
-                this.Line = line;
-                this.Error = error;
-                this.LineNumber = lineNumber;
+                Line = line;
+                Error = error;
+                LineNumber = lineNumber;
             }
 
             public string Line { get; }
@@ -240,48 +239,48 @@ namespace Ais.Net.Specs
             public int LineNumber { get; }
         }
 
-        private class MessageProcessor<TExtraFieldParser> : INmeaAisMessageStreamProcessor<TExtraFieldParser>
+        class MessageProcessor<TExtraFieldParser> : INmeaAisMessageStreamProcessor<TExtraFieldParser>
             where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
         {
-            private readonly NmeaAisMessageStreamProcessorBindings parent;
+            readonly NmeaAisMessageStreamProcessorBindings _parent;
 
-            public MessageProcessor(NmeaAisMessageStreamProcessorBindings nmeaAisMessageStreamProcessorBindings)
+            public MessageProcessor( NmeaAisMessageStreamProcessorBindings nmeaAisMessageStreamProcessorBindings )
             {
-                this.parent = nmeaAisMessageStreamProcessorBindings;
+                _parent = nmeaAisMessageStreamProcessorBindings;
             }
 
             public void OnCompleted()
             {
-                if (this.parent.IsComplete)
+                if( _parent.IsComplete )
                 {
-                    throw new InvalidOperationException($"Must not call {nameof(this.OnCompleted)} more than once");
+                    throw new InvalidOperationException( $"Must not call {nameof( OnCompleted )} more than once" );
                 }
 
-                this.parent.IsComplete = true;
+                _parent.IsComplete = true;
             }
 
-            public void OnError(in ReadOnlySpan<byte> line, Exception error, int lineNumber)
+            public void OnError( in ReadOnlySpan<byte> line, Exception error, int lineNumber )
             {
-                this.parent.OnErrorCalls.Add(new ErrorReport(Encoding.ASCII.GetString(line), error, lineNumber));
+                _parent.OnErrorCalls.Add( new ErrorReport( Encoding.ASCII.GetString( line ), error, lineNumber ) );
             }
 
             public void OnNext(
                 in NmeaLineParser<TExtraFieldParser> firstLine,
                 in ReadOnlySpan<byte> asciiPayload,
-                uint padding)
+                uint padding )
             {
-                if (this.parent.IsComplete)
+                if( _parent.IsComplete )
                 {
-                    throw new InvalidOperationException($"Must not call {nameof(this.OnNext)} after calling {nameof(this.OnCompleted)}");
+                    throw new InvalidOperationException( $"Must not call {nameof( OnNext )} after calling {nameof( OnCompleted )}" );
                 }
 
-                this.parent.OnNextCalls.Add(new Message(
+                _parent.OnNextCalls.Add( new Message(
                     firstLine.TagBlock.UnixTimestamp,
-                    Utf8Parser.TryParse(firstLine.TagBlock.Source, out int sourceId, out _) ? sourceId : throw new ArgumentException("Test must supply valid source"),
-                    Encoding.ASCII.GetString(asciiPayload),
+                    Utf8Parser.TryParse( firstLine.TagBlock.Source, out int sourceId, out _ ) ? sourceId : throw new ArgumentException( "Test must supply valid source" ),
+                    Encoding.ASCII.GetString( asciiPayload ),
                     padding,
                     firstLine.IsFixedMessage,
-                    firstLine.TagBlock.SentenceGrouping.HasValue ? firstLine.TagBlock.SentenceGrouping.Value.SentencesInGroup : 0));
+                    firstLine.TagBlock.SentenceGrouping.HasValue ? firstLine.TagBlock.SentenceGrouping.Value.SentencesInGroup : 0 ) );
             }
 
             public void Progress(
@@ -291,9 +290,9 @@ namespace Ais.Net.Specs
                 int totalTicks,
                 int nmeaLinesSinceLastUpdate,
                 int aisMessagesSinceLastUpdate,
-                int ticksSinceLastUpdate)
+                int ticksSinceLastUpdate )
             {
-                this.parent.ProgressCalls.Add(new ProgressReport(done, totalNmeaLines, totalAisMessages, totalTicks, nmeaLinesSinceLastUpdate, aisMessagesSinceLastUpdate, ticksSinceLastUpdate));
+                _parent.ProgressCalls.Add( new ProgressReport( done, totalNmeaLines, totalAisMessages, totalTicks, nmeaLinesSinceLastUpdate, aisMessagesSinceLastUpdate, ticksSinceLastUpdate ) );
             }
         }
     }

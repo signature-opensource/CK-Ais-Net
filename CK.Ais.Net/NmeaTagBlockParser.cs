@@ -2,11 +2,11 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
+using System;
+using System.Buffers.Text;
+
 namespace Ais.Net
 {
-    using System;
-    using System.Buffers.Text;
-
     /// <summary>
     /// Extracts data from the Tag Block section of an NMEA message.
     /// </summary>
@@ -19,13 +19,13 @@ namespace Ais.Net
         /// <param name="span">The ASCII-encoded tag block, without the leading and trailing
         /// <c>/</c> delimiters.
         /// </param>
-        public NmeaTagBlockParser(ReadOnlySpan<byte> span)
-            : this(span, false, TagBlockStandard.Unspecified)
+        public NmeaTagBlockParser( ReadOnlySpan<byte> span )
+            : this( span, false, TagBlockStandard.Unspecified )
         {
         }
 
         /// <summary>
-        /// Creates a <see cref="NmeaTagBlockParser"/>.
+        /// Creates a <see cref="NmeaTagBlockParser{TExtraFieldParser}"/>.
         /// </summary>
         /// <param name="span">The ASCII-encoded tag block, without the leading and trailing
         /// <c>/</c> delimiters.
@@ -35,85 +35,84 @@ namespace Ais.Net
         /// data sources that add non-standard fields.
         /// </param>
         /// <param name="tagBlockStandard">Defined in whick standard the tag block is.</param>
-        /// <param name="parserExtension">An optional parser extension if an unknown field type is found.</param>
-        public NmeaTagBlockParser(ReadOnlySpan<byte> span, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard)
+        public NmeaTagBlockParser( ReadOnlySpan<byte> span, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard )
         {
-            this.OriginalSpan = span;
-            this.SentenceGrouping = default;
-            this.Source = ReadOnlySpan<byte>.Empty;
-            this.UnixTimestamp = default;
-            this.TextString = ReadOnlySpan<byte>.Empty;
+            OriginalSpan = span;
+            SentenceGrouping = default;
+            Source = ReadOnlySpan<byte>.Empty;
+            UnixTimestamp = default;
+            TextString = ReadOnlySpan<byte>.Empty;
             // For the moment, we use the default constructor of the extra field parser. 
             // If we need to use a specific instance of the extra field parser, with a constructor that take parameters,
             // we will need to add a TExtraFieldParser parameter in the constructor of the NmeaTagBlockParser.
-            this.ExtraFieldParser = default;
+            ExtraFieldParser = default;
 
-            if (span[span.Length - 3] != (byte)'*')
+            if( span[^3] != (byte)'*' )
             {
-                throw new ArgumentException("Tag blocks should end with *XX where XX is a two-digit hexadecimal checksum");
+                throw new ArgumentException( "Tag blocks should end with *XX where XX is a two-digit hexadecimal checksum" );
             }
 
-            span = span.Slice(0, span.Length - 3);
+            span = span.Slice( 0, span.Length - 3 );
 
-            while (span.Length > 0)
+            while( span.Length > 0 )
             {
                 char fieldType = (char)span[0];
 
-                switch (fieldType)
+                switch( fieldType )
                 {
                     case >= '1' and <= '9':
-                        if (tagBlockStandard == TagBlockStandard.Nmea)
+                        if( tagBlockStandard == TagBlockStandard.Nmea )
                         {
-                            throw new ArgumentException("Tag block sentence grouping should be <int>-<int>-<int>, but first part was not a decimal integer");
+                            throw new ArgumentException( "Tag block sentence grouping should be <int>-<int>-<int>, but first part was not a decimal integer" );
                         }
 
-                        this.SentenceGrouping = ParseIECSentenceGrouping(ref span);
+                        SentenceGrouping = ParseIECSentenceGrouping( ref span );
                         break;
 
                     case 'g':
-                        if (tagBlockStandard == TagBlockStandard.IEC)
+                        if( tagBlockStandard == TagBlockStandard.IEC )
                         {
-                            throw new ArgumentException("Tag block sentence grouping should be <int>G<int>:<int>, but first part was not a decimal integer");
+                            throw new ArgumentException( "Tag block sentence grouping should be <int>G<int>:<int>, but first part was not a decimal integer" );
                         }
 
-                        MoveAfterFieldKey(ref span);
-                        this.SentenceGrouping = ParseNmeaSentenceGrouping(ref span);
+                        MoveAfterFieldKey( ref span );
+                        SentenceGrouping = ParseNmeaSentenceGrouping( ref span );
                         break;
 
                     case 's':
-                        MoveAfterFieldKey(ref span);
-                        this.Source = AdvanceToNextField(ref span);
+                        MoveAfterFieldKey( ref span );
+                        Source = AdvanceToNextField( ref span );
 
                         break;
 
                     case 'c':
-                        MoveAfterFieldKey(ref span);
-                        if (!ParseDelimitedLong(ref span, out long timestamp))
+                        MoveAfterFieldKey( ref span );
+                        if( !ParseDelimitedLong( ref span, out long timestamp ) )
                         {
-                            throw new ArgumentException("Tag block timestamp should be int");
+                            throw new ArgumentException( "Tag block timestamp should be int" );
                         }
 
-                        this.UnixTimestamp = timestamp;
+                        UnixTimestamp = timestamp;
                         break;
 
                     case 'i':
-                        if (tagBlockStandard == TagBlockStandard.Nmea)
+                        if( tagBlockStandard == TagBlockStandard.Nmea )
                         {
                             throw new ArgumentException( "Unknown field type in Nmea tag block: i" );
                         }
 
-                        MoveAfterFieldKey(ref span);
-                        this.TextString = AdvanceToNextField(ref span);
+                        MoveAfterFieldKey( ref span );
+                        TextString = AdvanceToNextField( ref span );
                         break;
 
                     case 't':
-                        if (tagBlockStandard == TagBlockStandard.IEC)
+                        if( tagBlockStandard == TagBlockStandard.IEC )
                         {
-                            throw new ArgumentException("Unknown field type in IEC tag block: t");
+                            throw new ArgumentException( "Unknown field type in IEC tag block: t" );
                         }
 
-                        MoveAfterFieldKey(ref span);
-                        this.TextString = AdvanceToNextField(ref span);
+                        MoveAfterFieldKey( ref span );
+                        TextString = AdvanceToNextField( ref span );
                         break;
 
                     // Both
@@ -123,61 +122,61 @@ namespace Ais.Net
                     case 'r':
                     // IEC
                     case 'x':
-                        if (throwWhenTagBlockContainsUnknownFields)
+                        if( throwWhenTagBlockContainsUnknownFields )
                         {
-                            if (tagBlockStandard == TagBlockStandard.Nmea && fieldType is 'x')
+                            if( tagBlockStandard == TagBlockStandard.Nmea && fieldType is 'x' )
                             {
-                                throw new ArgumentException("Unknown field type in Nmea tag block: " + fieldType);
+                                throw new ArgumentException( "Unknown field type in Nmea tag block: " + fieldType );
                             }
-                            else if (tagBlockStandard == TagBlockStandard.IEC && fieldType is 'n' or 'r')
+                            else if( tagBlockStandard == TagBlockStandard.IEC && fieldType is 'n' or 'r' )
                             {
-                                throw new ArgumentException("Unknown field type in IEC tag block: " + fieldType);
+                                throw new ArgumentException( "Unknown field type in IEC tag block: " + fieldType );
                             }
 
-                            throw new NotSupportedException("Unsupported field type: " + fieldType);
+                            throw new NotSupportedException( "Unsupported field type: " + fieldType );
                         }
-                        AdvanceToNextField(ref span);
+                        AdvanceToNextField( ref span );
                         break;
 
                     default:
-                        var field = AdvanceToNextField(ref span);
+                        var field = AdvanceToNextField( ref span );
                         var offset = OriginalSpan.Length - (field.Length + span.Length + 3 /* checksum */);
                         if( span.Length > 0 )
                         {
                             // Include the ',' between field and span.
                             offset--;
                         }
-                        if (!this.ExtraFieldParser.TryParseField(OriginalSpan, field, offset)
-                            && throwWhenTagBlockContainsUnknownFields)
+                        if( !ExtraFieldParser.TryParseField( OriginalSpan, field, offset )
+                            && throwWhenTagBlockContainsUnknownFields )
                         {
-                            throw new ArgumentException("Unknown field type: " + fieldType);
+                            throw new ArgumentException( "Unknown field type: " + fieldType );
                         }
                         break;
                 }
 
-                static void MoveAfterFieldKey(ref ReadOnlySpan<byte> source)
+                static void MoveAfterFieldKey( ref ReadOnlySpan<byte> source )
                 {
-                    if (source.Length < 3 || source[1] != (byte)':')
+                    if( source.Length < 3 || source[1] != (byte)':' )
                     {
-                        throw new ArgumentException("Tag block entries should start with a type character followed by a colon, and there was no colon");
+                        throw new ArgumentException( "Tag block entries should start with a type character followed by a colon, and there was no colon" );
                     }
 
-                    source = source.Slice(2);
+                    source = source.Slice( 2 );
                 }
 
-                static ReadOnlySpan<byte> AdvanceToNextField(scoped ref ReadOnlySpan<byte> source)
+                static ReadOnlySpan<byte> AdvanceToNextField( scoped ref ReadOnlySpan<byte> source )
                 {
                     ReadOnlySpan<byte> result;
-                    int next = source.IndexOf((byte)',');
-                    if (next < 0)
+                    int next = source.IndexOf( (byte)',' );
+                    if( next < 0 )
                     {
                         result = source;
                         source = ReadOnlySpan<byte>.Empty;
                     }
                     else
                     {
-                        result = source.Slice(0, next);
-                        source = source.Slice(next + 1);
+                        result = source.Slice( 0, next );
+                        source = source.Slice( next + 1 );
                     }
 
                     return result;
@@ -185,15 +184,15 @@ namespace Ais.Net
             }
         }
 
-        internal static NmeaTagBlockParser<TExtraFieldParser> OverrideGrouping(NmeaTagBlockParser<TExtraFieldParser> parser, NmeaTagBlockSentenceGrouping? grouping)
-            => new NmeaTagBlockParser<TExtraFieldParser>(parser, grouping);
+        internal static NmeaTagBlockParser<TExtraFieldParser> OverrideGrouping( NmeaTagBlockParser<TExtraFieldParser> parser, NmeaTagBlockSentenceGrouping? grouping )
+            => new NmeaTagBlockParser<TExtraFieldParser>( parser, grouping );
 
-        private NmeaTagBlockParser(NmeaTagBlockParser<TExtraFieldParser> parser, NmeaTagBlockSentenceGrouping? grouping)
+        NmeaTagBlockParser( NmeaTagBlockParser<TExtraFieldParser> parser, NmeaTagBlockSentenceGrouping? grouping )
         {
-            this.SentenceGrouping = grouping;
-            this.Source = parser.Source;
-            this.UnixTimestamp = parser.UnixTimestamp;
-            this.TextString = parser.TextString;
+            SentenceGrouping = grouping;
+            Source = parser.Source;
+            UnixTimestamp = parser.UnixTimestamp;
+            TextString = parser.TextString;
         }
 
         /// <summary>
@@ -226,50 +225,50 @@ namespace Ais.Net
         /// </summary>
         public readonly TExtraFieldParser ExtraFieldParser;
 
-        private static bool GetEnd(ref ReadOnlySpan<byte> source, char? delimiter, out int length)
+        static bool GetEnd( ref ReadOnlySpan<byte> source, char? delimiter, out int length )
         {
-            if (delimiter.HasValue)
+            if( delimiter.HasValue )
             {
-                length = source.IndexOf((byte)delimiter.Value);
+                length = source.IndexOf( (byte)delimiter.Value );
 
-                if (length < 0)
+                if( length < 0 )
                 {
                     return false;
                 }
 
-                source = source.Slice(length + 1);
+                source = source.Slice( length + 1 );
             }
             else
             {
-                length = source.IndexOf((byte)',');
+                length = source.IndexOf( (byte)',' );
                 bool isLastField = length < 0;
 
-                if (isLastField)
+                if( isLastField )
                 {
                     length = source.Length;
                     source = ReadOnlySpan<byte>.Empty;
                 }
                 else
                 {
-                    source = source.Slice(length + 1);
+                    source = source.Slice( length + 1 );
                 }
             }
 
             return true;
         }
 
-        private static bool ParseDelimitedInt(ref ReadOnlySpan<byte> source, out int result, char? delimiter = null)
+        static bool ParseDelimitedInt( ref ReadOnlySpan<byte> source, out int result, char? delimiter = null )
         {
             result = default;
 
             ReadOnlySpan<byte> original = source;
-            if (!GetEnd(ref source, delimiter, out int length))
+            if( !GetEnd( ref source, delimiter, out int length ) )
             {
                 return false;
             }
 
-            if (!Utf8Parser.TryParse(original, out result, out int consumed)
-                || consumed != length)
+            if( !Utf8Parser.TryParse( original, out result, out int consumed )
+                || consumed != length )
             {
                 return false;
             }
@@ -277,18 +276,18 @@ namespace Ais.Net
             return true;
         }
 
-        private static bool ParseDelimitedLong(ref ReadOnlySpan<byte> source, out long result, char? delimiter = null)
+        static bool ParseDelimitedLong( ref ReadOnlySpan<byte> source, out long result, char? delimiter = null )
         {
             result = default;
 
             ReadOnlySpan<byte> original = source;
-            if (!GetEnd(ref source, delimiter, out int length))
+            if( !GetEnd( ref source, delimiter, out int length ) )
             {
                 return false;
             }
 
-            if (!Utf8Parser.TryParse(original, out result, out int consumed)
-                || consumed != length)
+            if( !Utf8Parser.TryParse( original, out result, out int consumed )
+                || consumed != length )
             {
                 return false;
             }
@@ -296,44 +295,44 @@ namespace Ais.Net
             return true;
         }
 
-        private static NmeaTagBlockSentenceGrouping ParseNmeaSentenceGrouping(ref ReadOnlySpan<byte> source)
+        static NmeaTagBlockSentenceGrouping ParseNmeaSentenceGrouping( ref ReadOnlySpan<byte> source )
         {
-            if (!ParseDelimitedInt(ref source, out int sentenceNumber, '-'))
+            if( !ParseDelimitedInt( ref source, out int sentenceNumber, '-' ) )
             {
-                throw new ArgumentException("Tag block sentence grouping should be <int>-<int>-<int>, but first part was not a decimal integer");
+                throw new ArgumentException( "Tag block sentence grouping should be <int>-<int>-<int>, but first part was not a decimal integer" );
             }
 
-            if (!ParseDelimitedInt(ref source, out int totalSentences, '-'))
+            if( !ParseDelimitedInt( ref source, out int totalSentences, '-' ) )
             {
-                throw new ArgumentException("Tag block sentence grouping should be <int>-<int>-<int>, but second part was not a decimal integer");
+                throw new ArgumentException( "Tag block sentence grouping should be <int>-<int>-<int>, but second part was not a decimal integer" );
             }
 
-            if (!ParseDelimitedInt(ref source, out int groupId))
+            if( !ParseDelimitedInt( ref source, out int groupId ) )
             {
-                throw new ArgumentException("Tag block sentence grouping should be <int>-<int>-<int>, but third part was not a decimal integer");
+                throw new ArgumentException( "Tag block sentence grouping should be <int>-<int>-<int>, but third part was not a decimal integer" );
             }
 
-            return new NmeaTagBlockSentenceGrouping(sentenceNumber, totalSentences, groupId);
+            return new NmeaTagBlockSentenceGrouping( sentenceNumber, totalSentences, groupId );
         }
 
-        private static NmeaTagBlockSentenceGrouping ParseIECSentenceGrouping(ref ReadOnlySpan<byte> source)
+        static NmeaTagBlockSentenceGrouping ParseIECSentenceGrouping( ref ReadOnlySpan<byte> source )
         {
-            if (!ParseDelimitedInt(ref source, out int sentenceNumber, 'G'))
+            if( !ParseDelimitedInt( ref source, out int sentenceNumber, 'G' ) )
             {
-                throw new ArgumentException("Tag block sentence grouping should be <int>G<int>:<int>, but first part was not a decimal integer");
+                throw new ArgumentException( "Tag block sentence grouping should be <int>G<int>:<int>, but first part was not a decimal integer" );
             }
 
-            if (!ParseDelimitedInt(ref source, out int totalSentences, ':'))
+            if( !ParseDelimitedInt( ref source, out int totalSentences, ':' ) )
             {
-                throw new ArgumentException("Tag block sentence grouping should be <int>G<int>:<int>, but second part was not a decimal integer");
+                throw new ArgumentException( "Tag block sentence grouping should be <int>G<int>:<int>, but second part was not a decimal integer" );
             }
 
-            if (!ParseDelimitedInt(ref source, out int groupId))
+            if( !ParseDelimitedInt( ref source, out int groupId ) )
             {
-                throw new ArgumentException("Tag block sentence grouping should be <int>G<int>:<int>, but third part was not a decimal integer");
+                throw new ArgumentException( "Tag block sentence grouping should be <int>G<int>:<int>, but third part was not a decimal integer" );
             }
 
-            return new NmeaTagBlockSentenceGrouping(sentenceNumber, totalSentences, groupId);
+            return new NmeaTagBlockSentenceGrouping( sentenceNumber, totalSentences, groupId );
         }
     }
 }

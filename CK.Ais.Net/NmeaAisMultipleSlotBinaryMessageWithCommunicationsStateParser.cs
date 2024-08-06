@@ -1,19 +1,15 @@
-﻿// <copyright file="NmeaAisMultipleSlotBinaryMessageWithCommunicationsStateParser.cs" company="Endjin Limited">
-// Copyright (c) Endjin Limited. All rights reserved.
-// </copyright>
+using System;
 
 namespace Ais.Net
 {
-    using System;
-
     /// <summary>
     /// Enables fields to be extracted from an AIS Multiple Slot Binary Message With Communications State Message.
     /// It parses the content of messages 26.
     /// </summary>
     public readonly ref struct NmeaAisMultipleSlotBinaryMessageWithCommunicationsStateParser
     {
-        private readonly NmeaAisBitVectorParser bits;
-        private readonly bool hasDestination;
+        readonly NmeaAisBitVectorParser _bits;
+        readonly bool _hasDestination;
 
         /// <summary>
         /// Create an <see cref="NmeaAisMultipleSlotBinaryMessageWithCommunicationsStateParser"/>.
@@ -21,31 +17,31 @@ namespace Ais.Net
         /// <param name="ascii">The ASCII-encoded message payload.</param>
         /// <param name="padding">The number of bits of padding in this payload.</param>
         /// <param name="slotsCount">The number of slots used to contain the message.</param>
-        public NmeaAisMultipleSlotBinaryMessageWithCommunicationsStateParser(ReadOnlySpan<byte> ascii, uint padding, int slotsCount)
+        public NmeaAisMultipleSlotBinaryMessageWithCommunicationsStateParser( ReadOnlySpan<byte> ascii, uint padding, int slotsCount )
         {
-            this.bits = new NmeaAisBitVectorParser(ascii, padding);
-            this.hasDestination = this.DestinationIndicator == DestinationIndicator.Addressed;
+            _bits = new NmeaAisBitVectorParser( ascii, padding );
+            _hasDestination = DestinationIndicator == DestinationIndicator.Addressed;
 
             // TODO: gets the first slot length and the number of slots.
             int firstSlotLength = 0;
 
-            switch ((this.hasDestination, this.BinaryDataFlag))
+            switch( (_hasDestination, BinaryDataFlag) )
             {
-                case (true, true):
-                    this.ApplicationDataPadding = 4;
-                    this.ApplicationData = ascii.Slice(14 - firstSlotLength);
+                case (true, true ):
+                    ApplicationDataPadding = 4;
+                    ApplicationData = ascii.Slice( 14 - firstSlotLength );
                     break;
-                case (true, false):
-                    this.ApplicationDataPadding = 0;
-                    this.ApplicationData = ascii.Slice(12 - firstSlotLength);
+                case (true, false ):
+                    ApplicationDataPadding = 0;
+                    ApplicationData = ascii.Slice( 12 - firstSlotLength );
                     break;
-                case (false, true):
-                    this.ApplicationDataPadding = 2;
-                    this.ApplicationData = ascii.Slice(9 - firstSlotLength);
+                case (false, true ):
+                    ApplicationDataPadding = 2;
+                    ApplicationData = ascii.Slice( 9 - firstSlotLength );
                     break;
-                case (false, false):
-                    this.ApplicationDataPadding = 4;
-                    this.ApplicationData = ascii.Slice(6 - firstSlotLength);
+                case (false, false ):
+                    ApplicationDataPadding = 4;
+                    ApplicationData = ascii.Slice( 6 - firstSlotLength );
                     break;
             }
         }
@@ -53,7 +49,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets the message type.
         /// </summary>
-        public MessageType MessageType => (MessageType)this.bits.GetUnsignedInteger(6, 0);
+        public MessageType MessageType => (MessageType)_bits.GetUnsignedInteger( 6, 0 );
 
         /// <summary>
         /// Gets the number of times this message had been repeated on this broadcast.
@@ -63,50 +59,50 @@ namespace Ais.Net
         /// other obstacles, this should be incremented. When it reaches 3, no more attempts should
         /// be made to retransmit it.
         /// </remarks>
-        public uint RepeatIndicator => this.bits.GetUnsignedInteger(2, 6);
+        public uint RepeatIndicator => _bits.GetUnsignedInteger( 2, 6 );
 
         /// <summary>
         /// Gets the unique identifier assigned to the transponder that sent this message.
         /// </summary>
-        public uint Mmsi => this.bits.GetUnsignedInteger(30, 8);
+        public uint Mmsi => _bits.GetUnsignedInteger( 30, 8 );
 
         /// <summary>
         /// Gets a value indicating whether the <see cref="DestinationMmsi"/> is used.
         /// </summary>
-        public DestinationIndicator DestinationIndicator => (DestinationIndicator)this.bits.GetUnsignedInteger(1, 38);
+        public DestinationIndicator DestinationIndicator => (DestinationIndicator)_bits.GetUnsignedInteger( 1, 38 );
 
         /// <summary>
         /// Gets a value indicating whether the application identifier (<see cref="DAC"/> and <see cref="FI"/>) are used.
         /// </summary>
-        public bool BinaryDataFlag => this.bits.GetBit(39);
+        public bool BinaryDataFlag => _bits.GetBit( 39 );
 
         /// <summary>
         /// Gets the unique identifier assigned to the transponder who the message is for.
         /// </summary>
-        public uint? DestinationMmsi => this.hasDestination
-            ? this.bits.GetUnsignedInteger(30, 40)
+        public uint? DestinationMmsi => _hasDestination
+            ? _bits.GetUnsignedInteger( 30, 40 )
             : null;
 
         /// <summary>
         /// Gets the value of the bits in this message for which no standard meaning is currently
         /// defined.
         /// </summary>
-        public uint? SpareBits70 => this.hasDestination
-            ? this.bits.GetUnsignedInteger(2, 70)
+        public uint? SpareBits70 => _hasDestination
+            ? _bits.GetUnsignedInteger( 2, 70 )
             : null;
 
         /// <summary>
         /// Gets the Designated area code (DAC).
         /// </summary>
-        public uint? DAC => this.BinaryDataFlag
-            ? this.bits.GetUnsignedInteger(10, this.hasDestination ? 72u : 40u)
+        public uint? DAC => BinaryDataFlag
+            ? _bits.GetUnsignedInteger( 10, _hasDestination ? 72u : 40u )
             : null;
 
         /// <summary>
         /// Gets the Function identifier (FI).
         /// </summary>
-        public uint? FI => this.BinaryDataFlag
-            ? this.bits.GetUnsignedInteger(6, this.hasDestination ? 82u : 50u)
+        public uint? FI => BinaryDataFlag
+            ? _bits.GetUnsignedInteger( 6, _hasDestination ? 82u : 50u )
             : null;
 
         /// <summary>
@@ -142,17 +138,17 @@ namespace Ais.Net
         /// <summary>
         /// Gets the needed spare bits for alignment.
         /// </summary>
-        public uint SpareBitsXXX => this.bits.GetUnsignedInteger(4, );
+        public uint SpareBitsXXX => _bits.GetUnsignedInteger(4, );
 
         /// <summary>
         /// Gets the communication state follows that is used.
         /// </summary>
-        public CommunicationStateSelector CommunicationStateSelector => (CommunicationStateSelector)this.bits.GetUnsignedInteger(1, );
+        public CommunicationStateSelector CommunicationStateSelector => (CommunicationStateSelector)_bits.GetUnsignedInteger(1, );
 
         /// <summary>
         /// Gets the communication state, based on <see cref="CommunicationStateSelector"/>.
         /// </summary>
-        public uint CommunicationState => this.bits.GetUnsignedInteger(19, );
+        public uint CommunicationState => _bits.GetUnsignedInteger(19, );
         */
     }
 }

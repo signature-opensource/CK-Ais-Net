@@ -2,14 +2,14 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
+using System;
+using System.Buffers;
+using System.IO;
+using System.IO.Pipelines;
+using System.Threading.Tasks;
+
 namespace Ais.Net
 {
-    using System;
-    using System.Buffers;
-    using System.IO;
-    using System.IO.Pipelines;
-    using System.Threading.Tasks;
-
     /// <summary>
     /// Processes streams containing lines of ASCII-encoded text, each containing an NMEA message.
     /// </summary>
@@ -172,7 +172,7 @@ namespace Ais.Net
                             lineSpan = reassemblySpan.Slice( 0, (int)line.Length );
                         }
 
-                        if( lineSpan.Length > 0 && lineSpan[lineSpan.Length - 1] == (byte)'\r' )
+                        if( lineSpan.Length > 0 && lineSpan[^1] == (byte)'\r' )
                         {
                             lineSpan = lineSpan.Slice( 0, lineSpan.Length - 1 );
                         }

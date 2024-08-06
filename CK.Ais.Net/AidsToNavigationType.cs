@@ -9,7 +9,6 @@ namespace Ais.Net
     /// </summary>
     public enum AidsToNavigationType
     {
-#pragma warning disable CS1591, SA1602 // XML comments. The names are from the spec, and they're all the information we have
         NotSpecified = 0,
         ReferencePoint = 1,
         Racon = 2,
