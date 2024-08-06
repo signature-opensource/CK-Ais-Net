@@ -112,6 +112,9 @@ dotnet_diagnostic.VSTHRD101.severity = error
 # VSTHRD003: Avoid awaiting foreign Tasks
 dotnet_diagnostic.VSTHRD003.severity = none
 
+# IDE0301: Collection initialization can be simplified
+dotnet_diagnostic.IDE0301.severity = none
+# IDE0305: Collection initialization can be simplified
+dotnet_diagnostic.IDE0305.severity = none
 
 # /Signature-Code .editorconfig
-

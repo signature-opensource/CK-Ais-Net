@@ -1,18 +1,18 @@
-﻿// <copyright file="NmeaAisBitVectorParser.cs" company="Endjin Limited">
+// <copyright file="NmeaAisBitVectorParser.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace Ais.Net
 {
-    using System;
-
     /// <summary>
     /// Extracts values from a bit vector encoded using the NMEA 6-bit ASCII encoding for AIS
     /// payloads (AIVDM/AIVDO Payload Armoring).
     /// </summary>
     public readonly ref struct NmeaAisBitVectorParser
     {
-        private readonly ReadOnlySpan<byte> ascii;
+        readonly ReadOnlySpan<byte> _ascii;
 
         /// <summary>
         /// Creates a <see cref="NmeaAisBitVectorParser"/>.
@@ -23,10 +23,10 @@ namespace Ais.Net
         /// (The ASCII encoding works in multiples of 6 bits, so we may end up with more bits
         /// present than were present in the source.)
         /// </param>
-        public NmeaAisBitVectorParser(ReadOnlySpan<byte> ascii, uint padding)
+        public NmeaAisBitVectorParser( ReadOnlySpan<byte> ascii, uint padding )
         {
-            this.ascii = ascii;
-            this.BitCount = checked((uint)((ascii.Length * 6) - padding));
+            _ascii = ascii;
+            BitCount = checked((uint)((ascii.Length * 6) - padding));
         }
 
         /// <summary>
@@ -40,15 +40,15 @@ namespace Ais.Net
         /// <param name="bitCount">The number of bits in the value.</param>
         /// <param name="bitOffset">The offset (in bits) of the bitfield within the bit vector.</param>
         /// <returns>The value.</returns>
-        public int GetSignedInteger(uint bitCount, uint bitOffset)
+        public int GetSignedInteger( uint bitCount, uint bitOffset )
         {
-            int result = (int)this.GetUnsignedInteger(bitCount, bitOffset);
+            int result = (int)GetUnsignedInteger( bitCount, bitOffset );
 
             int sbitCount = (int)bitCount;
             int msb = 1 << (sbitCount - 1);
             bool isNegative = (result & msb) != 0;
 
-            if (isNegative)
+            if( isNegative )
             {
                 const int allOnesExceptLsb = -2;
                 int signBits = allOnesExceptLsb << (sbitCount - 1);
@@ -64,17 +64,21 @@ namespace Ais.Net
         /// <param name="bitCount">The number of bits in the value. M.</param>
         /// <param name="bitOffset">The offset (in bits) of the bitfield within the bit vector.</param>
         /// <returns>The value.</returns>
-        public uint GetUnsignedInteger(uint bitCount, uint bitOffset)
+        public uint GetUnsignedInteger( uint bitCount, uint bitOffset )
         {
-            if (bitOffset + bitCount > this.BitCount)
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
+            if( bitOffset + bitCount > BitCount )
             {
-                throw new ArgumentOutOfRangeException("Would read off end of bit vector");
+                throw new ArgumentOutOfRangeException( "Would read off end of bit vector" );
             }
 
-            if (bitCount > 32)
+#pragma warning disable CA1512 // Use ArgumentOutOfRangeException throw helper
+            if( bitCount > 32 )
             {
-                throw new ArgumentOutOfRangeException("Cannot read fields larger than 32 bits");
+                throw new ArgumentOutOfRangeException( "Cannot read fields larger than 32 bits" );
             }
+#pragma warning restore CA1512 // Use ArgumentOutOfRangeException throw helper
+#pragma warning restore CA2208 // Instantiate argument exceptions correctly
 
             uint result = 0;
             int charOffset = (int)(bitOffset / 6);
@@ -84,9 +88,9 @@ namespace Ais.Net
             int currentBitOffset = (int)bitOffset % 6;
             int remainingBits = (int)bitCount;
 
-            while (remainingBits > 0)
+            while( remainingBits > 0 )
             {
-                result <<= Math.Min(6, remainingBits);
+                result <<= Math.Min( 6, remainingBits );
 
                 // uint may seem like a strange choice since these are all inherently byte-like,
                 // but since the bitwise & operator doesn't actually support byte, C# ends up
@@ -94,10 +98,10 @@ namespace Ais.Net
                 // instead of fighting the compiler by adding (byte) casts everywhere (possibly
                 // causing generation of unnecessary type conversion code) we may as well just work
                 // with the natural word size.
-                uint currentCharacterValue = NmeaPayloadParser.AisAsciiTo6Bits(this.ascii[charOffset]);
+                uint currentCharacterValue = NmeaPayloadParser.AisAsciiTo6Bits( _ascii[charOffset] );
                 uint valueDiscardingBitsBeforeBitOffset;
 
-                if (currentBitOffset == 0)
+                if( currentBitOffset == 0 )
                 {
                     valueDiscardingBitsBeforeBitOffset = currentCharacterValue;
                 }
@@ -119,7 +123,7 @@ namespace Ais.Net
                 uint valueDiscardingTrailingBits;
                 int bitsLeftAfterInitialDiscard = 6 - currentBitOffset;
 
-                if (remainingBits >= bitsLeftAfterInitialDiscard)
+                if( remainingBits >= bitsLeftAfterInitialDiscard )
                 {
                     valueDiscardingTrailingBits = valueDiscardingBitsBeforeBitOffset;
                     remainingBits -= bitsLeftAfterInitialDiscard;
@@ -143,6 +147,6 @@ namespace Ais.Net
         /// </summary>
         /// <param name="bitOffset">The position of the bit to read.</param>
         /// <returns>True if the bit is 1, false if it is 0.</returns>
-        public bool GetBit(uint bitOffset) => this.GetUnsignedInteger(1, bitOffset) == 1;
+        public bool GetBit( uint bitOffset ) => GetUnsignedInteger( 1, bitOffset ) == 1;
     }
 }

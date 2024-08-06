@@ -1,4 +1,4 @@
-﻿# Copyright (c) Endjin Limited. All rights reserved.
+# Copyright (c) Endjin Limited. All rights reserved.
 #
 # Contains data under the Norwegian licence for Open Government data (NLOD) distributed by
 # the Norwegian Costal Administration - https://ais.kystverket.no/
@@ -355,7 +355,57 @@ Scenario: Two-fragment message fragments received too many sentences in the midd
 	And the message error report 0 should include an exception reporting that it received an incomplete set of fragments for a message
 	And the message error report 0 should include the line number 1
 
+Scenario: Tree-fragment message with only one sentence and auto fix group
+  Given I have configured a empty group tolerance of 2
+	When the line to message adapter receives '\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41'
+	And the line to message adapter receives '\g:2-3-1481*50\'
+	And the line to message adapter receives '\g:3-3-1481*51\'
+	Then INmeaAisMessageStreamProcessor.OnNext should have been called 1 times
+    And in ais message 0 the payload should be '13Ef?<3006wt9WlEMhi1S6uJ00Rq' with padding of 0
+    And in ais message 0 the source from the first NMEA line should be 99
+    And in ais message 0 the timestamp from the first NMEA line should be 1718701847
+    And in ais message 0 the isfixedmessage from the first NMEA line should be true
+    And in ais message 0 the sentencesingroup from the first NMEA line should be 0
 
+Scenario: Tree-fragment message with two sentences and auto fix group
+  Given I have configured a empty group tolerance of 2
+	When the line to message adapter receives '\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,2,1,8,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*7A'
+	And the line to message adapter receives '\g:2-3-1481*50\!AIVDM,2,2,8,B,T`0@n888880,2*3D'
+	And the line to message adapter receives '\g:3-3-1481*51\'
+	Then INmeaAisMessageStreamProcessor.OnNext should have been called 1 times
+    And in ais message 0 the payload should be '13Ef?<3006wt9WlEMhi1S6uJ00RqT`0@n888880' with padding of 2
+    And in ais message 0 the source from the first NMEA line should be 99
+    And in ais message 0 the timestamp from the first NMEA line should be 1718701847
+    And in ais message 0 the isfixedmessage from the first NMEA line should be true
+    And in ais message 0 the sentencesingroup from the first NMEA line should be 2
+
+Scenario: Tree-fragment message with only one sentence and allow empty sentence
+  Given I have configured a empty group tolerance of 1
+	When the line to message adapter receives '\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41'
+	And the line to message adapter receives '\g:2-3-1481*50\'
+	And the line to message adapter receives '\g:3-3-1481*51\'
+	Then INmeaAisMessageStreamProcessor.OnNext should have been called 1 times
+    And in ais message 0 the payload should be '13Ef?<3006wt9WlEMhi1S6uJ00Rq' with padding of 0
+    And in ais message 0 the source from the first NMEA line should be 99
+    And in ais message 0 the timestamp from the first NMEA line should be 1718701847
+    And in ais message 0 the isfixedmessage from the first NMEA line should be false
+    And in ais message 0 the sentencesingroup from the first NMEA line should be 3
+    
+Scenario: Tree-fragment message with only one sentence and empty sentence is not allowed
+  Given I have configured a empty group tolerance of 0
+  When the line to message adapter receives '\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41'
+  And the line to message adapter receives an error report for invalid content '\g:2-3-1481*50\' with line number 2
+  And the line to message adapter receives an error report for invalid content '\g:3-3-1481*51\' with line number 3
+  # And a line '\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41'
+	# And a line '\g:2-3-1481*50\'
+	# And a line '\g:3-3-1481*51\'
+  # When I parse the content by message
+	Then INmeaAisMessageStreamProcessor.OnNext should have been called 0 time
+	And INmeaAisMessageStreamProcessor.OnError should have been called 2 times
+	And the message error report 0 should include the problematic line '\g:2-3-1481*50\'
+	And the message error report 0 should include an exception reporting that the message appears to be missing some characters
+	And the message error report 1 should include the problematic line '\g:3-3-1481*51\'
+	And the message error report 1 should include an exception reporting that the message appears to be missing some characters
 
 # TODO:
 # Got to end with unclosed fragments (#4067)

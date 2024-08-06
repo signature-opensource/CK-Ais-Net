@@ -1,102 +1,104 @@
-﻿namespace Ais.Net.Specs.AisMessageTypes
-{
-    using System.Text;
-    using NUnit.Framework;
-    using TechTalk.SpecFlow;
+using NUnit.Framework;
+using System;
+using System.Text;
+using TechTalk.SpecFlow;
 
+namespace Ais.Net.Specs.AisMessageTypes
+{
     [Binding]
     public class SingleSlotBinaryParserSpecsSteps
     {
-        private ParserMaker makeParser;
+        ParserMaker? _makeParser;
 
-        private delegate NmeaAisSingleSlotBinaryParser ParserMaker();
+        delegate NmeaAisSingleSlotBinaryParser ParserMaker();
 
-        private delegate void ParserTest(NmeaAisSingleSlotBinaryParser parser);
+        delegate void ParserTest( NmeaAisSingleSlotBinaryParser parser );
 
-        [When("I parse '(.*)' with padding (.*) as a Single Slot Binary Message")]
-        public void WhenIParseWithNmeaAisSingleSlotBinaryParser(string payload, uint padding)
+        [When( "I parse '(.*)' with padding (.*) as a Single Slot Binary Message" )]
+        public void WhenIParseWithNmeaAisSingleSlotBinaryParser( string payload, uint padding )
         {
-            this.When(() => new NmeaAisSingleSlotBinaryParser(Encoding.ASCII.GetBytes(payload), padding));
+            When( () => new NmeaAisSingleSlotBinaryParser( Encoding.ASCII.GetBytes( payload ), padding ) );
         }
 
-        [Then(@"NmeaAisSingleSlotBinaryParser\.Type is (.*)")]
-        public void ThenNmeaAisSingleSlotBinaryParser_TypeIs(MessageType messageType)
+        [Then( @"NmeaAisSingleSlotBinaryParser\.Type is (.*)" )]
+        public void ThenNmeaAisSingleSlotBinaryParser_TypeIs( MessageType messageType )
         {
-            this.Then(parser =>
+            Then( parser =>
             {
-                Assert.AreEqual(messageType, parser.MessageType);
-            });
+                Assert.AreEqual( messageType, parser.MessageType );
+            } );
         }
 
-        [Then(@"NmeaAisSingleSlotBinaryParser\.RepeatIndicator is (.*)")]
-        public void ThenNmeaAisSingleSlotBinaryParser_RepeatIndicatorIs(uint repeatCount)
+        [Then( @"NmeaAisSingleSlotBinaryParser\.RepeatIndicator is (.*)" )]
+        public void ThenNmeaAisSingleSlotBinaryParser_RepeatIndicatorIs( uint repeatCount )
         {
-            this.Then(parser => Assert.AreEqual(repeatCount, parser.RepeatIndicator));
+            Then( parser => Assert.AreEqual( repeatCount, parser.RepeatIndicator ) );
         }
 
-        [Then(@"NmeaAisSingleSlotBinaryParser\.Mmsi is (.*)")]
-        public void ThenNmeaAisSingleSlotBinaryParser_MmsiIs(uint mmsi)
+        [Then( @"NmeaAisSingleSlotBinaryParser\.Mmsi is (.*)" )]
+        public void ThenNmeaAisSingleSlotBinaryParser_MmsiIs( uint mmsi )
         {
-            this.Then(parser => Assert.AreEqual(mmsi, parser.Mmsi));
+            Then( parser => Assert.AreEqual( mmsi, parser.Mmsi ) );
         }
 
-        [Then(@"NmeaAisSingleSlotBinaryParser\.DestinationIndicator is (.*)")]
-        public void ThenNmeaAisSingleSlotBinaryParser_DestinationIndicatorIs(DestinationIndicator value)
+        [Then( @"NmeaAisSingleSlotBinaryParser\.DestinationIndicator is (.*)" )]
+        public void ThenNmeaAisSingleSlotBinaryParser_DestinationIndicatorIs( DestinationIndicator value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.DestinationIndicator));
+            Then( parser => Assert.AreEqual( value, parser.DestinationIndicator ) );
         }
 
-        [Then(@"NmeaAisSingleSlotBinaryParser\.BinaryDataFlag is (.*)")]
-        public void ThenNmeaAisSingleSlotBinaryParser_BinaryDataFlagIs(bool value)
+        [Then( @"NmeaAisSingleSlotBinaryParser\.BinaryDataFlag is (.*)" )]
+        public void ThenNmeaAisSingleSlotBinaryParser_BinaryDataFlagIs( bool value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.BinaryDataFlag));
+            Then( parser => Assert.AreEqual( value, parser.BinaryDataFlag ) );
         }
 
-        [Then(@"NmeaAisSingleSlotBinaryParser\.DestinationMmsi is (.*)")]
-        public void ThenNmeaAisSingleSlotBinaryParser_DestinationMmsiIs(uint? value)
+        [Then( @"NmeaAisSingleSlotBinaryParser\.DestinationMmsi is (.*)" )]
+        public void ThenNmeaAisSingleSlotBinaryParser_DestinationMmsiIs( uint? value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.DestinationMmsi));
+            Then( parser => Assert.AreEqual( value, parser.DestinationMmsi ) );
         }
 
-        [Then(@"NmeaAisSingleSlotBinaryParser\.SpareBits70 is (.*)")]
-        public void ThenNmeaAisSingleSlotBinaryParser_SpareBits70Is(uint? value)
+        [Then( @"NmeaAisSingleSlotBinaryParser\.SpareBits70 is (.*)" )]
+        public void ThenNmeaAisSingleSlotBinaryParser_SpareBits70Is( uint? value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.SpareBits70));
+            Then( parser => Assert.AreEqual( value, parser.SpareBits70 ) );
         }
 
-        [Then(@"NmeaAisSingleSlotBinaryParser\.DAC is (.*)")]
-        public void ThenNmeaAisSingleSlotBinaryParser_DACIs(uint? value)
+        [Then( @"NmeaAisSingleSlotBinaryParser\.DAC is (.*)" )]
+        public void ThenNmeaAisSingleSlotBinaryParser_DACIs( uint? value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.DAC));
+            Then( parser => Assert.AreEqual( value, parser.DAC ) );
         }
 
-        [Then(@"NmeaAisSingleSlotBinaryParser\.FI is (.*)")]
-        public void ThenNmeaAisSingleSlotBinaryParser_FIIs(uint? value)
+        [Then( @"NmeaAisSingleSlotBinaryParser\.FI is (.*)" )]
+        public void ThenNmeaAisSingleSlotBinaryParser_FIIs( uint? value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.FI));
+            Then( parser => Assert.AreEqual( value, parser.FI ) );
         }
 
-        [Then(@"NmeaAisSingleSlotBinaryParser\.ApplicationDataPadding is (.*)")]
-        public void ThenNmeaAisSingleSlotBinaryParser_ApplicationDataPaddingIs(uint value)
+        [Then( @"NmeaAisSingleSlotBinaryParser\.ApplicationDataPadding is (.*)" )]
+        public void ThenNmeaAisSingleSlotBinaryParser_ApplicationDataPaddingIs( uint value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.ApplicationDataPadding));
+            Then( parser => Assert.AreEqual( value, parser.ApplicationDataPadding ) );
         }
 
-        [Then(@"NmeaAisSingleSlotBinaryParser\.ApplicationData is (.*)")]
-        public void ThenNmeaAisSingleSlotBinaryParser_ApplicationDataIs(string value)
+        [Then( @"NmeaAisSingleSlotBinaryParser\.ApplicationData is (.*)" )]
+        public void ThenNmeaAisSingleSlotBinaryParser_ApplicationDataIs( string value )
         {
-            this.Then(parser => Assert.AreEqual(value, Encoding.ASCII.GetString(parser.ApplicationData)));
+            Then( parser => Assert.AreEqual( value, Encoding.ASCII.GetString( parser.ApplicationData ) ) );
         }
 
-        private void When(ParserMaker makeParser)
+        void When( ParserMaker makeParser )
         {
-            this.makeParser = makeParser;
+            _makeParser = makeParser;
         }
 
-        private void Then(ParserTest test)
+        void Then( ParserTest test )
         {
-            NmeaAisSingleSlotBinaryParser parser = this.makeParser();
-            test(parser);
+            if( _makeParser is null ) throw new InvalidOperationException( $"When step must be called." );
+            NmeaAisSingleSlotBinaryParser parser = _makeParser();
+            test( parser );
         }
     }
 }

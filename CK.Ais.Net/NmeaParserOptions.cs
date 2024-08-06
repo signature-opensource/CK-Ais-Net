@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaParserOptions.cs" company="Endjin Limited">
+// <copyright file="NmeaParserOptions.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -70,5 +70,13 @@ namespace Ais.Net
         /// </para>
         /// </remarks>
         public int MaximumUnmatchedFragmentAge { get; set; } = 8;
+
+        /// <summary>
+        /// Define the tolerance of the parser to the ill-formed groups.
+        /// <para>
+        /// This option was added to prevent CLS ill-formed data 2024/06/18.
+        /// </para>
+        /// </summary>
+        public EmptyGroupTolerance EmptyGroupTolerance { get; set; } = EmptyGroupTolerance.None;
     }
 }

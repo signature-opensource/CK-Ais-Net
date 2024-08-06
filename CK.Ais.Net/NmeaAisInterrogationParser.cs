@@ -1,7 +1,7 @@
+using System;
+
 namespace Ais.Net
 {
-    using System;
-
     /// <summary>
     /// Enables fields to be extracted from an Interrogation.
     /// It parses the content of messages 15.

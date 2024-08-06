@@ -1,4 +1,4 @@
-﻿// <copyright file="NmeaTagBlockSentenceGrouping.cs" company="Endjin Limited">
+// <copyright file="NmeaTagBlockSentenceGrouping.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -18,11 +18,11 @@ namespace Ais.Net
         /// <param name="sentenceNumber">The <see cref="SentenceNumber"/> property.</param>
         /// <param name="sentencesInGroup">The <see cref="SentencesInGroup"/> property.</param>
         /// <param name="groupId">The <see cref="GroupId"/> property.</param>
-        public NmeaTagBlockSentenceGrouping(int sentenceNumber, int sentencesInGroup, int groupId)
+        public NmeaTagBlockSentenceGrouping( int sentenceNumber, int sentencesInGroup, int groupId )
         {
-            this.SentenceNumber = sentenceNumber;
-            this.SentencesInGroup = sentencesInGroup;
-            this.GroupId = groupId;
+            SentenceNumber = sentenceNumber;
+            SentencesInGroup = sentencesInGroup;
+            GroupId = groupId;
         }
 
         /// <summary>

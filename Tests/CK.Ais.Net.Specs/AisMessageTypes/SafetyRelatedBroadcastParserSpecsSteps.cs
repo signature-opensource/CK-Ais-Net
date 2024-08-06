@@ -1,69 +1,70 @@
-﻿namespace Ais.Net.Specs.AisMessageTypes
+using NUnit.Framework;
+using System;
+using System.Text;
+using TechTalk.SpecFlow;
+
+namespace Ais.Net.Specs.AisMessageTypes
 {
-    using System.Linq;
-    using System.Text;
-    using NUnit.Framework;
-    using TechTalk.SpecFlow;
-
     [Binding]
-    internal class SafetyRelatedBroadcastParserSpecsSteps
+    public class SafetyRelatedBroadcastParserSpecsSteps
     {
-        private ParserMaker makeParser;
+        ParserMaker? _makeParser;
 
-        private delegate NmeaAisSafetyRelatedBroadcastParser ParserMaker();
+        delegate NmeaAisSafetyRelatedBroadcastParser ParserMaker();
 
-        private delegate void ParserTest(NmeaAisSafetyRelatedBroadcastParser parser);
+        delegate void ParserTest( NmeaAisSafetyRelatedBroadcastParser parser );
 
-        [When("I parse '(.*)' with padding (.*) as a Safety Related Broadcast")]
-        public void WhenIParseWithPaddingAsALongRangeAisBroadcast(string payload, uint padding)
+        [When( "I parse '(.*)' with padding (.*) as a Safety Related Broadcast" )]
+        public void WhenIParseWithPaddingAsALongRangeAisBroadcast( string payload, uint padding )
         {
-            this.When(() => new NmeaAisSafetyRelatedBroadcastParser(Encoding.ASCII.GetBytes(payload), padding));
+            When( () => new NmeaAisSafetyRelatedBroadcastParser( Encoding.ASCII.GetBytes( payload ), padding ) );
         }
 
-        [Then(@"NmeaAisSafetyRelatedBroadcastParser\.Type is (.*)")]
-        public void ThenNmeaAisSafetyRelatedBroadcastParser_TypeIs(MessageType messageType)
+        [Then( @"NmeaAisSafetyRelatedBroadcastParser\.Type is (.*)" )]
+        public void ThenNmeaAisSafetyRelatedBroadcastParser_TypeIs( MessageType messageType )
         {
-            this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
+            Then( parser => Assert.AreEqual( messageType, parser.MessageType ) );
         }
 
-        [Then(@"NmeaAisSafetyRelatedBroadcastParser\.RepeatIndicator is (.*)")]
-        public void ThenNmeaAisSafetyRelatedBroadcastParser_RepeatIndicatorIs(int repeatCount)
+        [Then( @"NmeaAisSafetyRelatedBroadcastParser\.RepeatIndicator is (.*)" )]
+        public void ThenNmeaAisSafetyRelatedBroadcastParser_RepeatIndicatorIs( int repeatCount )
         {
-            this.Then(parser => Assert.AreEqual(repeatCount, parser.RepeatIndicator));
+            Then( parser => Assert.AreEqual( repeatCount, parser.RepeatIndicator ) );
         }
 
-        [Then(@"NmeaAisSafetyRelatedBroadcastParser\.Mmsi is (.*)")]
-        public void ThenNmeaAisSafetyRelatedBroadcastParser_MmsiIs(int mmsi)
+        [Then( @"NmeaAisSafetyRelatedBroadcastParser\.Mmsi is (.*)" )]
+        public void ThenNmeaAisSafetyRelatedBroadcastParser_MmsiIs( int mmsi )
         {
-            this.Then(parser => Assert.AreEqual(mmsi, parser.Mmsi));
+            Then( parser => Assert.AreEqual( mmsi, parser.Mmsi ) );
         }
 
-        [Then(@"NmeaAisSafetyRelatedBroadcastParser\.SpareBit38 is (.*)")]
-        public void ThenNmeaAisSafetyRelatedBroadcastParser_SpareBit38Is(uint spareBit38)
+        [Then( @"NmeaAisSafetyRelatedBroadcastParser\.SpareBit38 is (.*)" )]
+        public void ThenNmeaAisSafetyRelatedBroadcastParser_SpareBit38Is( uint spareBit38 )
         {
-            this.Then(parser => Assert.AreEqual(spareBit38, parser.SpareBits38));
+            Then( parser => Assert.AreEqual( spareBit38, parser.SpareBits38 ) );
         }
 
-        [Then(@"NmeaAisSafetyRelatedBroadcastParser\.SafetyRelatedText is (.*)")]
-        public void ThenNmeaAisSafetyRelatedBroadcastParser_SafetyRelatedTextIs(string safetyRelatedText)
+        [Then( @"NmeaAisSafetyRelatedBroadcastParser\.SafetyRelatedText is (.*)" )]
+        public void ThenNmeaAisSafetyRelatedBroadcastParser_SafetyRelatedTextIs( string safetyRelatedText )
         {
-            this.Then(parser =>
+            Then( parser =>
             {
                 byte[] text = new byte[parser.SafetyRelatedText.CharacterCount];
-                parser.SafetyRelatedText.WriteAsAscii(text);
-                Assert.AreEqual(safetyRelatedText.Trim('"'), text);
-            });
+                parser.SafetyRelatedText.WriteAsAscii( text );
+                Assert.AreEqual( safetyRelatedText.Trim( '"' ), text );
+            } );
         }
 
-        private void When(ParserMaker makeParser)
+        void When( ParserMaker makeParser )
         {
-            this.makeParser = makeParser;
+            _makeParser = makeParser;
         }
 
-        private void Then(ParserTest test)
+        void Then( ParserTest test )
         {
-            NmeaAisSafetyRelatedBroadcastParser parser = this.makeParser();
-            test(parser);
+            if( _makeParser is null ) throw new InvalidOperationException( $"When step must be called." );
+            NmeaAisSafetyRelatedBroadcastParser parser = _makeParser();
+            test( parser );
         }
     }
 }

@@ -1,11 +1,11 @@
-﻿// <copyright file="INmeaLineStreamProcessor.cs" company="Endjin Limited">
+// <copyright file="INmeaLineStreamProcessor.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace Ais.Net
 {
-    using System;
-
     /// <summary>
     /// Receives the lines parsed from an NMEA file by <see cref="NmeaStreamParser"/>.
     /// </summary>
@@ -17,20 +17,13 @@ namespace Ais.Net
     public interface INmeaLineStreamProcessor
     {
         /// <summary>
-        /// Called for each non-empty line.
-        /// </summary>
-        /// <param name="parsedLine">The parsed line.</param>
-        /// <param name="lineNumber">The 1-based line number.</param>
-        void OnNext(in NmeaLineParser parsedLine, int lineNumber);
-
-        /// <summary>
         /// Called when a line cannot be parsed, e.g. it does not contain a well-formed NMEA
         /// message.
         /// </summary>
         /// <param name="line">The line that cannot be parsed.</param>
         /// <param name="error">An exception describing the problem.</param>
         /// <param name="lineNumber">The 1-based line number on which the error was detected.</param>
-        void OnError(in ReadOnlySpan<byte> line, Exception error, int lineNumber);
+        void OnError( in ReadOnlySpan<byte> line, Exception error, int lineNumber );
 
         /// <summary>
         /// Called when all lines have been processed.
@@ -50,6 +43,6 @@ namespace Ais.Net
             int totalLines,
             int totalTicks,
             int linesSinceLastUpdate,
-            int ticksSinceLastUpdate);
+            int ticksSinceLastUpdate );
     }
 }

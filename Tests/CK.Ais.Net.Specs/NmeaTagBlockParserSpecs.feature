@@ -77,3 +77,46 @@ Scenario: Nmea tag block but IEC group
 	Given the line '\1G2:9628,s:AIS,c:1701650788*13\!AIVDM,2,1,2,B,55Mv3A`00001L=SKOG9@tlmV0F2222222222220l189446lgN5j3mDm3kc56,0*4E'
 	When I parse the content by message with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 2
 	Then the message error report 0 should include the error message 'Tag block sentence grouping should be <int>-<int>-<int>, but first part was not a decimal integer'
+
+Scenario: IEC tag block TextString
+	When I parse '<payload>' with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 1 as a NMEA tag block parser
+  Then the TextString is <text>
+
+  Examples:
+  | payload                     | text      |
+  | c:1673149953,i:<O>ES</O>*1F | <O>ES</O> |
+  | c:1673149955,i:<O>GI</O>*01 | <O>GI</O> |
+
+Scenario: Nmea tag block TextString
+	When I parse '<payload>' with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 2 as a NMEA tag block parser
+  Then the TextString is <text>
+
+  Examples:
+  | payload                     | text      |
+  | c:1673149951,t:<O>ES</O>*00 | <O>ES</O> |
+  | c:1673149954,t:<O>RO</O>*0E | <O>RO</O> |
+
+Scenario: IEC tag block TextString but Nmea TextString
+	Given the line '\c:1673149951,t:<O>ES</O>*00\!AIVDM,2,1,2,B,55Mv3A`00001L=SKOG9@tlmV0F2222222222220l189446lgN5j3mDm3kc56,0*4E'
+	When I parse the content by message with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 1
+	Then the message error report 0 should include the error message 'Unknown field type in IEC tag block: t'
+
+Scenario: Nmea tag block TextString but IEC TextString
+	Given the line '\c:1673149953,i:<O>ES</O>*1F\!AIVDM,2,1,2,B,55Mv3A`00001L=SKOG9@tlmV0F2222222222220l189446lgN5j3mDm3kc56,0*4E'
+	When I parse the content by message with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 2
+	Then the message error report 0 should include the error message 'Unknown field type in Nmea tag block: i'
+
+Scenario: Nmea tag block Extra Fields but no parser
+  Given the line '\s:KIN1B,c:1716810431,q:mt-pt-ct-st-kt*78\!AIVDM,1,1,,B,100BkthL2fmlG@@iC=w2CQfF0Gh8,0*38'
+	When I parse the content by message with throwWhenTagBlockContainsUnknownFields of true and tagBlockStandard of 0
+	Then the message error report 0 should include the error message 'Unknown field type: q'
+
+Scenario: Nmea tag block Extra Fields with extra parser
+	When I parse '<payload>' with throwWhenTagBlockContainsUnknownFields of true, tagBlockStandard of 0 and extra parser
+  Then the extra field parser q value is '<qvalue>'
+  And the extra field parser v value is '<vvalue>'
+
+  Examples:
+  | payload                                        | qvalue         | vvalue |
+  | s:KIN1B,c:1716810431,q:mt-pt-ct-st-kt*78       | mt-pt-ct-st-kt |        |
+  | s:KIN1B,c:1716810431,q:mt-pt-ct-st-kt,v:123*28 | mt-pt-ct-st-kt | 123    |

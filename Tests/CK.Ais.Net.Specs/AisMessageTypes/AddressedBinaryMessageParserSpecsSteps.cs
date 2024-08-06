@@ -1,99 +1,101 @@
-﻿namespace Ais.Net.Specs.AisMessageTypes
-{
-    using System.Text;
-    using NUnit.Framework;
-    using TechTalk.SpecFlow;
+using NUnit.Framework;
+using System;
+using System.Text;
+using TechTalk.SpecFlow;
 
+namespace Ais.Net.Specs.AisMessageTypes
+{
     [Binding]
     public class AddressedBinaryMessageParserSpecsSteps
     {
-        private ParserMaker makeParser;
+        ParserMaker? _makeParser;
 
-        private delegate NmeaAisAddressedBinaryMessageParser ParserMaker();
+        delegate NmeaAisAddressedBinaryMessageParser ParserMaker();
 
-        private delegate void ParserTest(NmeaAisAddressedBinaryMessageParser parser);
+        delegate void ParserTest( NmeaAisAddressedBinaryMessageParser parser );
 
-        [When("I parse '(.*)' with padding (.*) as a Addressed Binary Message")]
-        public void WhenIParseWithNmeaAisAddressedBinaryMessageParser(string payload, uint padding)
+        [When( "I parse '(.*)' with padding (.*) as a Addressed Binary Message" )]
+        public void WhenIParseWithNmeaAisAddressedBinaryMessageParser( string payload, uint padding )
         {
-            this.When(() => new NmeaAisAddressedBinaryMessageParser(Encoding.ASCII.GetBytes(payload), padding));
+            When( () => new NmeaAisAddressedBinaryMessageParser( Encoding.ASCII.GetBytes( payload ), padding ) );
         }
 
-        [Then(@"NmeaAisAddressedBinaryMessageParser\.Type is (.*)")]
-        public void ThenNmeaAisAddressedBinaryMessageParser_TypeIs(MessageType messageType)
+        [Then( @"NmeaAisAddressedBinaryMessageParser\.Type is (.*)" )]
+        public void ThenNmeaAisAddressedBinaryMessageParser_TypeIs( MessageType messageType )
         {
-            this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
+            Then( parser => Assert.AreEqual( messageType, parser.MessageType ) );
         }
 
-        [Then(@"NmeaAisAddressedBinaryMessageParser\.RepeatIndicator is (.*)")]
-        public void ThenNmeaAisAddressedBinaryMessageParser_RepeatIndicatorIs(uint repeatCount)
+        [Then( @"NmeaAisAddressedBinaryMessageParser\.RepeatIndicator is (.*)" )]
+        public void ThenNmeaAisAddressedBinaryMessageParser_RepeatIndicatorIs( uint repeatCount )
         {
-            this.Then(parser => Assert.AreEqual(repeatCount, parser.RepeatIndicator));
+            Then( parser => Assert.AreEqual( repeatCount, parser.RepeatIndicator ) );
         }
 
-        [Then(@"NmeaAisAddressedBinaryMessageParser\.Mmsi is (.*)")]
-        public void ThenNmeaAisAddressedBinaryMessageParser_MmsiIs(uint mmsi)
+        [Then( @"NmeaAisAddressedBinaryMessageParser\.Mmsi is (.*)" )]
+        public void ThenNmeaAisAddressedBinaryMessageParser_MmsiIs( uint mmsi )
         {
-            this.Then(parser => Assert.AreEqual(mmsi, parser.Mmsi));
+            Then( parser => Assert.AreEqual( mmsi, parser.Mmsi ) );
         }
 
-        [Then(@"NmeaAisAddressedBinaryMessageParser\.SequenceNumber is (.*)")]
-        public void ThenNmeaAisAddressedBinaryMessageParser_SequenceNumberIs(uint value)
+        [Then( @"NmeaAisAddressedBinaryMessageParser\.SequenceNumber is (.*)" )]
+        public void ThenNmeaAisAddressedBinaryMessageParser_SequenceNumberIs( uint value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.SequenceNumber));
+            Then( parser => Assert.AreEqual( value, parser.SequenceNumber ) );
         }
 
-        [Then(@"NmeaAisAddressedBinaryMessageParser\.DestinationMmsi is (.*)")]
-        public void ThenNmeaAisAddressedBinaryMessageParser_DestinationMmsiIs(uint value)
+        [Then( @"NmeaAisAddressedBinaryMessageParser\.DestinationMmsi is (.*)" )]
+        public void ThenNmeaAisAddressedBinaryMessageParser_DestinationMmsiIs( uint value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.DestinationMmsi));
+            Then( parser => Assert.AreEqual( value, parser.DestinationMmsi ) );
         }
 
-        [Then(@"NmeaAisAddressedBinaryMessageParser\.Retransmit is (.*)")]
-        public void ThenNmeaAisAddressedBinaryMessageParser_Is(bool value)
+        [Then( @"NmeaAisAddressedBinaryMessageParser\.Retransmit is (.*)" )]
+        public void ThenNmeaAisAddressedBinaryMessageParser_Is( bool value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.Retransmit));
+            Then( parser => Assert.AreEqual( value, parser.Retransmit ) );
         }
 
-        [Then(@"NmeaAisAddressedBinaryMessageParser\.SpareBit71 is (.*)")]
-        public void ThenNmeaAisAddressedBinaryMessageParser_SpareBit71Is(bool value)
+        [Then( @"NmeaAisAddressedBinaryMessageParser\.SpareBit71 is (.*)" )]
+        public void ThenNmeaAisAddressedBinaryMessageParser_SpareBit71Is( bool value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.SpareBit71));
+            Then( parser => Assert.AreEqual( value, parser.SpareBit71 ) );
         }
 
-        [Then(@"NmeaAisAddressedBinaryMessageParser\.DAC is (.*)")]
-        public void ThenNmeaAisAddressedBinaryMessageParser_DACIs(uint value)
+        [Then( @"NmeaAisAddressedBinaryMessageParser\.DAC is (.*)" )]
+        public void ThenNmeaAisAddressedBinaryMessageParser_DACIs( uint value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.DAC));
+            Then( parser => Assert.AreEqual( value, parser.DAC ) );
         }
 
-        [Then(@"NmeaAisAddressedBinaryMessageParser\.FI is (.*)")]
-        public void ThenNmeaAisAddressedBinaryMessageParser_FIIs(uint value)
+        [Then( @"NmeaAisAddressedBinaryMessageParser\.FI is (.*)" )]
+        public void ThenNmeaAisAddressedBinaryMessageParser_FIIs( uint value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.FI));
+            Then( parser => Assert.AreEqual( value, parser.FI ) );
         }
 
-        [Then(@"NmeaAisAddressedBinaryMessageParser\.ApplicationDataPadding is (.*)")]
-        public void ThenNmeaAisAddressedBinaryMessageParser_ApplicationDataPaddingIs(uint value)
+        [Then( @"NmeaAisAddressedBinaryMessageParser\.ApplicationDataPadding is (.*)" )]
+        public void ThenNmeaAisAddressedBinaryMessageParser_ApplicationDataPaddingIs( uint value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.ApplicationDataPadding));
+            Then( parser => Assert.AreEqual( value, NmeaAisAddressedBinaryMessageParser.ApplicationDataPadding ) );
         }
 
-        [Then(@"NmeaAisAddressedBinaryMessageParser\.ApplicationData is (.*)")]
-        public void ThenNmeaAisAddressedBinaryMessageParser_ApplicationDataIs(string value)
+        [Then( @"NmeaAisAddressedBinaryMessageParser\.ApplicationData is (.*)" )]
+        public void ThenNmeaAisAddressedBinaryMessageParser_ApplicationDataIs( string value )
         {
-            this.Then(parser => Assert.AreEqual(value, Encoding.ASCII.GetString(parser.ApplicationData)));
+            Then( parser => Assert.AreEqual( value, Encoding.ASCII.GetString( parser.ApplicationData ) ) );
         }
 
-        private void When(ParserMaker makeParser)
+        void When( ParserMaker makeParser )
         {
-            this.makeParser = makeParser;
+            _makeParser = makeParser;
         }
 
-        private void Then(ParserTest test)
+        void Then( ParserTest test )
         {
-            NmeaAisAddressedBinaryMessageParser parser = this.makeParser();
-            test(parser);
+            if( _makeParser is null ) throw new InvalidOperationException( $"When step must be called." );
+            NmeaAisAddressedBinaryMessageParser parser = _makeParser();
+            test( parser );
         }
     }
 }

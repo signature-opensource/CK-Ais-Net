@@ -1,4 +1,4 @@
-﻿// <copyright file="ReportingInterval.cs" company="Endjin Limited">
+// <copyright file="ReportingInterval.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
@@ -9,7 +9,6 @@ namespace Ais.Net
     /// </summary>
     public enum ReportingInterval
     {
-#pragma warning disable CS1591, SA1602 // XML comments. The names are from the spec, and they're all the information we have
         AsGivenByTheAutonomousMode = 0,
         TenMinutes = 1,
         SixMinutes = 2,

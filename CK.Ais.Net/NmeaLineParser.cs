@@ -1,30 +1,29 @@
-﻿// <copyright file="NmeaLineParser.cs" company="Endjin Limited">
+// <copyright file="NmeaLineParser.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
+using System;
+using System.Text;
+
 namespace Ais.Net
 {
-    using System;
-    using System.Text;
-
     /// <summary>
     /// Parses a line of ASCII-encoded text containing an NMEA message.
     /// </summary>
-    public readonly ref struct NmeaLineParser
+    public readonly ref struct NmeaLineParser<TExtraFieldParser>
+        where TExtraFieldParser : struct, INmeaTagBlockExtraFieldParser
     {
-        private const byte ExclamationMark = (byte)'!';
-        private const byte TagBlockMarker = (byte)'\\';
-        private static readonly byte[] VdmAscii = Encoding.ASCII.GetBytes("VDM");
-        private static readonly byte[] VdoAscii = Encoding.ASCII.GetBytes("VDO");
-        private readonly bool throwWhenTagBlockContainsUnknownFields;
-        private readonly TagBlockStandard tagBlockStandard;
+        const byte _exclamationMark = (byte)'!';
+        const byte _tagBlockMarker = (byte)'\\';
+        static readonly byte[] _vdmAscii = Encoding.ASCII.GetBytes( "VDM" );
+        static readonly byte[] _vdoAscii = Encoding.ASCII.GetBytes( "VDO" );
 
         /// <summary>
         /// Creates a <see cref="NmeaLineParser"/>.
         /// </summary>
         /// <param name="line">The ASCII-encoded text containing the NMEA message.</param>
-        public NmeaLineParser(ReadOnlySpan<byte> line)
-            : this(line, false, TagBlockStandard.Unspecified)
+        public NmeaLineParser( ReadOnlySpan<byte> line )
+            : this( line, false, TagBlockStandard.Unspecified, EmptyGroupTolerance.None )
         {
         }
 
@@ -37,36 +36,48 @@ namespace Ais.Net
         /// data sources that add non-standard fields.
         /// </param>
         /// <param name="tagBlockStandard">Defined in whick standard the tag block is.</param>
-        public NmeaLineParser(ReadOnlySpan<byte> line, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard)
+        /// <param name="emptyGroupTolerance">The empty group tolerance.</param>
+        public NmeaLineParser( ReadOnlySpan<byte> line, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard, EmptyGroupTolerance emptyGroupTolerance )
         {
-            this.Line = line;
+            Line = line;
 
             int sentenceStartIndex = 0;
 
-            if (line[0] == TagBlockMarker)
+            if( line[0] == _tagBlockMarker )
             {
-                int tagBlockEndIndex = line.Slice(1).IndexOf(TagBlockMarker);
+                int tagBlockEndIndex = line.Slice( 1 ).IndexOf( _tagBlockMarker );
 
-                if (tagBlockEndIndex < 0)
+                if( tagBlockEndIndex < 0 )
                 {
-                    throw new ArgumentException("Invalid data. Unclosed tag block");
+                    throw new ArgumentException( "Invalid data. Unclosed tag block" );
                 }
 
-                this.TagBlockAsciiWithoutDelimiters = line.Slice(1, tagBlockEndIndex);
+                TagBlockAsciiWithoutDelimiters = line.Slice( 1, tagBlockEndIndex );
+                TagBlock = new NmeaTagBlockParser<TExtraFieldParser>( TagBlockAsciiWithoutDelimiters, throwWhenTagBlockContainsUnknownFields, tagBlockStandard );
 
                 sentenceStartIndex = tagBlockEndIndex + 2;
             }
             else
             {
-                if (line.IndexOf(TagBlockMarker) > 0)
+                if( line.IndexOf( _tagBlockMarker ) > 0 )
                 {
-                    throw new NotSupportedException("Can't handle tag block unless at start");
+                    throw new NotSupportedException( "Can't handle tag block unless at start" );
                 }
 
-                this.TagBlockAsciiWithoutDelimiters = ReadOnlySpan<byte>.Empty;
+                TagBlockAsciiWithoutDelimiters = ReadOnlySpan<byte>.Empty;
             }
 
-            this.Sentence = line.Slice(sentenceStartIndex);
+            Sentence = line.Slice( sentenceStartIndex );
+
+            if( !TagBlockAsciiWithoutDelimiters.IsEmpty &&
+                TagBlock.SentenceGrouping.HasValue &&
+                !HasSentence( Sentence ) &&
+                emptyGroupTolerance >= EmptyGroupTolerance.Allow )
+            {
+                Sentence = ReadOnlySpan<byte>.Empty;
+                Payload = ReadOnlySpan<byte>.Empty;
+                return;
+            }
 
             // Need at least the exclamation mark, talker, and origin (e.g. !AIVDM), then
             // the two fragment fields are non-optional. The multi-sequence message ID is
@@ -76,20 +87,20 @@ namespace Ais.Net
             // Then there will need to be the final comma, the padding, the * and the checksum, e.g.
             // ,0*3C
             // So that's 18 characters before we get to any payload.
-            if (this.Sentence.Length < 18)
+            if( Sentence.Length < 18 )
             {
-                throw new ArgumentException("Invalid data. The message appears to be missing some characters - it may have been corrupted or truncated.");
+                throw new ArgumentException( "Invalid data. The message appears to be missing some characters - it may have been corrupted or truncated." );
             }
 
-            if (this.Sentence[0] != ExclamationMark)
+            if( Sentence[0] != _exclamationMark )
             {
-                throw new ArgumentException("Invalid data. Expected '!' at sentence start");
+                throw new ArgumentException( "Invalid data. Expected '!' at sentence start" );
             }
 
-            byte talkerFirstChar = this.Sentence[1];
-            byte talkerSecondChar = this.Sentence[2];
+            byte talkerFirstChar = Sentence[1];
+            byte talkerSecondChar = Sentence[2];
 
-            this.AisTalker = talkerFirstChar switch
+            AisTalker = talkerFirstChar switch
             {
                 (byte)'A' => talkerSecondChar switch
                 {
@@ -101,80 +112,78 @@ namespace Ais.Net
                     (byte)'S' => TalkerId.LimitedBaseStation,
                     (byte)'T' => TalkerId.TransmittingStation,
                     (byte)'X' => TalkerId.RepeaterStation,
-                    _ => throw new ArgumentException("Invalid data. Unrecognized talker id - cannot start with " + talkerFirstChar),
+                    _ => throw new ArgumentException( "Invalid data. Unrecognized talker id - cannot start with " + talkerFirstChar ),
                 },
 
                 (byte)'B' => talkerSecondChar switch
                 {
                     (byte)'S' => TalkerId.DeprecatedBaseStation,
-                    _ => throw new ArgumentException("Invalid data. Unrecognized talker id - cannot end with " + talkerSecondChar),
+                    _ => throw new ArgumentException( "Invalid data. Unrecognized talker id - cannot end with " + talkerSecondChar ),
                 },
 
                 (byte)'S' => talkerSecondChar switch
                 {
                     (byte)'A' => TalkerId.PhysicalShoreStation,
-                    _ => throw new ArgumentException("Invalid data. Unrecognized talker id - cannot end with " + talkerSecondChar),
+                    _ => throw new ArgumentException( "Invalid data. Unrecognized talker id - cannot end with " + talkerSecondChar ),
                 },
 
-                _ => throw new ArgumentException("Invalid data. Unrecognized talker id"),
+                _ => throw new ArgumentException( "Invalid data. Unrecognized talker id" ),
             };
-            if (this.Sentence.Slice(3, 3).SequenceEqual(VdmAscii))
+            if( Sentence.Slice( 3, 3 ).SequenceEqual( _vdmAscii ) )
             {
-                this.DataOrigin = VesselDataOrigin.Vdm;
+                DataOrigin = VesselDataOrigin.Vdm;
             }
-            else if (this.Sentence.Slice(3, 3).SequenceEqual(VdoAscii))
+            else if( Sentence.Slice( 3, 3 ).SequenceEqual( _vdoAscii ) )
             {
-                this.DataOrigin = VesselDataOrigin.Vdo;
+                DataOrigin = VesselDataOrigin.Vdo;
             }
             else
             {
-                throw new ArgumentException("Invalid data. Unrecognized origin in AIS talker ID - must be VDM or VDO");
+                throw new ArgumentException( "Invalid data. Unrecognized origin in AIS talker ID - must be VDM or VDO" );
             }
 
-            if (this.Sentence[6] != (byte)',')
+            if( Sentence[6] != (byte)',' )
             {
-                throw new ArgumentException("Invalid data. Talker ID must be followed by ','");
+                throw new ArgumentException( "Invalid data. Talker ID must be followed by ','" );
             }
 
-            ReadOnlySpan<byte> remainingFields = this.Sentence.Slice(7);
+            ReadOnlySpan<byte> remainingFields = Sentence.Slice( 7 );
 
-            this.TotalFragmentCount = GetSingleDigitField(ref remainingFields, true);
-            this.FragmentNumberOneBased = GetSingleDigitField(ref remainingFields, true);
+            TotalFragmentCount = GetSingleDigitField( ref remainingFields, true );
+            FragmentNumberOneBased = GetSingleDigitField( ref remainingFields, true );
 
-            int nextComma = remainingFields.IndexOf((byte)',');
+            int nextComma = remainingFields.IndexOf( (byte)',' );
 
-            this.MultiSequenceMessageId = remainingFields.Slice(0, nextComma);
+            MultiSequenceMessageId = remainingFields.Slice( 0, nextComma );
 
-            remainingFields = remainingFields.Slice(nextComma + 1);
-            nextComma = remainingFields.IndexOf((byte)',');
+            remainingFields = remainingFields.Slice( nextComma + 1 );
+            nextComma = remainingFields.IndexOf( (byte)',' );
 
-            if (nextComma > 1)
+            if( nextComma > 1 )
             {
-                throw new ArgumentException("Invalid data. Channel code must be only one character");
+                throw new ArgumentException( "Invalid data. Channel code must be only one character" );
             }
 
-            this.ChannelCode = nextComma == 0 ? default : (char)remainingFields[0];
+            ChannelCode = nextComma == 0 ? default : (char)remainingFields[0];
 
-            remainingFields = remainingFields.Slice(nextComma + 1);
-            nextComma = remainingFields.IndexOf((byte)',');
+            remainingFields = remainingFields.Slice( nextComma + 1 );
+            nextComma = remainingFields.IndexOf( (byte)',' );
 
-            if (nextComma < 0 || remainingFields.Length <= (nextComma + 1) || !char.IsDigit((char)remainingFields[nextComma + 1]))
+            if( nextComma < 0 || remainingFields.Length <= (nextComma + 1) || !char.IsDigit( (char)remainingFields[nextComma + 1] ) )
             {
-                throw new ArgumentException("Invalid data. Payload padding field not present - the message may have been corrupted or truncated");
+                throw new ArgumentException( "Invalid data. Payload padding field not present - the message may have been corrupted or truncated" );
             }
 
-            this.Payload = remainingFields.Slice(0, nextComma);
+            Payload = remainingFields.Slice( 0, nextComma );
 
-            remainingFields = remainingFields.Slice(nextComma + 1);
+            remainingFields = remainingFields.Slice( nextComma + 1 );
 
-            if (remainingFields.Length < 4)
+            if( remainingFields.Length < 4 )
             {
-                throw new ArgumentException("Invalid data. Payload checksum not present - the message may have been corrupted or truncated");
+                throw new ArgumentException( "Invalid data. Payload checksum not present - the message may have been corrupted or truncated" );
             }
 
-            this.Padding = (uint)GetSingleDigitField(ref remainingFields, true);
-            this.throwWhenTagBlockContainsUnknownFields = throwWhenTagBlockContainsUnknownFields;
-            this.tagBlockStandard = tagBlockStandard;
+            Padding = (uint)GetSingleDigitField( ref remainingFields, true );
         }
 
         /// <summary>
@@ -235,7 +244,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets the details from the tag block.
         /// </summary>
-        public NmeaTagBlockParser TagBlock => new NmeaTagBlockParser(this.TagBlockAsciiWithoutDelimiters, this.throwWhenTagBlockContainsUnknownFields, this.tagBlockStandard);
+        public NmeaTagBlockParser<TExtraFieldParser> TagBlock { get; }
 
         /// <summary>
         /// Gets the tag block part of the underlying data (excluding the delimiting '/'
@@ -249,30 +258,70 @@ namespace Ais.Net
         /// </summary>
         public int TotalFragmentCount { get; }
 
-        private static int GetSingleDigitField(ref ReadOnlySpan<byte> fields, bool required)
+        /// <summary>
+        /// Indicate if the message is a fragment from a group with fragments with empty sentence.
+        /// </summary>
+        public bool IsFixedMessage { get; }
+
+        internal static NmeaLineParser<TExtraFieldParser> OverrideGrouping( NmeaLineParser<TExtraFieldParser> lineParser, NmeaTagBlockSentenceGrouping? grouping )
+            => new NmeaLineParser<TExtraFieldParser>( lineParser, grouping );
+
+        private NmeaLineParser( NmeaLineParser<TExtraFieldParser> parser, NmeaTagBlockSentenceGrouping? grouping )
         {
-            if (fields[0] == ',')
+            AisTalker = parser.AisTalker;
+            ChannelCode = parser.ChannelCode;
+            DataOrigin = parser.DataOrigin;
+            FragmentNumberOneBased = grouping.HasValue ? grouping.Value.SentenceNumber : 1;
+            Line = parser.Line;
+            MultiSequenceMessageId = parser.MultiSequenceMessageId;
+            Padding = parser.Padding;
+            Payload = parser.Payload;
+            Sentence = parser.Sentence;
+            TagBlock = NmeaTagBlockParser<TExtraFieldParser>.OverrideGrouping( parser.TagBlock, grouping );
+            TagBlockAsciiWithoutDelimiters = parser.TagBlockAsciiWithoutDelimiters;
+            TotalFragmentCount = grouping.HasValue ? grouping.Value.SentencesInGroup : 1;
+            IsFixedMessage = true;
+        }
+
+        static int GetSingleDigitField( ref ReadOnlySpan<byte> fields, bool required )
+        {
+            if( fields[0] == ',' )
             {
-                if (required)
+                if( required )
                 {
-                    throw new ArgumentException("Field must not be empty");
+                    throw new ArgumentException( "Field must not be empty" );
                 }
 
-                fields = fields.Slice(1);
+                fields = fields.Slice( 1 );
 
                 return 0;
             }
 
             int result = fields[0] - '0';
 
-            if (result < 0 || result > 9)
+            if( result is < 0 or > 9 )
             {
-                throw new NotSupportedException("Cannot handle multi-digit field");
+                throw new NotSupportedException( "Cannot handle multi-digit field" );
             }
 
-            fields = fields.Slice(2);
+            fields = fields.Slice( 2 );
 
             return result;
+        }
+
+        /// <summary>
+        /// This method checks that the sentence (after the tag block) is not empty.
+        /// When we parse the data from the source stream, the <paramref name="sentence"/> will go to the end of the NMEA sentence.
+        /// When the frame is in a group, it well be in a `byte` provided by the `ArrayPool`, but the `byte` array may exceed the originale message size.
+        /// Here a sentence is considered to exist when the <paramref name="sentence"/> is not empty and all its bytes are not at theur default value.
+        /// <param name="sentence">The part following the tag block.</param>
+        static bool HasSentence( ReadOnlySpan<byte> sentence )
+        {
+            for( int i = 0; i < sentence.Length; i++ )
+            {
+                if( sentence[i] is not default( byte ) ) return true;
+            }
+            return false;
         }
     }
 }

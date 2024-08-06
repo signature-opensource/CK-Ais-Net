@@ -2,260 +2,263 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
+using NUnit.Framework;
+using System;
+using System.Text;
+using TechTalk.SpecFlow;
+
 namespace Ais.Net.Specs.AisMessageTypes
 {
-    using System;
-    using System.Text;
-    using NUnit.Framework;
-    using TechTalk.SpecFlow;
-
     [Binding]
     public class StaticDataReportParserSpecsSteps
     {
-        private InitialParserMaker makeInitialParser;
-        private PartAParserMaker makePartAParser;
-        private PartBParserMaker makePartBParser;
-        private Exception exception;
+        InitialParserMaker? _makeInitialParser;
+        PartAParserMaker? _makePartAParser;
+        PartBParserMaker? _makePartBParser;
+        Exception? _exception;
 
-        private delegate uint InitialParserMaker();
+        delegate uint InitialParserMaker();
 
-        private delegate NmeaAisStaticDataReportParserPartA PartAParserMaker();
+        delegate NmeaAisStaticDataReportParserPartA PartAParserMaker();
 
-        private delegate NmeaAisStaticDataReportParserPartB PartBParserMaker();
+        delegate NmeaAisStaticDataReportParserPartB PartBParserMaker();
 
-        private delegate void InitialParserTest(uint partNumber);
+        delegate void InitialParserTest( uint partNumber );
 
-        private delegate void PartAParserTest(NmeaAisStaticDataReportParserPartA parser);
+        delegate void PartAParserTest( NmeaAisStaticDataReportParserPartA parser );
 
-        private delegate void PartBParserTest(NmeaAisStaticDataReportParserPartB parser);
+        delegate void PartBParserTest( NmeaAisStaticDataReportParserPartB parser );
 
-        [When("I inspect the Static Data Report part of '(.*)' with padding (.*)")]
-        public void WhenIInspectTheStaticDataReportPartOfWithPadding(string payload, uint padding)
+        [When( "I inspect the Static Data Report part of '(.*)' with padding (.*)" )]
+        public void WhenIInspectTheStaticDataReportPartOfWithPadding( string payload, uint padding )
         {
-            this.WhenInitial(() => NmeaAisStaticDataReportParser.GetPartNumber(Encoding.ASCII.GetBytes(payload), padding));
+            WhenInitial( () => NmeaAisStaticDataReportParser.GetPartNumber( Encoding.ASCII.GetBytes( payload ), padding ) );
         }
 
-        [When("I parse '(.*)' with padding (.*) as Static Data Report Part A")]
-        public void WhenIParseWithPaddingAsStaticDataReportPartA(string payload, uint padding)
+        [When( "I parse '(.*)' with padding (.*) as Static Data Report Part A" )]
+        public void WhenIParseWithPaddingAsStaticDataReportPartA( string payload, uint padding )
         {
-            this.WhenPartA(() => new NmeaAisStaticDataReportParserPartA(Encoding.ASCII.GetBytes(payload), padding));
+            WhenPartA( () => new NmeaAisStaticDataReportParserPartA( Encoding.ASCII.GetBytes( payload ), padding ) );
         }
 
-        [When("I parse '(.*)' with padding (.*) as Static Data Report Part B")]
-        public void WhenIParseWithPaddingAsStaticDataReportPartB(string payload, uint padding)
+        [When( "I parse '(.*)' with padding (.*) as Static Data Report Part B" )]
+        public void WhenIParseWithPaddingAsStaticDataReportPartB( string payload, uint padding )
         {
-            this.WhenPartB(() => new NmeaAisStaticDataReportParserPartB(Encoding.ASCII.GetBytes(payload), padding));
+            WhenPartB( () => new NmeaAisStaticDataReportParserPartB( Encoding.ASCII.GetBytes( payload ), padding ) );
         }
 
-        [When("I parse '(.*)' with padding (.*) as Static Data Report Part A catching exception")]
-        public void WhenIParseWithPaddingAsStaticDataReportPartACatchingException(string payload, uint padding)
-        {
-            try
-            {
-                new NmeaAisStaticDataReportParserPartA(Encoding.ASCII.GetBytes(payload), padding);
-                Assert.Fail("Was expecting an exception");
-            }
-            catch (Exception x)
-            {
-                this.exception = x;
-            }
-        }
-
-        [When("I parse '(.*)' with padding (.*) as Static Data Report Part B catching exception")]
-        public void WhenIParseWithPaddingAsStaticDataReportPartBCatchingException(string payload, uint padding)
+        [When( "I parse '(.*)' with padding (.*) as Static Data Report Part A catching exception" )]
+        public void WhenIParseWithPaddingAsStaticDataReportPartACatchingException( string payload, uint padding )
         {
             try
             {
-                new NmeaAisStaticDataReportParserPartB(Encoding.ASCII.GetBytes(payload), padding);
-                Assert.Fail("Was expecting an exception");
+                var _ = new NmeaAisStaticDataReportParserPartA( Encoding.ASCII.GetBytes( payload ), padding );
+                Assert.Fail( "Was expecting an exception" );
             }
-            catch (Exception x)
+            catch( Exception x )
             {
-                this.exception = x;
+                _exception = x;
             }
         }
 
-        [Then(@"NmeaAisStaticDataReportParser\.GetPartNumber returns (.*)")]
-        public void ThenNmeaAisStaticDataReportParser_GetPartNumberReturns(uint partNumber)
+        [When( "I parse '(.*)' with padding (.*) as Static Data Report Part B catching exception" )]
+        public void WhenIParseWithPaddingAsStaticDataReportPartBCatchingException( string payload, uint padding )
         {
-            this.ThenInitial(r => Assert.AreEqual(partNumber, r));
+            try
+            {
+                var _ = new NmeaAisStaticDataReportParserPartB( Encoding.ASCII.GetBytes( payload ), padding );
+                Assert.Fail( "Was expecting an exception" );
+            }
+            catch( Exception x )
+            {
+                _exception = x;
+            }
         }
 
-        [Then("the constructor throws ArgumentException")]
+        [Then( @"NmeaAisStaticDataReportParser\.GetPartNumber returns (.*)" )]
+        public void ThenNmeaAisStaticDataReportParser_GetPartNumberReturns( uint partNumber )
+        {
+            ThenInitial( r => Assert.AreEqual( partNumber, r ) );
+        }
+
+        [Then( "the constructor throws ArgumentException" )]
         public void ThenTheConstructorThrowsArgumentException()
         {
-            Assert.IsInstanceOf<ArgumentException>(this.exception);
+            Assert.IsInstanceOf<ArgumentException>( _exception );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartA\.Type is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartA_TypeIs(MessageType messageType)
+        [Then( @"NmeaAisStaticDataReportParserPartA\.Type is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartA_TypeIs( MessageType messageType )
         {
-            this.ThenPartA(parser => Assert.AreEqual(messageType, parser.MessageType));
+            ThenPartA( parser => Assert.AreEqual( messageType, parser.MessageType ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.Type is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_TypeIs(MessageType messageType)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.Type is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_TypeIs( MessageType messageType )
         {
-            this.ThenPartB(parser => Assert.AreEqual(messageType, parser.MessageType));
+            ThenPartB( parser => Assert.AreEqual( messageType, parser.MessageType ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartA\.RepeatIndicator is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartA_RepeatIndicatorIs(uint repeatCount)
+        [Then( @"NmeaAisStaticDataReportParserPartA\.RepeatIndicator is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartA_RepeatIndicatorIs( uint repeatCount )
         {
-            this.ThenPartA(parser => Assert.AreEqual(repeatCount, parser.RepeatIndicator));
+            ThenPartA( parser => Assert.AreEqual( repeatCount, parser.RepeatIndicator ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.RepeatIndicator is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_RepeatIndicatorIs(uint repeatCount)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.RepeatIndicator is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_RepeatIndicatorIs( uint repeatCount )
         {
-            this.ThenPartB(parser => Assert.AreEqual(repeatCount, parser.RepeatIndicator));
+            ThenPartB( parser => Assert.AreEqual( repeatCount, parser.RepeatIndicator ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartA\.Mmsi is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartA_MmsiIs(int mmsi)
+        [Then( @"NmeaAisStaticDataReportParserPartA\.Mmsi is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartA_MmsiIs( int mmsi )
         {
-            this.ThenPartA(parser => Assert.AreEqual(mmsi, parser.Mmsi));
+            ThenPartA( parser => Assert.AreEqual( mmsi, parser.Mmsi ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.Mmsi is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_MmsiIs(int mmsi)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.Mmsi is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_MmsiIs( int mmsi )
         {
-            this.ThenPartB(parser => Assert.AreEqual(mmsi, parser.Mmsi));
+            ThenPartB( parser => Assert.AreEqual( mmsi, parser.Mmsi ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartA\.PartNumber is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartA_PartNumberIs(int partNumber)
+        [Then( @"NmeaAisStaticDataReportParserPartA\.PartNumber is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartA_PartNumberIs( int partNumber )
         {
-            this.ThenPartA(parser => Assert.AreEqual(partNumber, parser.PartNumber));
+            ThenPartA( parser => Assert.AreEqual( partNumber, parser.PartNumber ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.PartNumber is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_PartNumberIs(int partNumber)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.PartNumber is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_PartNumberIs( int partNumber )
         {
-            this.ThenPartB(parser => Assert.AreEqual(partNumber, parser.PartNumber));
+            ThenPartB( parser => Assert.AreEqual( partNumber, parser.PartNumber ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartA\.VesselName is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartA_VesselNameIs(string vesselName)
+        [Then( @"NmeaAisStaticDataReportParserPartA\.VesselName is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartA_VesselNameIs( string vesselName )
         {
-            this.ThenPartA(parser => AisStringsSpecsSteps.TestString(vesselName, 20, parser.VesselName));
+            ThenPartA( parser => AisStringsSpecsSteps.TestString( vesselName, 20, parser.VesselName ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartA\.Spare is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartA_SpareIs(uint spare)
+        [Then( @"NmeaAisStaticDataReportParserPartA\.Spare is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartA_SpareIs( uint spare )
         {
-            this.ThenPartA(parser => Assert.AreEqual(spare, parser.Spare160));
+            ThenPartA( parser => Assert.AreEqual( spare, parser.Spare160 ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.ShipType is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_ShipTypeIs(ShipType type)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.ShipType is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_ShipTypeIs( ShipType type )
         {
-            this.ThenPartB(parser => Assert.AreEqual(type, parser.ShipType));
+            ThenPartB( parser => Assert.AreEqual( type, parser.ShipType ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.VendorIdRev3 is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_VendorIdRev3Is(string vendorId)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.VendorIdRev3 is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_VendorIdRev3Is( string vendorId )
         {
-            this.ThenPartB(parser => AisStringsSpecsSteps.TestString(vendorId, 7, parser.VendorIdRev3));
+            ThenPartB( parser => AisStringsSpecsSteps.TestString( vendorId, 7, parser.VendorIdRev3 ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.VendorIdRev4 is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_VendorIdRev4Is(string vendorId)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.VendorIdRev4 is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_VendorIdRev4Is( string vendorId )
         {
-            this.ThenPartB(parser => AisStringsSpecsSteps.TestString(vendorId, 3, parser.VendorIdRev4));
+            ThenPartB( parser => AisStringsSpecsSteps.TestString( vendorId, 3, parser.VendorIdRev4 ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.UnitModelCode is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_UnitModelCodeIs(uint unitModelCode)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.UnitModelCode is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_UnitModelCodeIs( uint unitModelCode )
         {
-            this.ThenPartB(parser => Assert.AreEqual(unitModelCode, parser.UnitModelCode));
+            ThenPartB( parser => Assert.AreEqual( unitModelCode, parser.UnitModelCode ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.SerialNumber is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_SerialNumberIs(uint serialNumber)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.SerialNumber is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_SerialNumberIs( uint serialNumber )
         {
-            this.ThenPartB(parser => Assert.AreEqual(serialNumber, parser.SerialNumber));
+            ThenPartB( parser => Assert.AreEqual( serialNumber, parser.SerialNumber ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.CallSign is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_CallSignIs(string callSign)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.CallSign is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_CallSignIs( string callSign )
         {
-            this.ThenPartB(parser => AisStringsSpecsSteps.TestString(callSign, 7, parser.CallSign));
+            ThenPartB( parser => AisStringsSpecsSteps.TestString( callSign, 7, parser.CallSign ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.DimensionToBow is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_DimensionToBowIs(uint size)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.DimensionToBow is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_DimensionToBowIs( uint size )
         {
-            this.ThenPartB(parser => Assert.AreEqual(size, parser.DimensionToBow));
+            ThenPartB( parser => Assert.AreEqual( size, parser.DimensionToBow ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.DimensionToStern is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_DimensionToSternIs(uint size)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.DimensionToStern is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_DimensionToSternIs( uint size )
         {
-            this.ThenPartB(parser => Assert.AreEqual(size, parser.DimensionToStern));
+            ThenPartB( parser => Assert.AreEqual( size, parser.DimensionToStern ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.DimensionToPort is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_DimensionToPortIs(uint size)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.DimensionToPort is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_DimensionToPortIs( uint size )
         {
-            this.ThenPartB(parser => Assert.AreEqual(size, parser.DimensionToPort));
+            ThenPartB( parser => Assert.AreEqual( size, parser.DimensionToPort ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.DimensionToStarboard is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_DimensionToStarboardIs(uint size)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.DimensionToStarboard is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_DimensionToStarboardIs( uint size )
         {
-            this.ThenPartB(parser => Assert.AreEqual(size, parser.DimensionToStarboard));
+            ThenPartB( parser => Assert.AreEqual( size, parser.DimensionToStarboard ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.MothershipMmsi is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_MothershipMmsiIs(uint mmsi)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.MothershipMmsi is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_MothershipMmsiIs( uint mmsi )
         {
-            this.ThenPartB(parser => Assert.AreEqual(mmsi, parser.MothershipMmsi));
+            ThenPartB( parser => Assert.AreEqual( mmsi, parser.MothershipMmsi ) );
         }
 
         [Then( @"NmeaAisStaticDataReportParserPartB\.EpfdFixType is (.*)" )]
-        public void ThenNmeaAisStaticDataReportParserPartB_EpfdFixTypeIs(EpfdFixType mmsi)
+        public void ThenNmeaAisStaticDataReportParserPartB_EpfdFixTypeIs( EpfdFixType mmsi )
         {
-            this.ThenPartB(parser => Assert.AreEqual(mmsi, parser.EpfdFixType));
+            ThenPartB( parser => Assert.AreEqual( mmsi, parser.EpfdFixType ) );
         }
 
-        [Then(@"NmeaAisStaticDataReportParserPartB\.Spare is (.*)")]
-        public void ThenNmeaAisStaticDataReportParserPartB_SpareIs(uint spare)
+        [Then( @"NmeaAisStaticDataReportParserPartB\.Spare is (.*)" )]
+        public void ThenNmeaAisStaticDataReportParserPartB_SpareIs( uint spare )
         {
-            this.ThenPartB(parser => Assert.AreEqual(spare, parser.Spare162));
+            ThenPartB( parser => Assert.AreEqual( spare, parser.Spare162 ) );
         }
 
-        private void WhenInitial(InitialParserMaker makeParser)
+        void WhenInitial( InitialParserMaker makeParser )
         {
-            this.makeInitialParser = makeParser;
+            _makeInitialParser = makeParser;
         }
 
-        private void WhenPartA(PartAParserMaker makeParser)
+        void WhenPartA( PartAParserMaker makeParser )
         {
-            this.makePartAParser = makeParser;
+            _makePartAParser = makeParser;
         }
 
-        private void WhenPartB(PartBParserMaker makeParser)
+        void WhenPartB( PartBParserMaker makeParser )
         {
-            this.makePartBParser = makeParser;
+            _makePartBParser = makeParser;
         }
 
-        private void ThenInitial(InitialParserTest test)
+        void ThenInitial( InitialParserTest test )
         {
-            uint messagePart = this.makeInitialParser();
-            test(messagePart);
+            if( _makeInitialParser is null ) throw new InvalidOperationException( $"Then initial step must be called." );
+            uint messagePart = _makeInitialParser();
+            test( messagePart );
         }
 
-        private void ThenPartA(PartAParserTest test)
+        void ThenPartA( PartAParserTest test )
         {
-            NmeaAisStaticDataReportParserPartA parser = this.makePartAParser();
-            test(parser);
+            if( _makePartAParser is null ) throw new InvalidOperationException( $"Then Part A step must be called." );
+            NmeaAisStaticDataReportParserPartA parser = _makePartAParser();
+            test( parser );
         }
 
-        private void ThenPartB(PartBParserTest test)
+        void ThenPartB( PartBParserTest test )
         {
-            NmeaAisStaticDataReportParserPartB parser = this.makePartBParser();
-            test(parser);
+            if( _makePartBParser is null ) throw new InvalidOperationException( $"Then Part B step must be called." );
+            NmeaAisStaticDataReportParserPartB parser = _makePartBParser();
+            test( parser );
         }
     }
 }

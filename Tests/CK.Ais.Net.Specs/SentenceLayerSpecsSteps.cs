@@ -1,182 +1,188 @@
-﻿// <copyright file="SentenceLayerSpecsSteps.cs" company="Endjin Limited">
+// <copyright file="SentenceLayerSpecsSteps.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
+using NUnit.Framework;
+using System;
+using System.Text;
+using TechTalk.SpecFlow;
+
 namespace Ais.Net.Specs
 {
-    using System.Text;
-    using NUnit.Framework;
-    using TechTalk.SpecFlow;
-
     [Binding]
     public class SentenceLayerSpecsSteps
     {
-        private ParserMaker makeParser;
+        ParserMaker? _makeParser;
 
-        private delegate NmeaLineParser ParserMaker();
+        delegate NmeaLineParser<DefaultExtraFieldParser> ParserMaker();
 
-        private delegate void ParserTest(NmeaLineParser parser);
+        delegate void ParserTest( NmeaLineParser<DefaultExtraFieldParser> parser );
 
-        [When("I parse a message with no tag block")]
+        [When( "I parse a message with no tag block" )]
         public void WhenIParseAMessageWithNoTagBlock()
         {
-            this.When(AivdmExamples.SomeSortOfAivdmMessageRenameThisWhenWeKnowMore);
+            When( AivdmExamples.SomeSortOfAivdmMessageRenameThisWhenWeKnowMore );
         }
 
-        [When("I parse a message with a tag block")]
+        [When( "I parse a message with a tag block" )]
         public void WhenIParseAMessageWithATagBlock()
         {
-            this.When(AivdmExamples.SomeSortOfAivdmMessageRenameThisWhenWeKnowMoreWithTagBlock);
+            When( AivdmExamples.SomeSortOfAivdmMessageRenameThisWhenWeKnowMoreWithTagBlock );
         }
 
-        [When("I parse a message with a packet tag field of '(.*)'")]
-        public void WhenIParseAMessageWithAPacketTagFieldOf(string tag)
+        [When( "I parse a message with a packet tag field of '(.*)'" )]
+        public void WhenIParseAMessageWithAPacketTagFieldOf( string tag )
         {
-            this.When(string.Format(AivdmExamples.MessageWithTaAGPLaceholderFormat, tag));
+            When( string.Format( AivdmExamples.MessageWithTaAGPLaceholderFormat, tag ) );
         }
 
-        [When("I parse a message fragment part (.*) of (.*) with message id (.*) and sentence group id (.*)")]
+        [When( "I parse a message fragment part (.*) of (.*) with message id (.*) and sentence group id (.*)" )]
         public void WhenIParseAMessageFragmentPartOfWithMessageIdAndSentenceGroupId(
-            int currentFragment, int totalFragments, string sequentialMessageId, string sentenceGroupId)
+            int currentFragment, int totalFragments, string sequentialMessageId, string sentenceGroupId )
         {
-            this.When(string.Format(AivdmExamples.MessageFragmentFormat, currentFragment, totalFragments, sequentialMessageId, sentenceGroupId));
+            When( string.Format( AivdmExamples.MessageFragmentFormat, currentFragment, totalFragments, sequentialMessageId, sentenceGroupId ) );
         }
 
-        [When("I parse a message fragment part (.*) of (.*) with message id (.*) and no sentence group id")]
+        [When( "I parse a message fragment part (.*) of (.*) with message id (.*) and no sentence group id" )]
         public void WhenIParseAMessageFragmentPartOfWithMessageIdAndNoSentenceGroupId(
-            int currentFragment, int totalFragments, string sequentialMessageId)
+            int currentFragment, int totalFragments, string sequentialMessageId )
         {
-            this.When(string.Format(AivdmExamples.MessageFragmentWithoutGroupInHeaderFormat, currentFragment, totalFragments, sequentialMessageId));
+            When( string.Format( AivdmExamples.MessageFragmentWithoutGroupInHeaderFormat, currentFragment, totalFragments, sequentialMessageId ) );
         }
 
-        [When("I parse a non-fragmented message")]
+        [When( "I parse a non-fragmented message" )]
         public void WhenIParseANon_FragmentedMessage()
         {
-            this.When(AivdmExamples.NonFragmentedMessage);
+            When( AivdmExamples.NonFragmentedMessage );
         }
 
-        [When("I parse a message with a radio channel code of '(.*)'")]
-        public void WhenIParseAMessageWithARadioChannelCodeOf(string channel)
+        [When( "I parse a message with a radio channel code of '(.*)'" )]
+        public void WhenIParseAMessageWithARadioChannelCodeOf( string channel )
         {
-            this.When(string.Format(AivdmExamples.MessageWithRadioChannelPlaceholderFormat, channel));
+            When( string.Format( AivdmExamples.MessageWithRadioChannelPlaceholderFormat, channel ) );
         }
 
-        [When("I parse a message with a payload of '(.*)'")]
-        public void WhenIParseAMessageWithAPayloadOf(string payload)
+        [When( "I parse a message with a payload of '(.*)'" )]
+        public void WhenIParseAMessageWithAPayloadOf( string payload )
         {
-            this.When(string.Format(AivdmExamples.MessageWithPayloadPlaceholderFormat, payload));
+            When( string.Format( AivdmExamples.MessageWithPayloadPlaceholderFormat, payload ) );
         }
 
-        [When("I parse a message with padding of (.*)")]
-        public void WhenIParseAMessageWithAPaddingOf(int padding)
+        [When( "I parse a message with padding of (.*)" )]
+        public void WhenIParseAMessageWithAPaddingOf( int padding )
         {
-            this.When(string.Format(AivdmExamples.MessageWithPaddinAGPLaceholderFormat, padding));
+            When( string.Format( AivdmExamples.MessageWithPaddinAGPLaceholderFormat, padding ) );
         }
 
-        [Then("the TagBlockWithoutDelimiters property's Length should be (.*)")]
-        public void ThenTheTagBlockWithoutDelimitersLengthShouldBe(int expectedLength)
+        [Then( "the TagBlockWithoutDelimiters property's Length should be (.*)" )]
+        public void ThenTheTagBlockWithoutDelimitersLengthShouldBe( int expectedLength )
         {
-            this.Then(parser => Assert.AreEqual(expectedLength, parser.TagBlockAsciiWithoutDelimiters.Length));
+            Then( parser => Assert.AreEqual( expectedLength, parser.TagBlockAsciiWithoutDelimiters.Length ) );
         }
 
-        [Then("the TagBlockWithoutDelimiters property should match the tag block without the delimiters")]
+        [Then( "the TagBlockWithoutDelimiters property should match the tag block without the delimiters" )]
         public void ThenTheTagBlockWithoutDelimitersPropertyShouldMatchTheTagBlockWithoutTheDelimiters()
         {
-            this.Then(parser =>
+            Then( parser =>
             {
-                string parsedTagBlock = Encoding.ASCII.GetString(parser.TagBlockAsciiWithoutDelimiters);
-                Assert.AreEqual(AivdmExamples.SimpleTagBlockWithoutDelimiters, parsedTagBlock);
-            });
+                string parsedTagBlock = Encoding.ASCII.GetString( parser.TagBlockAsciiWithoutDelimiters );
+                Assert.AreEqual( AivdmExamples.SimpleTagBlockWithoutDelimiters, parsedTagBlock );
+            } );
         }
 
-        [Then("the AisTalker is '(.*)'")]
-        public void ThenTheAisTalkerIs(TalkerId talkerId)
+        [Then( "the AisTalker is '(.*)'" )]
+        public void ThenTheAisTalkerIs( TalkerId talkerId )
         {
-            this.Then(parser => Assert.AreEqual(talkerId, parser.AisTalker));
+            Then( parser => Assert.AreEqual( talkerId, parser.AisTalker ) );
         }
 
-        [Then("the DataOrigin is '(.*)'")]
-        public void ThenTheDataOriginIs(VesselDataOrigin dataOrigin)
+        [Then( "the DataOrigin is '(.*)'" )]
+        public void ThenTheDataOriginIs( VesselDataOrigin dataOrigin )
         {
-            this.Then(parser => Assert.AreEqual(dataOrigin, parser.DataOrigin));
+            Then( parser => Assert.AreEqual( dataOrigin, parser.DataOrigin ) );
         }
 
-        [Then("the TotalFragmentCount is '(.*)'")]
-        public void ThenTheTotalFragmentCountIs(int totalFragments)
+        [Then( "the TotalFragmentCount is '(.*)'" )]
+        public void ThenTheTotalFragmentCountIs( int totalFragments )
         {
-            this.Then(parser => Assert.AreEqual(totalFragments, parser.TotalFragmentCount));
+            Then( parser => Assert.AreEqual( totalFragments, parser.TotalFragmentCount ) );
         }
 
-        [Then("the FragmentNumberOneBased is '(.*)'")]
-        public void ThenTheFragmentNumberOneBasedIs(int currentFragment)
+        [Then( "the FragmentNumberOneBased is '(.*)'" )]
+        public void ThenTheFragmentNumberOneBasedIs( int currentFragment )
         {
-            this.Then(parser => Assert.AreEqual(currentFragment, parser.FragmentNumberOneBased));
+            Then( parser => Assert.AreEqual( currentFragment, parser.FragmentNumberOneBased ) );
         }
 
-        [Then("the MultiSequenceMessageId is '(.*)'")]
-        public void ThenTheMultiSequenceMessageIdIs(string sequentialMessageId)
+        [Then( "the MultiSequenceMessageId is '(.*)'" )]
+        public void ThenTheMultiSequenceMessageIdIs( string sequentialMessageId )
         {
-            this.Then(parser =>
+            Then( parser =>
             {
-                string parsedMessageId = Encoding.ASCII.GetString(parser.MultiSequenceMessageId);
-                Assert.AreEqual(sequentialMessageId, parsedMessageId);
-            });
+                string parsedMessageId = Encoding.ASCII.GetString( parser.MultiSequenceMessageId );
+                Assert.AreEqual( sequentialMessageId, parsedMessageId );
+            } );
         }
 
-        [Then("the MultiSequenceMessageId is empty")]
+        [Then( "the MultiSequenceMessageId is empty" )]
         public void ThenTheMultiSequenceMessageIdIsEmpty()
         {
-            this.Then(parser => Assert.IsTrue(parser.MultiSequenceMessageId.IsEmpty));
+            Then( parser => Assert.IsTrue( parser.MultiSequenceMessageId.IsEmpty ) );
         }
 
-        [Then("the TagBlockSentenceGrouping is not present")]
+        [Then( "the TagBlockSentenceGrouping is not present" )]
         public void ThenTheTagBlockSentenceGroupingIsNotPresent()
         {
-            this.Then(parser => Assert.IsFalse(parser.TagBlock.SentenceGrouping.HasValue));
+            Then( parser => Assert.IsFalse( parser.TagBlock.SentenceGrouping.HasValue ) );
         }
 
-        [Then("the SentenceGroupId is '(.*)'")]
-        public void ThenTheSentenceGroupIdIs(int sentenceGroupId)
+        [Then( "the SentenceGroupId is '(.*)'" )]
+        public void ThenTheSentenceGroupIdIs( int sentenceGroupId )
         {
-            this.Then(parser => Assert.AreEqual(sentenceGroupId, parser.TagBlock.SentenceGrouping.Value.GroupId));
-        }
-
-        [Then("the ChannelCode is '(.*)'")]
-        public void ThenTheChannelCodeIs(char channelCode)
-        {
-            this.Then(parser => Assert.AreEqual(channelCode, parser.ChannelCode));
-        }
-
-        [Then("the payload is '(.*)'")]
-        public void ThenThePayloadIs(string payload)
-        {
-            this.Then(parser =>
+            Then( parser =>
             {
-                string parsedPayload = Encoding.ASCII.GetString(parser.Payload);
-                Assert.AreEqual(payload, parsedPayload);
-            });
+                Assert.IsTrue( parser.TagBlock.SentenceGrouping.HasValue );
+                Assert.AreEqual( sentenceGroupId, parser.TagBlock.SentenceGrouping!.Value.GroupId );
+            } );
         }
 
-        [Then("the padding is (.*)")]
-        public void ThenThePaddingIs(int padding)
+        [Then( "the ChannelCode is '(.*)'" )]
+        public void ThenTheChannelCodeIs( char channelCode )
         {
-            this.Then(parser => Assert.AreEqual(padding, parser.Padding));
+            Then( parser => Assert.AreEqual( channelCode, parser.ChannelCode ) );
         }
 
-        private void When(string messageLine)
+        [Then( "the payload is '(.*)'" )]
+        public void ThenThePayloadIs( string payload )
         {
-            this.When(() => new NmeaLineParser(Encoding.ASCII.GetBytes(messageLine)));
+            Then( parser =>
+            {
+                string parsedPayload = Encoding.ASCII.GetString( parser.Payload );
+                Assert.AreEqual( payload, parsedPayload );
+            } );
         }
 
-        private void When(ParserMaker makeParser)
+        [Then( "the padding is (.*)" )]
+        public void ThenThePaddingIs( int padding )
         {
-            this.makeParser = makeParser;
+            Then( parser => Assert.AreEqual( padding, parser.Padding ) );
         }
 
-        private void Then(ParserTest test)
+        void When( string messageLine )
         {
-            NmeaLineParser parser = this.makeParser();
-            test(parser);
+            When( () => new NmeaLineParser<DefaultExtraFieldParser>( Encoding.ASCII.GetBytes( messageLine ) ) );
+        }
+
+        void When( ParserMaker makeParser )
+        {
+            _makeParser = makeParser;
+        }
+
+        void Then( ParserTest test )
+        {
+            if( _makeParser is null ) throw new InvalidOperationException( $"When step must be called." );
+            NmeaLineParser<DefaultExtraFieldParser> parser = _makeParser();
+            test( parser );
         }
     }
 }

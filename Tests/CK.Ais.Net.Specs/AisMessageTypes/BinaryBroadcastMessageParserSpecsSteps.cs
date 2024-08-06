@@ -1,81 +1,83 @@
-﻿namespace Ais.Net.Specs.AisMessageTypes
-{
-    using System.Text;
-    using NUnit.Framework;
-    using TechTalk.SpecFlow;
+using NUnit.Framework;
+using System;
+using System.Text;
+using TechTalk.SpecFlow;
 
+namespace Ais.Net.Specs.AisMessageTypes
+{
     [Binding]
     public class BinaryBroadcastMessageParserSpecsSteps
     {
-        private ParserMaker makeParser;
+        ParserMaker? _makeParser;
 
-        private delegate NmeaAisBinaryBroadcastMessageParser ParserMaker();
+        delegate NmeaAisBinaryBroadcastMessageParser ParserMaker();
 
-        private delegate void ParserTest(NmeaAisBinaryBroadcastMessageParser parser);
+        delegate void ParserTest( NmeaAisBinaryBroadcastMessageParser parser );
 
-        [When("I parse '(.*)' with padding (.*) as a Binary Broadcast Message")]
-        public void WhenIParseWithNmeaAisBinaryBroadcastMessageParser(string payload, uint padding)
+        [When( "I parse '(.*)' with padding (.*) as a Binary Broadcast Message" )]
+        public void WhenIParseWithNmeaAisBinaryBroadcastMessageParser( string payload, uint padding )
         {
-            this.When(() => new NmeaAisBinaryBroadcastMessageParser(Encoding.ASCII.GetBytes(payload), padding));
+            When( () => new NmeaAisBinaryBroadcastMessageParser( Encoding.ASCII.GetBytes( payload ), padding ) );
         }
 
-        [Then(@"NmeaAisBinaryBroadcastMessageParser\.Type is (.*)")]
-        public void ThenNmeaAisBinaryBroadcastMessageParser_TypeIs(MessageType messageType)
+        [Then( @"NmeaAisBinaryBroadcastMessageParser\.Type is (.*)" )]
+        public void ThenNmeaAisBinaryBroadcastMessageParser_TypeIs( MessageType messageType )
         {
-            this.Then(parser => Assert.AreEqual(messageType, parser.MessageType));
+            Then( parser => Assert.AreEqual( messageType, parser.MessageType ) );
         }
 
-        [Then(@"NmeaAisBinaryBroadcastMessageParser\.RepeatIndicator is (.*)")]
-        public void ThenNmeaAisBinaryBroadcastMessageParser_RepeatIndicatorIs(uint repeatCount)
+        [Then( @"NmeaAisBinaryBroadcastMessageParser\.RepeatIndicator is (.*)" )]
+        public void ThenNmeaAisBinaryBroadcastMessageParser_RepeatIndicatorIs( uint repeatCount )
         {
-            this.Then(parser => Assert.AreEqual(repeatCount, parser.RepeatIndicator));
+            Then( parser => Assert.AreEqual( repeatCount, parser.RepeatIndicator ) );
         }
 
-        [Then(@"NmeaAisBinaryBroadcastMessageParser\.Mmsi is (.*)")]
-        public void ThenNmeaAisBinaryBroadcastMessageParser_MmsiIs(uint mmsi)
+        [Then( @"NmeaAisBinaryBroadcastMessageParser\.Mmsi is (.*)" )]
+        public void ThenNmeaAisBinaryBroadcastMessageParser_MmsiIs( uint mmsi )
         {
-            this.Then(parser => Assert.AreEqual(mmsi, parser.Mmsi));
+            Then( parser => Assert.AreEqual( mmsi, parser.Mmsi ) );
         }
 
-        [Then(@"NmeaAisBinaryBroadcastMessageParser\.SpareBits38 is (.*)")]
-        public void ThenNmeaAisBinaryBroadcastMessageParser_SpareBits38Is(uint value)
+        [Then( @"NmeaAisBinaryBroadcastMessageParser\.SpareBits38 is (.*)" )]
+        public void ThenNmeaAisBinaryBroadcastMessageParser_SpareBits38Is( uint value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.SpareBits38));
+            Then( parser => Assert.AreEqual( value, parser.SpareBits38 ) );
         }
 
-        [Then(@"NmeaAisBinaryBroadcastMessageParser\.DAC is (.*)")]
-        public void ThenNmeaAisBinaryBroadcastMessageParser_DACIs(uint value)
+        [Then( @"NmeaAisBinaryBroadcastMessageParser\.DAC is (.*)" )]
+        public void ThenNmeaAisBinaryBroadcastMessageParser_DACIs( uint value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.DAC));
+            Then( parser => Assert.AreEqual( value, parser.DAC ) );
         }
 
-        [Then(@"NmeaAisBinaryBroadcastMessageParser\.FI is (.*)")]
-        public void ThenNmeaAisBinaryBroadcastMessageParser_FIIs(uint value)
+        [Then( @"NmeaAisBinaryBroadcastMessageParser\.FI is (.*)" )]
+        public void ThenNmeaAisBinaryBroadcastMessageParser_FIIs( uint value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.FI));
+            Then( parser => Assert.AreEqual( value, parser.FI ) );
         }
 
-        [Then(@"NmeaAisBinaryBroadcastMessageParser\.ApplicationDataPadding is (.*)")]
-        public void ThenNmeaAisBinaryBroadcastMessageParser_ApplicationDataPaddingIs(uint value)
+        [Then( @"NmeaAisBinaryBroadcastMessageParser\.ApplicationDataPadding is (.*)" )]
+        public void ThenNmeaAisBinaryBroadcastMessageParser_ApplicationDataPaddingIs( uint value )
         {
-            this.Then(parser => Assert.AreEqual(value, parser.ApplicationDataPadding));
+            Then( parser => Assert.AreEqual( value, parser.ApplicationDataPadding ) );
         }
 
-        [Then(@"NmeaAisBinaryBroadcastMessageParser\.ApplicationData is (.*)")]
-        public void ThenNmeaAisBinaryBroadcastMessageParser_ApplicationDataIs(string value)
+        [Then( @"NmeaAisBinaryBroadcastMessageParser\.ApplicationData is (.*)" )]
+        public void ThenNmeaAisBinaryBroadcastMessageParser_ApplicationDataIs( string value )
         {
-            this.Then(parser => Assert.AreEqual(value, Encoding.ASCII.GetString(parser.ApplicationData)));
+            Then( parser => Assert.AreEqual( value, Encoding.ASCII.GetString( parser.ApplicationData ) ) );
         }
 
-        private void When(ParserMaker makeParser)
+        void When( ParserMaker makeParser )
         {
-            this.makeParser = makeParser;
+            _makeParser = makeParser;
         }
 
-        private void Then(ParserTest test)
+        void Then( ParserTest test )
         {
-            NmeaAisBinaryBroadcastMessageParser parser = this.makeParser();
-            test(parser);
+            if( _makeParser is null ) throw new InvalidOperationException( $"When step must be called." );
+            NmeaAisBinaryBroadcastMessageParser parser = _makeParser();
+            test( parser );
         }
     }
 }

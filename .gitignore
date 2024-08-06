@@ -8,6 +8,7 @@ CodeCakeBuilder/[Rr]eleases/
 CodeCakeBuilder/UnitTestsDone.*.txt
 $StObjGen/
 Tests/**/TestResult*.xml
+Tests/**/*.trx
 CodeCakeBuilder/MemoryKey.*.txt
 Tests/**/Logs/
 Tests/**/CKSetup-WorkingDir/
