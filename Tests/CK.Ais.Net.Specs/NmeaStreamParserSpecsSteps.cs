@@ -37,6 +37,13 @@ namespace Ais.Net.Specs
             _content.Append( '\n' );
         }
 
+        [Given( "a CR line '(.*)'" )]
+        public void GivenACrLine( string line )
+        {
+            _content.Append( line );
+            _content.Append( '\r' );
+        }
+
         [Given( "a CRLF line '(.*)'" )]
         public void GivenACrlfLine( string line )
         {

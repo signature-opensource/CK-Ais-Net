@@ -30,6 +30,12 @@ Scenario: Single LF blank line only
 	Then INmeaAisMessageStreamProcessor.OnNext should have been called 0 times
 	And INmeaAisMessageStreamProcessor.OnComplete should have been called
 
+Scenario: Single CR blank line only
+	Given a CR line ''
+	When I parse the content by message
+	Then INmeaAisMessageStreamProcessor.OnNext should have been called 0 times
+	And INmeaAisMessageStreamProcessor.OnComplete should have been called
+
 Scenario: Multiple CRLF blank lines only
 	Given a CRLF line ''
 	And a CRLF line ''
@@ -50,6 +56,7 @@ Scenario: Multiple mixed blank lines only
 	Given a CRLF line ''
 	And a line ''
 	And a CRLF line ''
+  And a CR line ''
 	When I parse the content by message
 	Then INmeaAisMessageStreamProcessor.OnNext should have been called 0 times
 	And INmeaAisMessageStreamProcessor.OnComplete should have been called
@@ -81,6 +88,27 @@ Scenario: Multiple lines
 	And a line '\s:24,c:1567692878*35\!AIVDM,1,1,,B,13o`9@701j1Ej3vc;o3q@7SJ0D02,0*21'
 	# ais.kystverket.no
 	And a line '\s:772,c:1567693246*07\!AIVDM,1,1,,,13o7g2001P0Lv<rSdVHf2h3N0000,0*25'
+	When I parse the content by message
+	Then INmeaAisMessageStreamProcessor.OnNext should have been called 4 times
+	# ais.kystverket.no
+	And in ais message 0 the payload should be 'B3m:H900AP@b:79ae6:<OwnUoP06' with padding of 0
+	# ais.kystverket.no
+	And in ais message 1 the payload should be '13m9WS001d0K==pR=D?HB6WD0pJV' with padding of 0
+	# ais.kystverket.no
+	And in ais message 2 the payload should be '13o`9@701j1Ej3vc;o3q@7SJ0D02' with padding of 0
+	# ais.kystverket.no
+	And in ais message 3 the payload should be '13o7g2001P0Lv<rSdVHf2h3N0000' with padding of 0
+	And INmeaAisMessageStreamProcessor.OnComplete should have been called
+
+Scenario: Multiple CR lines
+	# ais.kystverket.no
+	Given a CR line '\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78'
+	# ais.kystverket.no
+	And a CR line '\s:3,c:1567692251*01\!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*54'
+	# ais.kystverket.no
+	And a CR line '\s:24,c:1567692878*35\!AIVDM,1,1,,B,13o`9@701j1Ej3vc;o3q@7SJ0D02,0*21'
+	# ais.kystverket.no
+	And a CR line '\s:772,c:1567693246*07\!AIVDM,1,1,,,13o7g2001P0Lv<rSdVHf2h3N0000,0*25'
 	When I parse the content by message
 	Then INmeaAisMessageStreamProcessor.OnNext should have been called 4 times
 	# ais.kystverket.no

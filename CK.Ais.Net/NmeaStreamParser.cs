@@ -157,7 +157,9 @@ namespace Ais.Net
 
                     ReadOnlySequence<byte> remainingSequence = result.Buffer;
 
-                    while( (position = remainingSequence.PositionOf( (byte)'\n' ) ?? (remainingSequence.IsEmpty || !result.IsCompleted ? default( SequencePosition? ) : remainingSequence.End)) != null )
+                    while( (position = remainingSequence.PositionOf( (byte)'\n' )
+                                    ?? remainingSequence.PositionOf( (byte)'\r' )
+                                    ?? (remainingSequence.IsEmpty || !result.IsCompleted ? default( SequencePosition? ) : remainingSequence.End)) is not null )
                     {
                         ReadOnlySequence<byte> line = remainingSequence.Slice( remainingSequence.Start, position.Value );
 

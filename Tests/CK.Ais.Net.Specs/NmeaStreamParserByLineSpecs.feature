@@ -1,4 +1,4 @@
-﻿# Copyright (c) Endjin Limited. All rights reserved.
+# Copyright (c) Endjin Limited. All rights reserved.
 #
 # Contains data under the Norwegian licence for Open Government data (NLOD) distributed by
 # the Norwegian Costal Administration - https://ais.kystverket.no/
@@ -30,6 +30,12 @@ Scenario: Single LF blank line only
 	Then INmeaLineStreamProcessor.OnNext should have been called 0 times
 	And INmeaLineStreamProcessor.OnComplete should have been called
 
+Scenario: Single CR blank line only
+  Given a CR line ''
+  When I parse the content by line
+	Then INmeaLineStreamProcessor.OnNext should have been called 0 times
+	And INmeaLineStreamProcessor.OnComplete should have been called
+
 Scenario: Multiple CRLF blank lines only
 	Given a CRLF line ''
 	And a CRLF line ''
@@ -46,10 +52,19 @@ Scenario: Multiple LF blank lines only
 	Then INmeaLineStreamProcessor.OnNext should have been called 0 times
 	And INmeaLineStreamProcessor.OnComplete should have been called
 
+Scenario: Multiple CR blank lines only
+	Given a CR line ''
+	And a CR line ''
+	And a CR line ''
+	When I parse the content by line
+	Then INmeaLineStreamProcessor.OnNext should have been called 0 times
+	And INmeaLineStreamProcessor.OnComplete should have been called
+
 Scenario: Multiple mixed blank lines only
 	Given a CRLF line ''
 	And a line ''
 	And a CRLF line ''
+  And a CR line ''
 	When I parse the content by line
 	Then INmeaLineStreamProcessor.OnNext should have been called 0 times
 	And INmeaLineStreamProcessor.OnComplete should have been called
@@ -81,6 +96,27 @@ Scenario: Multiple lines
 	And a line '\s:24,c:1567692878*35\!AIVDM,1,1,,B,13o`9@701j1Ej3vc;o3q@7SJ0D02,0*21'
 	# ais.kystverket.no
 	And a line '\s:772,c:1567693246*07\!AIVDM,1,1,,,13o7g2001P0Lv<rSdVHf2h3N0000,0*25'
+	When I parse the content by line
+	Then INmeaLineStreamProcessor.OnNext should have been called 4 times
+	# ais.kystverket.no
+	And line 0 should have a tag block of 's:42,c:1567684904*38' and a sentence of '!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78'
+	# ais.kystverket.no
+	And line 1 should have a tag block of 's:3,c:1567692251*01' and a sentence of '!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*54'
+	# ais.kystverket.no
+	And line 2 should have a tag block of 's:24,c:1567692878*35' and a sentence of '!AIVDM,1,1,,B,13o`9@701j1Ej3vc;o3q@7SJ0D02,0*21'
+	# ais.kystverket.no
+	And line 3 should have a tag block of 's:772,c:1567693246*07' and a sentence of '!AIVDM,1,1,,,13o7g2001P0Lv<rSdVHf2h3N0000,0*25'
+	And INmeaLineStreamProcessor.OnComplete should have been called
+
+Scenario: Multiple CR lines
+	# ais.kystverket.no
+	Given a CR line '\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78'
+	# ais.kystverket.no
+	And a CR line '\s:3,c:1567692251*01\!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*54'
+	# ais.kystverket.no
+	And a CR line '\s:24,c:1567692878*35\!AIVDM,1,1,,B,13o`9@701j1Ej3vc;o3q@7SJ0D02,0*21'
+	# ais.kystverket.no
+	And a CR line '\s:772,c:1567693246*07\!AIVDM,1,1,,,13o7g2001P0Lv<rSdVHf2h3N0000,0*25'
 	When I parse the content by line
 	Then INmeaLineStreamProcessor.OnNext should have been called 4 times
 	# ais.kystverket.no
