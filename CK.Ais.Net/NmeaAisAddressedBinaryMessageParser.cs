@@ -74,7 +74,9 @@ namespace Ais.Net
         /// <summary>
         /// Gets the padding before the data in the <see cref="ApplicationData"/>.
         /// </summary>
-        public static uint ApplicationDataPadding => 4;
+#pragma warning disable CA1822 // Mark members as static
+        public uint ApplicationDataPadding => 4;
+#pragma warning restore CA1822 // Mark members as static
 
         /// <summary>
         /// Gets the application specific data.
