@@ -77,7 +77,7 @@ namespace Ais.Net.Specs.AisMessageTypes
         [Then( @"NmeaAisAddressedBinaryMessageParser\.ApplicationDataPadding is (.*)" )]
         public void ThenNmeaAisAddressedBinaryMessageParser_ApplicationDataPaddingIs( uint value )
         {
-            Then( parser => Assert.AreEqual( value, NmeaAisAddressedBinaryMessageParser.ApplicationDataPadding ) );
+            Then( parser => Assert.AreEqual( value, parser.ApplicationDataPadding ) );
         }
 
         [Then( @"NmeaAisAddressedBinaryMessageParser\.ApplicationData is (.*)" )]
