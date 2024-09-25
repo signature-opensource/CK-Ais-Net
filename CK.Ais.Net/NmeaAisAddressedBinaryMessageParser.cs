@@ -19,6 +19,7 @@ namespace Ais.Net
         {
             _bits = new NmeaAisBitVectorParser( ascii, padding );
             ApplicationData = ascii.Slice( 14 );
+            ApplicationDataPaddingAfter = padding;
         }
 
         /// <summary>
@@ -75,12 +76,17 @@ namespace Ais.Net
         /// Gets the padding before the data in the <see cref="ApplicationData"/>.
         /// </summary>
 #pragma warning disable CA1822 // Mark members as static
-        public uint ApplicationDataPadding => 4;
+        public uint ApplicationDataPaddingBefore => 4;
 #pragma warning restore CA1822 // Mark members as static
+
+        /// <summary>
+        /// Gets the padding after the data in the <see cref="ApplicationData"/>.
+        /// </summary>
+        public readonly uint ApplicationDataPaddingAfter;
 
         /// <summary>
         /// Gets the application specific data.
         /// </summary>
-        public ReadOnlySpan<byte> ApplicationData { get; }
+        public readonly ReadOnlySpan<byte> ApplicationData;
     }
 }

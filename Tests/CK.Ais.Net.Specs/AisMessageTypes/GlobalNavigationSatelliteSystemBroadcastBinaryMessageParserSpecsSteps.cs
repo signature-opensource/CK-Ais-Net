@@ -65,7 +65,7 @@ namespace Ais.Net.Specs.AisMessageTypes
         [Then( @"NmeaAisGlobalNavigationSatelliteSystemBroadcastBinaryMessageParser\.DifferentialCorrectionDataPadding is (.*)" )]
         public void ThenNmeaAisGlobalNavigationSatelliteSystemBroadcastBinaryMessageParser_DifferentialCorrectionDataPaddingIs( uint value )
         {
-            Then( parser => Assert.AreEqual( value, parser.DifferentialCorrectionDataPadding ) );
+            Then( parser => Assert.AreEqual( value, parser.DifferentialCorrectionDataPaddingBefore ) );
         }
 
         [Then( @"NmeaAisGlobalNavigationSatelliteSystemBroadcastBinaryMessageParser\.DifferentialCorrectionData is (.*)" )]
