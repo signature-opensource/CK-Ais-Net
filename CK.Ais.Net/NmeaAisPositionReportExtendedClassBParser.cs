@@ -48,7 +48,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets the 8 bits of 'regional reserved' data starting at bit 38.
         /// </summary>
-        public byte RegionalReserved38 => (byte)_bits.GetUnsignedInteger( 8, 38 );
+        public byte SpareBits38 => (byte)_bits.GetUnsignedInteger( 8, 38 );
 
         /// <summary>
         /// Gets the vessel's speed over ground, in tenths of a knot.
@@ -92,7 +92,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets the 4 bits of 'regional reserved' data starting at bit 38.
         /// </summary>
-        public byte RegionalReserved139 => (byte)_bits.GetUnsignedInteger( 4, 139 );
+        public byte SpareBits139 => (byte)_bits.GetUnsignedInteger( 4, 139 );
 
         /// <summary>
         /// Gets the ship name field.

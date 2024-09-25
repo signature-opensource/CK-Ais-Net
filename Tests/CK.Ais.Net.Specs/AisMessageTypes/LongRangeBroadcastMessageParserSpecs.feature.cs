@@ -109,7 +109,7 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestCaseAttribute("KC5E2b@U19PFdLbMuc5=ROv62<7m", "0", "27", "1", "206914217", "false", "false", "2", "82214", "2904", "57", "167", "false", "true", null)]
         [NUnit.Framework.TestCaseAttribute("Kp15Li@1D=MeT5T@", "0", "27", "3", "538008773", "false", "false", "0", "21557", "-18744", "11", "68", "false", "false", null)]
         [NUnit.Framework.TestCaseAttribute("Kk=>UB03fbh:R`7d", "0", "27", "3", "215197000", "false", "false", "0", "61099", "1349", "16", "123", "false", "false", null)]
-        public void FullMessage(string payload, string padding, string type, string repeatindicator, string mmsi, string accuracy, string raimflag, string navigationstatus, string longitude, string latitude, string sog, string cog, string latency, string spare94, string[] exampleTags)
+        public void FullMessage(string payload, string padding, string type, string repeatindicator, string mmsi, string accuracy, string raimflag, string navigationstatus, string longitude, string latitude, string sog, string cog, string latency, string spare95, string[] exampleTags)
         {
             string[] tagsOfScenario = exampleTags;
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
@@ -126,7 +126,7 @@ this.ScenarioInitialize(scenarioInfo);
             argumentsOfScenario.Add("sog", sog);
             argumentsOfScenario.Add("cog", cog);
             argumentsOfScenario.Add("latency", latency);
-            argumentsOfScenario.Add("spare94", spare94);
+            argumentsOfScenario.Add("spare95", spare95);
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Full message", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 12
 this.ScenarioInitialize(scenarioInfo);
@@ -176,7 +176,7 @@ this.ScenarioInitialize(scenarioInfo);
     testRunner.And(string.Format("NmeaAisLongRangeBroadcastMessageParser.PositionLatency is {0}", latency), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 25
-    testRunner.And(string.Format("NmeaAisLongRangeBroadcastMessageParser.SpareBit94 is {0}", spare94), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+    testRunner.And(string.Format("NmeaAisLongRangeBroadcastMessageParser.SpareBit95 is {0}", spare95), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

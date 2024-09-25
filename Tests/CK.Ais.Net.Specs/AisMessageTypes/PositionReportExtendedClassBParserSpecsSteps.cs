@@ -42,10 +42,10 @@ namespace Ais.Net.Specs.AisMessageTypes
             Then( parser => Assert.AreEqual( mmsi, parser.Mmsi ) );
         }
 
-        [Then( @"NmeaAisPositionReportExtendedClassBParser\.RegionalReserved38 is (.*)" )]
-        public void ThenNmeaAisPositionReportExtendedClassBParser_RegionalReserve38dIs( int reserved )
+        [Then( @"NmeaAisPositionReportExtendedClassBParser\.SpareBits38 is (.*)" )]
+        public void ThenNmeaAisPositionReportExtendedClassBParser_SpareBits38dIs( byte spare )
         {
-            Then( parser => Assert.AreEqual( reserved, parser.RegionalReserved38 ) );
+            Then( parser => Assert.AreEqual( spare, parser.SpareBits38 ) );
         }
 
         [Then( @"NmeaAisPositionReportExtendedClassBParser\.SpeedOverGroundTenths is (.*)" )]
@@ -90,10 +90,10 @@ namespace Ais.Net.Specs.AisMessageTypes
             Then( parser => Assert.AreEqual( timeStamp, parser.TimeStampSecond ) );
         }
 
-        [Then( @"NmeaAisPositionReportExtendedClassBParser\.RegionalReserved139 is (.*)" )]
-        public void ThenNmeaAisPositionReportExtendedClassBParser_RegionalReserved139( uint reserved )
+        [Then( @"NmeaAisPositionReportExtendedClassBParser\.SpareBits139 is (.*)" )]
+        public void ThenNmeaAisPositionReportExtendedClassBParser_SpareBits139( byte spare )
         {
-            Then( parser => Assert.AreEqual( reserved, parser.RegionalReserved139 ) );
+            Then( parser => Assert.AreEqual( spare, parser.SpareBits139 ) );
         }
 
         [Then( @"NmeaAisPositionReportExtendedClassBParser\.Name is '(.*)'" )]

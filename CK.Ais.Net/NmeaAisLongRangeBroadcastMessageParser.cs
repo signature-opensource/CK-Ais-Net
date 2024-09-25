@@ -91,6 +91,6 @@ namespace Ais.Net
         /// <summary>
         /// Gets a value indicating whether the spare bit at offset 94 is set.
         /// </summary>
-        public bool SpareBit94 => _bits.GetBit( 95 );
+        public bool SpareBit95 => _bits.GetBit( 95 );
     }
 }

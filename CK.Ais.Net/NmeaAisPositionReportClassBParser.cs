@@ -48,7 +48,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets the 8 bits of 'regional reserved' data starting at bit 38.
         /// </summary>
-        public byte RegionalReserved38 => (byte)_bits.GetUnsignedInteger( 8, 38 );
+        public byte SpareBits38 => (byte)_bits.GetUnsignedInteger( 8, 38 );
 
         /// <summary>
         /// Gets the vessel's speed over ground, in tenths of a knot.
@@ -90,9 +90,9 @@ namespace Ais.Net
         public uint TimeStampSecond => _bits.GetUnsignedInteger( 6, 133 );
 
         /// <summary>
-        /// Gets the 2 bits of 'regional reserved' data starting at bit 38.
+        /// Gets the 2 bits of 'regional reserved' data starting at bit 139.
         /// </summary>
-        public byte RegionalReserved139 => (byte)_bits.GetUnsignedInteger( 2, 139 );
+        public byte SpareBits139 => (byte)_bits.GetUnsignedInteger( 2, 139 );
 
         /// <summary>
         /// Gets the value indicating whether this is a Class B (using CSTDMA) unit, or a Class B+

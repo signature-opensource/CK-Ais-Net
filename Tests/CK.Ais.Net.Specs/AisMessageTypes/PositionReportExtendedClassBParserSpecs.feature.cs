@@ -172,19 +172,19 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Regional Reserved bits 38-45")]
+        [NUnit.Framework.DescriptionAttribute("Spare bits 38-45")]
         [NUnit.Framework.TestCaseAttribute("C000000000000000000000000000000000000000000000000000", "0", "0", null)]
         [NUnit.Framework.TestCaseAttribute("C000000400000000000000000000000000000000000000000000", "0", "1", null)]
         [NUnit.Framework.TestCaseAttribute("C000001000000000000000000000000000000000000000000000", "0", "16", null)]
         [NUnit.Framework.TestCaseAttribute("C00000?t00000000000000000000000000000000000000000000", "0", "255", null)]
-        public void RegionalReservedBits38_45(string payload, string padding, string reserved, string[] exampleTags)
+        public void SpareBits38_45(string payload, string padding, string spare, string[] exampleTags)
         {
             string[] tagsOfScenario = exampleTags;
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             argumentsOfScenario.Add("payload", payload);
             argumentsOfScenario.Add("padding", padding);
-            argumentsOfScenario.Add("reserved", reserved);
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Regional Reserved bits 38-45", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            argumentsOfScenario.Add("spare", spare);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Spare bits 38-45", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 34
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -199,7 +199,7 @@ this.ScenarioInitialize(scenarioInfo);
     testRunner.When(string.Format("I parse \'{0}\' with padding {1} as a Position Report Extended Class B", payload, padding), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 36
-    testRunner.Then(string.Format("NmeaAisPositionReportExtendedClassBParser.RegionalReserved38 is {0}", reserved), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.Then(string.Format("NmeaAisPositionReportExtendedClassBParser.SpareBits38 is {0}", spare), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -410,7 +410,7 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Regional Reserved bits 139-142")]
+        [NUnit.Framework.DescriptionAttribute("Spare bits bits 139-142")]
         [NUnit.Framework.TestCaseAttribute("C000000000000000000000000000000000000000000000000000", "0", "0", null)]
         [NUnit.Framework.TestCaseAttribute("C000000000000000000000020000000000000000000000000000", "0", "1", null)]
         [NUnit.Framework.TestCaseAttribute("C000000000000000000000040000000000000000000000000000", "0", "2", null)]
@@ -418,14 +418,14 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestCaseAttribute("C0000000000000000000000@0000000000000000000000000000", "0", "8", null)]
         [NUnit.Framework.TestCaseAttribute("C0000000000000000000000H0000000000000000000000000000", "0", "12", null)]
         [NUnit.Framework.TestCaseAttribute("C0000000000000000000000N0000000000000000000000000000", "0", "15", null)]
-        public void RegionalReservedBits139_142(string payload, string padding, string reserved, string[] exampleTags)
+        public void SpareBitsBits139_142(string payload, string padding, string spare, string[] exampleTags)
         {
             string[] tagsOfScenario = exampleTags;
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             argumentsOfScenario.Add("payload", payload);
             argumentsOfScenario.Add("padding", padding);
-            argumentsOfScenario.Add("reserved", reserved);
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Regional Reserved bits 139-142", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            argumentsOfScenario.Add("spare", spare);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Spare bits bits 139-142", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 108
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -440,7 +440,7 @@ this.ScenarioInitialize(scenarioInfo);
     testRunner.When(string.Format("I parse \'{0}\' with padding {1} as a Position Report Extended Class B", payload, padding), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 110
-    testRunner.Then(string.Format("NmeaAisPositionReportExtendedClassBParser.RegionalReserved139 is {0}", reserved), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.Then(string.Format("NmeaAisPositionReportExtendedClassBParser.SpareBits139 is {0}", spare), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

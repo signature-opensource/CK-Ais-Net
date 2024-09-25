@@ -1,4 +1,4 @@
-﻿# Copyright (c) Endjin Limited. All rights reserved.
+# Copyright (c) Endjin Limited. All rights reserved.
 #
 # Contains data under the Norwegian licence for Open Government data (NLOD) distributed by
 # the Norwegian Costal Administration - https://ais.kystverket.no/
@@ -44,17 +44,17 @@ Scenario Outline: MMSI
     | B3q35T005h<0h@`Dd:i;gwRUoP06 | 0       | 261146000 |		# ais.kystverket.no
     | B3m?;p0008<q:naAtLh03wTUoP06 | 0       | 257149920 |		# ais.kystverket.no
 
-Scenario Outline: Regional Reserved bits 38-45
+Scenario Outline: Spare bits 38-45
     When I parse '<payload>' with padding <padding> as a Position Report Class B
-    Then AisPositionReportClassBParser.RegionalReserved38 is <reserved>
+    Then AisPositionReportClassBParser.SpareBits38 is <spare>
 
     Examples:
-    | payload                      | padding | reserved |
-    | B000000000000000000000000000 | 0       | 0        |
-    | B000000400000000000000000000 | 0       | 1        |
-    | B000001000000000000000000000 | 0       | 16       |
-    | B00000?t00000000000000000000 | 0       | 255      |
-    | B3m?;p0008<q:naAtLh03wTUoP06 | 0       | 0        |		# ais.kystverket.no
+    | payload                      | padding | spare |
+    | B000000000000000000000000000 | 0       | 0     |
+    | B000000400000000000000000000 | 0       | 1     |
+    | B000001000000000000000000000 | 0       | 16    |
+    | B00000?t00000000000000000000 | 0       | 255   |
+    | B3m?;p0008<q:naAtLh03wTUoP06 | 0       | 0     |		# ais.kystverket.no
 
 Scenario Outline: Speed Over Ground
     When I parse '<payload>' with padding <padding> as a Position Report Class B
@@ -134,17 +134,17 @@ Scenario Outline: Time Stamp
     | B3mnUc0000@LTtaWw7CQ3wVTkP06 | 0       | 13        |		# ais.kystverket.no
     | B3m6D@P0005r0R``WaiC;wgUkP06 | 0       | 31        |		# ais.kystverket.no
 
-Scenario Outline: Regional Reserved bits 139-140
+Scenario Outline: Spare bits 139-140
     When I parse '<payload>' with padding <padding> as a Position Report Class B
-    Then AisPositionReportClassBParser.RegionalReserved139 is <reserved>
+    Then AisPositionReportClassBParser.SpareBits139is <spare>
 
     Examples:
-    | payload                      | padding | reserved |
-    | B000000000000000000000000000 | 0       | 0        |
-    | B000000000000000000000080000 | 0       | 1        |
-    | B0000000000000000000000@0000 | 0       | 2        |
-    | B0000000000000000000000H0000 | 0       | 3        |
-    | B3q35T005h<0h@`Dd:i;gwRUoP06 | 0       | 0        |		# ais.kystverket.no
+    | payload                      | padding | spare |
+    | B000000000000000000000000000 | 0       | 0     |
+    | B000000000000000000000080000 | 0       | 1     |
+    | B0000000000000000000000@0000 | 0       | 2     |
+    | B0000000000000000000000H0000 | 0       | 3     |
+    | B3q35T005h<0h@`Dd:i;gwRUoP06 | 0       | 0     |		# ais.kystverket.no
 
 Scenario Outline: CS unit flag
     When I parse '<payload>' with padding <padding> as a Position Report Class B

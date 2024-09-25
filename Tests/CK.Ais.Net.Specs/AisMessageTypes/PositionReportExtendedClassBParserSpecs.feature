@@ -1,4 +1,4 @@
-﻿# Copyright (c) Endjin Limited. All rights reserved.
+# Copyright (c) Endjin Limited. All rights reserved.
 
 Feature: PositionReportExtendedClassBParserSpecs
     In order process AIS messages from an nm4 file
@@ -31,16 +31,16 @@ Scenario Outline: MMSI
     | C00000P000000000000000000000000000000000000000000000 | 0       | 2         |
     | C>eq`d@000000000000000000000000000000000000000000000 | 0       | 987654321 |
 
-Scenario Outline: Regional Reserved bits 38-45
+Scenario Outline: Spare bits 38-45
     When I parse '<payload>' with padding <padding> as a Position Report Extended Class B
-    Then NmeaAisPositionReportExtendedClassBParser.RegionalReserved38 is <reserved>
+    Then NmeaAisPositionReportExtendedClassBParser.SpareBits38 is <spare>
 
     Examples:
-    | payload                                              | padding | reserved |
-    | C000000000000000000000000000000000000000000000000000 | 0       | 0        |
-    | C000000400000000000000000000000000000000000000000000 | 0       | 1        |
-    | C000001000000000000000000000000000000000000000000000 | 0       | 16       |
-    | C00000?t00000000000000000000000000000000000000000000 | 0       | 255      |
+    | payload                                              | padding | spare |
+    | C000000000000000000000000000000000000000000000000000 | 0       | 0     |
+    | C000000400000000000000000000000000000000000000000000 | 0       | 1     |
+    | C000001000000000000000000000000000000000000000000000 | 0       | 16    |
+    | C00000?t00000000000000000000000000000000000000000000 | 0       | 255   |
 
 Scenario Outline: Speed Over Ground
     When I parse '<payload>' with padding <padding> as a Position Report Extended Class B
@@ -105,19 +105,19 @@ Scenario Outline: Time Stamp
     | C0000000000000000000000P0000000000000000000000000000 | 0       | 1         |
     | C000000000000000000000MP0000000000000000000000000000 | 0       | 59        |
 
-Scenario Outline: Regional Reserved bits 139-142
+Scenario Outline: Spare bits bits 139-142
     When I parse '<payload>' with padding <padding> as a Position Report Extended Class B
-    Then NmeaAisPositionReportExtendedClassBParser.RegionalReserved139 is <reserved>
+    Then NmeaAisPositionReportExtendedClassBParser.SpareBits139 is <spare>
 
     Examples:
-    | payload                                              | padding | reserved |
-    | C000000000000000000000000000000000000000000000000000 | 0       | 0        |
-    | C000000000000000000000020000000000000000000000000000 | 0       | 1        |
-    | C000000000000000000000040000000000000000000000000000 | 0       | 2        |
-    | C000000000000000000000080000000000000000000000000000 | 0       | 4        |
-    | C0000000000000000000000@0000000000000000000000000000 | 0       | 8        |
-    | C0000000000000000000000H0000000000000000000000000000 | 0       | 12       |
-    | C0000000000000000000000N0000000000000000000000000000 | 0       | 15       |
+    | payload                                              | padding | spare |
+    | C000000000000000000000000000000000000000000000000000 | 0       | 0     |
+    | C000000000000000000000020000000000000000000000000000 | 0       | 1     |
+    | C000000000000000000000040000000000000000000000000000 | 0       | 2     |
+    | C000000000000000000000080000000000000000000000000000 | 0       | 4     |
+    | C0000000000000000000000@0000000000000000000000000000 | 0       | 8     |
+    | C0000000000000000000000H0000000000000000000000000000 | 0       | 12    |
+    | C0000000000000000000000N0000000000000000000000000000 | 0       | 15    |
 
 Scenario Outline: Name
     When I parse '<payload>' with padding <padding> as a Position Report Extended Class B

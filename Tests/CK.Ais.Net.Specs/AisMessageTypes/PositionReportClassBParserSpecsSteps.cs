@@ -42,10 +42,10 @@ namespace Ais.Net.Specs.AisMessageTypes
             Then( parser => Assert.AreEqual( mmsi, parser.Mmsi ) );
         }
 
-        [Then( @"AisPositionReportClassBParser\.RegionalReserved38 is (.*)" )]
-        public void ThenAisPositionReportClassBParser_RegionalReservedIs( int reserved )
+        [Then( @"AisPositionReportClassBParser\.SPareBits38 is (.*)" )]
+        public void ThenAisPositionReportClassBParser_SpareBitsIs( int spare )
         {
-            Then( parser => Assert.AreEqual( reserved, parser.RegionalReserved38 ) );
+            Then( parser => Assert.AreEqual( spare, parser.SpareBits38 ) );
         }
 
         [Then( @"AisPositionReportClassBParser\.SpeedOverGroundTenths is (.*)" )]
@@ -90,10 +90,10 @@ namespace Ais.Net.Specs.AisMessageTypes
             Then( parser => Assert.AreEqual( timeStamp, parser.TimeStampSecond ) );
         }
 
-        [Then( @"AisPositionReportClassBParser\.RegionalReserved139 is (.*)" )]
-        public void ThenAisPositionReportClassBParser_RegionalReserved139Is( int reserved )
+        [Then( @"AisPositionReportClassBParser\.SpareBits139 is (.*)" )]
+        public void ThenAisPositionReportClassBParser_SpareBits139Is( int spare )
         {
-            Then( parser => Assert.AreEqual( reserved, parser.RegionalReserved139 ) );
+            Then( parser => Assert.AreEqual( spare, parser.SpareBits139 ) );
         }
 
         [Then( @"AisPositionReportClassBParser\.CsUnit is (.*)" )]
