@@ -28,19 +28,19 @@ namespace Ais.Net
             switch( (_hasDestination, BinaryDataFlag) )
             {
                 case (true, true ):
-                    ApplicationDataPadding = 4;
+                    ApplicationDataPaddingBefore = 4;
                     ApplicationData = ascii.Slice( 14 - firstSlotLength );
                     break;
                 case (true, false ):
-                    ApplicationDataPadding = 0;
+                    ApplicationDataPaddingBefore = 0;
                     ApplicationData = ascii.Slice( 12 - firstSlotLength );
                     break;
                 case (false, true ):
-                    ApplicationDataPadding = 2;
+                    ApplicationDataPaddingBefore = 2;
                     ApplicationData = ascii.Slice( 9 - firstSlotLength );
                     break;
                 case (false, false ):
-                    ApplicationDataPadding = 4;
+                    ApplicationDataPaddingBefore = 4;
                     ApplicationData = ascii.Slice( 6 - firstSlotLength );
                     break;
             }
@@ -108,32 +108,37 @@ namespace Ais.Net
         /// <summary>
         /// Gets the padding before the data in the <see cref="ApplicationData"/>.
         /// </summary>
-        public uint ApplicationDataPadding { get; }
+        public readonly uint ApplicationDataPaddingBefore;
+
+        /// <summary>
+        /// Gets the padding after the data in the <see cref="ApplicationData"/>.
+        /// </summary>
+        public readonly uint ApplicationDataPaddingAfter;
 
         /// <summary>
         /// Gets the application specific data.
         /// </summary>
-        public ReadOnlySpan<byte> ApplicationData { get; }
+        public readonly ReadOnlySpan<byte> ApplicationData;
 
         /// <summary>
         /// Gets the binary data from the second slot.
         /// </summary>
-        public ReadOnlySpan<byte> BinaryDataSlot2 { get; } = ReadOnlySpan<byte>.Empty;
+        public readonly ReadOnlySpan<byte> BinaryDataSlot2;
 
         /// <summary>
         /// Gets the binary data from the third slot.
         /// </summary>
-        public ReadOnlySpan<byte> BinaryDataSlot3 { get; } = ReadOnlySpan<byte>.Empty;
+        public readonly ReadOnlySpan<byte> BinaryDataSlot3;
 
         /// <summary>
         /// Gets the binary data from the fourth slot.
         /// </summary>
-        public ReadOnlySpan<byte> BinaryDataSlot4 { get; } = ReadOnlySpan<byte>.Empty;
+        public readonly ReadOnlySpan<byte> BinaryDataSlot4;
 
         /// <summary>
         /// Gets the binary data from the fifth slot.
         /// </summary>
-        public ReadOnlySpan<byte> BinaryDataSlot5 { get; } = ReadOnlySpan<byte>.Empty;
+        public readonly ReadOnlySpan<byte> BinaryDataSlot5;
         /*
         /// <summary>
         /// Gets the needed spare bits for alignment.

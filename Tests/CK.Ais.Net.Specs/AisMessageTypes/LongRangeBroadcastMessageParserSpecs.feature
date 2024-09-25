@@ -22,11 +22,10 @@ Scenario: Full message
     And NmeaAisLongRangeBroadcastMessageParser.SpeedOverGround is <sog>
     And NmeaAisLongRangeBroadcastMessageParser.CourseOverGround is <cog>
     And NmeaAisLongRangeBroadcastMessageParser.PositionLatency is <latency>
-    And NmeaAisLongRangeBroadcastMessageParser.SpareBit94 is <spare94>
+    And NmeaAisLongRangeBroadcastMessageParser.SpareBit95 is <spare95>
 
     Examples:
-    | payload                      | padding | type | repeatindicator | mmsi      | accuracy | raimflag | navigationstatus | longitude | latitude | sog | cog | latency | spare94 |
+    | payload                      | padding | type | repeatindicator | mmsi      | accuracy | raimflag | navigationstatus | longitude | latitude | sog | cog | latency | spare95 |
     | KC5E2b@U19PFdLbMuc5=ROv62<7m | 0       | 27   | 1               | 206914217 | false    | false    | 2                | 82214     | 2904     | 57  | 167 | false   | true    |
     | Kp15Li@1D=MeT5T@             | 0       | 27   | 3               | 538008773 | false    | false    | 0                | 21557     | -18744   | 11  | 68  | false   | false   |
     | Kk=>UB03fbh:R`7d             | 0       | 27   | 3               | 215197000 | false    | false    | 0                | 61099     | 1349     | 16  | 123 | false   | false   |
-    

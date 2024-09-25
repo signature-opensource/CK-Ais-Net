@@ -20,7 +20,7 @@ Scenario: Full message
     And NmeaAisAddressedBinaryMessageParser.SpareBit71 is <spare71>
     And NmeaAisAddressedBinaryMessageParser.DAC is <dac>
     And NmeaAisAddressedBinaryMessageParser.FI is <fi>
-    And NmeaAisAddressedBinaryMessageParser.ApplicationDataPadding is <applicationdatapadding>
+    And NmeaAisAddressedBinaryMessageParser.ApplicationDataPaddingBefore is <applicationdatapadding>
     And NmeaAisAddressedBinaryMessageParser.ApplicationData is <applicationdata>
 
     Examples:

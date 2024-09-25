@@ -86,10 +86,10 @@ namespace Ais.Net.Specs.AisMessageTypes
             Then( parser => Assert.AreEqual( value, parser.PositionLatency ) );
         }
 
-        [Then( @"NmeaAisLongRangeBroadcastMessageParser\.SpareBit94 is (.*)" )]
-        public void ThenNmeaAisLongRangeBroadcastMessageParser_SpareBit94Is( bool value )
+        [Then( @"NmeaAisLongRangeBroadcastMessageParser\.SpareBit95 is (.*)" )]
+        public void ThenNmeaAisLongRangeBroadcastMessageParser_SpareBit95Is( bool value )
         {
-            Then( parser => Assert.AreEqual( value, parser.SpareBit94 ) );
+            Then( parser => Assert.AreEqual( value, parser.SpareBit95 ) );
         }
 
         void When( ParserMaker makeParser )

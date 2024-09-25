@@ -80,7 +80,7 @@ namespace Ais.Net.Specs.AisMessageTypes
         [Then( @"NmeaAisSingleSlotBinaryParser\.ApplicationDataPadding is (.*)" )]
         public void ThenNmeaAisSingleSlotBinaryParser_ApplicationDataPaddingIs( uint value )
         {
-            Then( parser => Assert.AreEqual( value, parser.ApplicationDataPadding ) );
+            Then( parser => Assert.AreEqual( value, parser.ApplicationDataPaddingBefore ) );
         }
 
         [Then( @"NmeaAisSingleSlotBinaryParser\.ApplicationData is (.*)" )]

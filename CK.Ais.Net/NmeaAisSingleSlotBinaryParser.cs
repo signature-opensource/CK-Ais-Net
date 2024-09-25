@@ -23,23 +23,24 @@ namespace Ais.Net
 
             switch( (_hasDestination, BinaryDataFlag) )
             {
-                case (true, true ):
-                    ApplicationDataPadding = 4;
+                case (true, true):
+                    ApplicationDataPaddingBefore = 4;
                     ApplicationData = ascii.Slice( 14 );
                     break;
-                case (true, false ):
-                    ApplicationDataPadding = 0;
+                case (true, false):
+                    ApplicationDataPaddingBefore = 0;
                     ApplicationData = ascii.Slice( 12 );
                     break;
-                case (false, true ):
-                    ApplicationDataPadding = 2;
+                case (false, true):
+                    ApplicationDataPaddingBefore = 2;
                     ApplicationData = ascii.Slice( 9 );
                     break;
-                case (false, false ):
-                    ApplicationDataPadding = 4;
+                case (false, false):
+                    ApplicationDataPaddingBefore = 4;
                     ApplicationData = ascii.Slice( 6 );
                     break;
             }
+            ApplicationDataPaddingAfter = padding;
         }
 
         /// <summary>
@@ -104,11 +105,16 @@ namespace Ais.Net
         /// <summary>
         /// Gets the padding before the data in the <see cref="ApplicationData"/>.
         /// </summary>
-        public uint ApplicationDataPadding { get; }
+        public readonly uint ApplicationDataPaddingBefore;
+
+        /// <summary>
+        /// Gets the padding after the data in the <see cref="ApplicationData"/>.
+        /// </summary>
+        public readonly uint ApplicationDataPaddingAfter;
 
         /// <summary>
         /// Gets the application specific data.
         /// </summary>
-        public ReadOnlySpan<byte> ApplicationData { get; }
+        public readonly ReadOnlySpan<byte> ApplicationData;
     }
 }

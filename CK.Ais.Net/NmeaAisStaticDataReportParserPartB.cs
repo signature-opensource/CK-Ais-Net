@@ -59,6 +59,8 @@ namespace Ais.Net
         /// </summary>
         public ShipType ShipType => (ShipType)_bits.GetUnsignedInteger( 8, 40 );
 
+        #region Vendor Identification Field
+
         /// <summary>
         /// Gets the Vendor field as specified by ITU-R 1371-3.
         /// </summary>
@@ -78,6 +80,8 @@ namespace Ais.Net
         /// Gets the Serial Number (only on messages conforming to ITU-R 1371-4 or later).
         /// </summary>
         public uint SerialNumber => _bits.GetUnsignedInteger( 20, 70 );
+
+        #endregion
 
         /// <summary>
         /// Gets the Call Sign field.

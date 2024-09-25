@@ -166,7 +166,7 @@ this.ScenarioInitialize(scenarioInfo);
     testRunner.And(string.Format("NmeaAisAddressedBinaryMessageParser.FI is {0}", fi), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 23
-    testRunner.And(string.Format("NmeaAisAddressedBinaryMessageParser.ApplicationDataPadding is {0}", applicationdatapadding), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+    testRunner.And(string.Format("NmeaAisAddressedBinaryMessageParser.ApplicationDataPaddingBefore is {0}", applicationdatapadding), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 24
     testRunner.And(string.Format("NmeaAisAddressedBinaryMessageParser.ApplicationData is {0}", applicationdata), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");

@@ -21,6 +21,7 @@ namespace Ais.Net
             DifferentialCorrectionData = _bits.BitCount > 80
                 ? ascii.Slice( 13 )
                 : ReadOnlySpan<byte>.Empty;
+            DifferentialCorrectionDataPaddingAfter = padding;
         }
 
         /// <summary>
@@ -69,12 +70,14 @@ namespace Ais.Net
         /// Gets the padding before the data in the <see cref="DifferentialCorrectionData"/>.
         /// </summary>
 #pragma warning disable CA1822 // Mark members as static
-        public uint DifferentialCorrectionDataPadding => 2;
+        public uint DifferentialCorrectionDataPaddingBefore => 2;
 #pragma warning restore CA1822 // Mark members as static
+
+        public readonly uint DifferentialCorrectionDataPaddingAfter;
 
         /// <summary>
         /// Gets the differential correlation data. It should be parsed with the <see cref="NmeaAisDifferentialCorrectionDataParser"/>.
         /// </summary>
-        public ReadOnlySpan<byte> DifferentialCorrectionData { get; }
+        public readonly ReadOnlySpan<byte> DifferentialCorrectionData;
     }
 }

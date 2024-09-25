@@ -21,7 +21,7 @@ namespace Ais.Net.Specs.AisMessageTypes
             When( () =>
             {
                 var parser = new NmeaAisGlobalNavigationSatelliteSystemBroadcastBinaryMessageParser( Encoding.ASCII.GetBytes( payload ), padding );
-                return new NmeaAisDifferentialCorrectionDataParser( parser.DifferentialCorrectionData, parser.DifferentialCorrectionDataPadding, padding );
+                return new NmeaAisDifferentialCorrectionDataParser( parser.DifferentialCorrectionData, parser.DifferentialCorrectionDataPaddingBefore, padding );
             } );
         }
 
