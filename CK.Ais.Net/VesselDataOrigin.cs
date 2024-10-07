@@ -2,21 +2,20 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
-namespace Ais.Net
+namespace Ais.Net;
+
+/// <summary>
+/// The origin of the data.
+/// </summary>
+public enum VesselDataOrigin
 {
     /// <summary>
-    /// The origin of the data.
+    /// Information received from other vessels or stations.
     /// </summary>
-    public enum VesselDataOrigin
-    {
-        /// <summary>
-        /// Information received from other vessels or stations.
-        /// </summary>
-        Vdm,
+    Vdm,
 
-        /// <summary>
-        /// Information on your own vessel.
-        /// </summary>
-        Vdo,
-    }
+    /// <summary>
+    /// Information on your own vessel.
+    /// </summary>
+    Vdo,
 }
