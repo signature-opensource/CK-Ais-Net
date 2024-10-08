@@ -2,14 +2,13 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
-namespace Ais.Net
+namespace Ais.Net;
+
+/// <summary>
+/// Indicates which type of altitude sensor is present in a Standard Search and Rescue Aircraft Position Report message.
+/// </summary>
+public enum AltitudeSensor
 {
-    /// <summary>
-    /// Indicates which type of altitude sensor is present in a Standard Search and Rescue Aircraft Position Report message.
-    /// </summary>
-    public enum AltitudeSensor
-    {
-        Gnss = 0,
-        BarometricSource = 1,
-    }
+    Gnss = 0,
+    BarometricSource = 1,
 }

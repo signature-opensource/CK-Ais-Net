@@ -4,23 +4,22 @@
 
 using System;
 
-namespace Ais.Net
+namespace Ais.Net;
+
+/// <summary>
+/// Performs initial parsing of type 24 messages to distinguish between Part A and Part B messages.
+/// </summary>
+public static class NmeaAisStaticDataReportParser
 {
     /// <summary>
-    /// Performs initial parsing of type 24 messages to distinguish between Part A and Part B messages.
+    /// Inspects a Type 24: Static Data Report message and determines the message Part Number.
     /// </summary>
-    public static class NmeaAisStaticDataReportParser
+    /// <param name="ascii">The ASCII-encoded message payload.</param>
+    /// <param name="padding">The number of bits of padding in this payload.</param>
+    /// <returns>The part number.</returns>
+    public static uint GetPartNumber( ReadOnlySpan<byte> ascii, uint padding )
     {
-        /// <summary>
-        /// Inspects a Type 24: Static Data Report message and determines the message Part Number.
-        /// </summary>
-        /// <param name="ascii">The ASCII-encoded message payload.</param>
-        /// <param name="padding">The number of bits of padding in this payload.</param>
-        /// <returns>The part number.</returns>
-        public static uint GetPartNumber( ReadOnlySpan<byte> ascii, uint padding )
-        {
-            var bits = new NmeaAisBitVectorParser( ascii, padding );
-            return bits.GetUnsignedInteger( 2, 38 );
-        }
+        var bits = new NmeaAisBitVectorParser( ascii, padding );
+        return bits.GetUnsignedInteger( 2, 38 );
     }
 }

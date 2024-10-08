@@ -2,36 +2,35 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
-namespace Ais.Net
+namespace Ais.Net;
+
+/// <summary>
+/// Identify the reporting interval settings for use with message 23.
+/// </summary>
+public enum ReportingInterval
 {
+    AsGivenByTheAutonomousMode = 0,
+    TenMinutes = 1,
+    SixMinutes = 2,
+    ThreeMinutes = 3,
+    OneMinute = 4,
+    ThirtySeconds = 5,
+    FifteenSeconds = 6,
+    TenSeconds = 7,
+    FiveSeconds = 8,
+
     /// <summary>
-    /// Identify the reporting interval settings for use with message 23.
+    /// Only applicable if in autonomous mode.
     /// </summary>
-    public enum ReportingInterval
-    {
-        AsGivenByTheAutonomousMode = 0,
-        TenMinutes = 1,
-        SixMinutes = 2,
-        ThreeMinutes = 3,
-        OneMinute = 4,
-        ThirtySeconds = 5,
-        FifteenSeconds = 6,
-        TenSeconds = 7,
-        FiveSeconds = 8,
+    NextShorterReportingInterval = 9,
 
-        /// <summary>
-        /// Only applicable if in autonomous mode.
-        /// </summary>
-        NextShorterReportingInterval = 9,
+    /// <summary>
+    /// Only applicable if in autonomous mode.
+    /// </summary>
+    NextLongerReportingInterval = 10,
 
-        /// <summary>
-        /// Only applicable if in autonomous mode.
-        /// </summary>
-        NextLongerReportingInterval = 10,
-
-        /// <summary>
-        /// Not applicable to the Class B "CS" and Class B "SO".
-        /// </summary>
-        TwoSeconds = 11,
-    }
+    /// <summary>
+    /// Not applicable to the Class B "CS" and Class B "SO".
+    /// </summary>
+    TwoSeconds = 11,
 }

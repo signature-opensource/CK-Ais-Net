@@ -2,14 +2,13 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
-namespace Ais.Net
+namespace Ais.Net;
+
+/// <summary>
+/// Indicates which communication state follows is used.
+/// </summary>
+public enum CommunicationStateSelector
 {
-    /// <summary>
-    /// Indicates which communication state follows is used.
-    /// </summary>
-    public enum CommunicationStateSelector
-    {
-        Sotdma = 0,
-        Itdma = 1,
-    }
+    Sotdma = 0,
+    Itdma = 1,
 }

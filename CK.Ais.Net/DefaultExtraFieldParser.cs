@@ -1,9 +1,8 @@
 using System;
 
-namespace Ais.Net
+namespace Ais.Net;
+
+public readonly struct DefaultExtraFieldParser : INmeaTagBlockExtraFieldParser
 {
-    public readonly struct DefaultExtraFieldParser : INmeaTagBlockExtraFieldParser
-    {
-        public bool TryParseField( ReadOnlySpan<byte> originalSpan, ReadOnlySpan<byte> field, int fieldOffset ) => false;
-    }
+    public bool TryParseField( ReadOnlySpan<byte> originalSpan, ReadOnlySpan<byte> field, int fieldOffset ) => false;
 }
