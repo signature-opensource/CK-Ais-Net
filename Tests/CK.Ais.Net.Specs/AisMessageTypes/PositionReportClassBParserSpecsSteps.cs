@@ -43,7 +43,7 @@ namespace Ais.Net.Specs.AisMessageTypes
         }
 
         [Then( @"AisPositionReportClassBParser\.SPareBits38 is (.*)" )]
-        public void ThenAisPositionReportClassBParser_SpareBitsIs( int spare )
+        public void ThenAisPositionReportClassBParser_SpareBitsIs( uint spare )
         {
             Then( parser => Assert.AreEqual( spare, parser.SpareBits38 ) );
         }
@@ -91,7 +91,7 @@ namespace Ais.Net.Specs.AisMessageTypes
         }
 
         [Then( @"AisPositionReportClassBParser\.SpareBits139 is (.*)" )]
-        public void ThenAisPositionReportClassBParser_SpareBits139Is( int spare )
+        public void ThenAisPositionReportClassBParser_SpareBits139Is( uint spare )
         {
             Then( parser => Assert.AreEqual( spare, parser.SpareBits139 ) );
         }

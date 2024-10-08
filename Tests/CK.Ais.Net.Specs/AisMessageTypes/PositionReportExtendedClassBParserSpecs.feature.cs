@@ -812,7 +812,7 @@ this.ScenarioInitialize(scenarioInfo);
     testRunner.When(string.Format("I parse \'{0}\' with padding {1} as a Position Report Extended Class B", payload, padding), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 229
-    testRunner.Then(string.Format("NmeaAisPositionReportExtendedClassBParser.Spare308 is {0}", spare), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.Then(string.Format("NmeaAisPositionReportExtendedClassBParser.SpareBits308 is {0}", spare), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

@@ -144,10 +144,10 @@ namespace Ais.Net.Specs.AisMessageTypes
             Then( parser => Assert.AreEqual( notReady, parser.IsDteNotReady ) );
         }
 
-        [Then( @"NmeaAisStaticAndVoyageRelatedDataParser\.Spare423 is (.*)" )]
-        public void ThenNmeaAisStaticAndVoyageRelatedDataParser_SpareIs( int spare )
+        [Then( @"NmeaAisStaticAndVoyageRelatedDataParser\.SpareBit423 is (.*)" )]
+        public void ThenNmeaAisStaticAndVoyageRelatedDataParser_SpareBitIs( bool spare )
         {
-            Then( parser => Assert.AreEqual( spare, parser.Spare423 ) );
+            Then( parser => Assert.AreEqual( spare, parser.SpareBit423 ) );
         }
 
         void When( ParserMaker makeParser )

@@ -226,7 +226,7 @@ Scenario Outline: Assigned flag
 
 Scenario Outline: Spare
     When I parse '<payload>' with padding <padding> as a Position Report Extended Class B
-    Then NmeaAisPositionReportExtendedClassBParser.Spare308 is <spare>
+    Then NmeaAisPositionReportExtendedClassBParser.SpareBits308 is <spare>
 
     Examples:
     | payload                                              | padding | spare |

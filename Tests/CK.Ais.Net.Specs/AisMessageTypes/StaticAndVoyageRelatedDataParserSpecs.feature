@@ -1,4 +1,4 @@
-﻿# Copyright (c) Endjin Limited. All rights reserved.
+# Copyright (c) Endjin Limited. All rights reserved.
 #
 # Contains data under the Norwegian licence for Open Government data (NLOD) distributed by
 # the Norwegian Costal Administration - https://ais.kystverket.no/
@@ -298,11 +298,11 @@ Scenario Outline: DTE ready
 
 Scenario Outline: Spare
     When I parse '<payload>' with padding <padding> as Static and Voyage Related Data
-    Then NmeaAisStaticAndVoyageRelatedDataParser.Spare423 is <spare>
+    Then NmeaAisStaticAndVoyageRelatedDataParser.SpareBit423 is <spare>
 
     Examples:
     | payload                                                                 | padding | spare |
-    | 50000000000000000000000000000000000000000000000000000000000000000000000 | 2       | 0     |
-    | 50000000000000000000000000000000000000000000000000000000000000000000004 | 2       | 1     |
-    | 53m89J81SR44hdhL0004eH5A84q<00000000001@4P8825LD08j0DTm0A00000000000000 | 2       | 0     |	# ais.kystverket.no
-    | 5=7LHAT000000000000L58A<uT6085B3@000000U0@21140Ht000000000000000000000< | 2       | 1     |	# ais.kystverket.no
+    | 50000000000000000000000000000000000000000000000000000000000000000000000 | 2       | false |
+    | 50000000000000000000000000000000000000000000000000000000000000000000004 | 2       | true  |
+    | 53m89J81SR44hdhL0004eH5A84q<00000000001@4P8825LD08j0DTm0A00000000000000 | 2       | false |	# ais.kystverket.no
+    | 5=7LHAT000000000000L58A<uT6085B3@000000U0@21140Ht000000000000000000000< | 2       | true  |	# ais.kystverket.no

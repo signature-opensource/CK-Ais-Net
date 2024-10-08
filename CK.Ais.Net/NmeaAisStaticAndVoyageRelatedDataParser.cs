@@ -137,6 +137,6 @@ namespace Ais.Net
         /// <summary>
         /// Gets the value of the 'spare' bit at 423.
         /// </summary>
-        public uint Spare423 => _bits.GetUnsignedInteger( 1, 423 );
+        public bool SpareBit423 => _bits.GetBit( 423 );
     }
 }
