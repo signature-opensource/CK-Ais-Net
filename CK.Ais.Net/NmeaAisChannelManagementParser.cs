@@ -91,7 +91,7 @@ namespace Ais.Net
         /// <summary>
         /// Gets a value indicating whether the message is used.
         /// </summary>
-        public DestinationIndicator MessageIndicator => (DestinationIndicator)_bits.GetUnsignedInteger( 1, 139 );
+        public DestinationIndicator DestinationIndicator => (DestinationIndicator)_bits.GetUnsignedInteger( 1, 139 );
 
         /// <summary>
         /// Gets a value indicating whether badwith is used.

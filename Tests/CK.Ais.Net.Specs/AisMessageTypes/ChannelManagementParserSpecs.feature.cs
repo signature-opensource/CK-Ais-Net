@@ -200,7 +200,7 @@ this.ScenarioInitialize(scenarioInfo);
     testRunner.And(string.Format("NmeaAisChannelManagementParser.Latitude10thMins2 is {0}", latitude2), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 26
-    testRunner.And(string.Format("NmeaAisChannelManagementParser.MessageIndicator is {0}", indicator), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+    testRunner.And(string.Format("NmeaAisChannelManagementParser.DestinationIndicator is {0}", indicator), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 27
     testRunner.And(string.Format("NmeaAisChannelManagementParser.ChannelABandwidth is {0}", bandwitha), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
