@@ -48,7 +48,7 @@ public readonly ref struct NmeaAisPositionReportExtendedClassBParser
     /// <summary>
     /// Gets the 8 bits of 'regional reserved' data starting at bit 38.
     /// </summary>
-    public byte SpareBits38 => (byte)_bits.GetUnsignedInteger( 8, 38 );
+        public uint SpareBits38 => _bits.GetUnsignedInteger( 8, 38 );
 
     /// <summary>
     /// Gets the vessel's speed over ground, in tenths of a knot.
@@ -92,7 +92,7 @@ public readonly ref struct NmeaAisPositionReportExtendedClassBParser
     /// <summary>
     /// Gets the 4 bits of 'regional reserved' data starting at bit 38.
     /// </summary>
-    public byte SpareBits139 => (byte)_bits.GetUnsignedInteger( 4, 139 );
+        public uint SpareBits139 => _bits.GetUnsignedInteger( 4, 139 );
 
     /// <summary>
     /// Gets the ship name field.
@@ -148,5 +148,5 @@ public readonly ref struct NmeaAisPositionReportExtendedClassBParser
     /// <summary>
     /// Gets the value of the 'spare' bits from 308 to 311.
     /// </summary>
-    public uint Spare308 => _bits.GetUnsignedInteger( 4, 308 );
+        public uint SpareBits308 => _bits.GetUnsignedInteger( 4, 308 );
 }

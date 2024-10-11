@@ -821,10 +821,10 @@ this.ScenarioInitialize(scenarioInfo);
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Spare")]
-        [NUnit.Framework.TestCaseAttribute("50000000000000000000000000000000000000000000000000000000000000000000000", "2", "0", null)]
-        [NUnit.Framework.TestCaseAttribute("50000000000000000000000000000000000000000000000000000000000000000000004", "2", "1", null)]
-        [NUnit.Framework.TestCaseAttribute("53m89J81SR44hdhL0004eH5A84q<00000000001@4P8825LD08j0DTm0A00000000000000", "2", "0", null)]
-        [NUnit.Framework.TestCaseAttribute("5=7LHAT000000000000L58A<uT6085B3@000000U0@21140Ht000000000000000000000<", "2", "1", null)]
+        [NUnit.Framework.TestCaseAttribute("50000000000000000000000000000000000000000000000000000000000000000000000", "2", "false", null)]
+        [NUnit.Framework.TestCaseAttribute("50000000000000000000000000000000000000000000000000000000000000000000004", "2", "true", null)]
+        [NUnit.Framework.TestCaseAttribute("53m89J81SR44hdhL0004eH5A84q<00000000001@4P8825LD08j0DTm0A00000000000000", "2", "false", null)]
+        [NUnit.Framework.TestCaseAttribute("5=7LHAT000000000000L58A<uT6085B3@000000U0@21140Ht000000000000000000000<", "2", "true", null)]
         public void Spare(string payload, string padding, string spare, string[] exampleTags)
         {
             string[] tagsOfScenario = exampleTags;
@@ -847,7 +847,7 @@ this.ScenarioInitialize(scenarioInfo);
     testRunner.When(string.Format("I parse \'{0}\' with padding {1} as Static and Voyage Related Data", payload, padding), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 301
-    testRunner.Then(string.Format("NmeaAisStaticAndVoyageRelatedDataParser.Spare423 is {0}", spare), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.Then(string.Format("NmeaAisStaticAndVoyageRelatedDataParser.SpareBit423 is {0}", spare), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

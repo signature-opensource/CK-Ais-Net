@@ -92,10 +92,10 @@ public class ChannelManagementParserSpecsSteps
         Then( parser => Assert.AreEqual( value, parser.Latitude10thMins2 ) );
     }
 
-    [Then( @"NmeaAisChannelManagementParser\.MessageIndicator is (.*)" )]
-    public void ThenNmeaAisChannelManagementParser_MessageIndicatorIs( DestinationIndicator value )
+        [Then( @"NmeaAisChannelManagementParser\.DestinationIndicator is (.*)" )]
+        public void ThenNmeaAisChannelManagementParser_DestinationIndicatorIs( DestinationIndicator value )
     {
-        Then( parser => Assert.AreEqual( value, parser.MessageIndicator ) );
+            Then( parser => Assert.AreEqual( value, parser.DestinationIndicator ) );
     }
 
     [Then( @"NmeaAisChannelManagementParser\.ChannelABandwidth is (.*)" )]

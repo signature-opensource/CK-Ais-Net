@@ -43,7 +43,7 @@ public class PositionReportExtendedClassBParserSpecsSteps
     }
 
     [Then( @"NmeaAisPositionReportExtendedClassBParser\.SpareBits38 is (.*)" )]
-    public void ThenNmeaAisPositionReportExtendedClassBParser_SpareBits38dIs( byte spare )
+        public void ThenNmeaAisPositionReportExtendedClassBParser_SpareBits38dIs( uint spare )
     {
         Then( parser => Assert.AreEqual( spare, parser.SpareBits38 ) );
     }
@@ -91,7 +91,7 @@ public class PositionReportExtendedClassBParserSpecsSteps
     }
 
     [Then( @"NmeaAisPositionReportExtendedClassBParser\.SpareBits139 is (.*)" )]
-    public void ThenNmeaAisPositionReportExtendedClassBParser_SpareBits139( byte spare )
+        public void ThenNmeaAisPositionReportExtendedClassBParser_SpareBits139( uint spare )
     {
         Then( parser => Assert.AreEqual( spare, parser.SpareBits139 ) );
     }
@@ -156,10 +156,10 @@ public class PositionReportExtendedClassBParserSpecsSteps
         Then( parser => Assert.AreEqual( isAssigned, parser.IsAssigned ) );
     }
 
-    [Then( @"NmeaAisPositionReportExtendedClassBParser\.Spare308 is (.*)" )]
-    public void ThenNmeaAisPositionReportExtendedClassBParser_Spare308( int spare )
+        [Then( @"NmeaAisPositionReportExtendedClassBParser\.SpareBits308 is (.*)" )]
+        public void ThenNmeaAisPositionReportExtendedClassBParser_SpareBits308( uint spare )
     {
-        Then( parser => Assert.AreEqual( spare, parser.Spare308 ) );
+            Then( parser => Assert.AreEqual( spare, parser.SpareBits308 ) );
     }
 
     void When( ParserMaker makeParser )
