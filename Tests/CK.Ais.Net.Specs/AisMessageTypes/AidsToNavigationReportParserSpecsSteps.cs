@@ -3,175 +3,174 @@ using System;
 using System.Text;
 using TechTalk.SpecFlow;
 
-namespace Ais.Net.Specs.AisMessageTypes
+namespace Ais.Net.Specs.AisMessageTypes;
+
+[Binding]
+public class AidsToNavigationReportParserSpecsSteps
 {
-    [Binding]
-    public class AidsToNavigationReportParserSpecsSteps
+    ParserMaker? _makeParser;
+
+    delegate NmeaAisAidsToNavigationReportParser ParserMaker();
+
+    delegate void ParserTest( NmeaAisAidsToNavigationReportParser parser );
+
+    [When( "I parse '(.*)' with padding (.*) as a Aids to Navigation Report" )]
+    public void WhenIParseWithNmeaAisAidsToNavigationReportParser( string payload, uint padding )
     {
-        ParserMaker? _makeParser;
+        When( () => new NmeaAisAidsToNavigationReportParser( Encoding.ASCII.GetBytes( payload ), padding ) );
+    }
 
-        delegate NmeaAisAidsToNavigationReportParser ParserMaker();
+    [Then( @"NmeaAisAidsToNavigationReportParser\.Type is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_TypeIs( MessageType messageType )
+    {
+        Then( parser => Assert.AreEqual( messageType, parser.MessageType ) );
+    }
 
-        delegate void ParserTest( NmeaAisAidsToNavigationReportParser parser );
+    [Then( @"NmeaAisAidsToNavigationReportParser\.RepeatIndicator is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_RepeatIndicatorIs( uint repeatCount )
+    {
+        Then( parser => Assert.AreEqual( repeatCount, parser.RepeatIndicator ) );
+    }
 
-        [When( "I parse '(.*)' with padding (.*) as a Aids to Navigation Report" )]
-        public void WhenIParseWithNmeaAisAidsToNavigationReportParser( string payload, uint padding )
+    [Then( @"NmeaAisAidsToNavigationReportParser\.Mmsi is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_MmsiIs( uint mmsi )
+    {
+        Then( parser => Assert.AreEqual( mmsi, parser.Mmsi ) );
+    }
+
+    [Then( @"NmeaAisAidsToNavigationReportParser\.AidsToNavigationType is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_AidsToNavigationTypeIs( AidsToNavigationType value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.AidsToNavigationType ) );
+    }
+
+    [Then( @"NmeaAisAidsToNavigationReportParser\.NameOfAidsToNavigation is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_NameOfAidsToNavigationIs( string value )
+    {
+        Then( parser =>
         {
-            When( () => new NmeaAisAidsToNavigationReportParser( Encoding.ASCII.GetBytes( payload ), padding ) );
-        }
+            byte[] bytes = new byte[parser.NameOfAidsToNavigation.CharacterCount];
+            parser.NameOfAidsToNavigation.WriteAsAscii( bytes );
+            Assert.AreEqual( value, Encoding.ASCII.GetString( bytes ) );
+        } );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.Type is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_TypeIs( MessageType messageType )
-        {
-            Then( parser => Assert.AreEqual( messageType, parser.MessageType ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.PositionAccuracy is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_PositionAccuracyIs( bool value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.PositionAccuracy ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.RepeatIndicator is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_RepeatIndicatorIs( uint repeatCount )
-        {
-            Then( parser => Assert.AreEqual( repeatCount, parser.RepeatIndicator ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.Longitude10000thMins is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_Longitude10000thMinsIs( int value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.Longitude10000thMins ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.Mmsi is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_MmsiIs( uint mmsi )
-        {
-            Then( parser => Assert.AreEqual( mmsi, parser.Mmsi ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.Latitude10000thMins is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_Latitude10000thMinsIs( int value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.Latitude10000thMins ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.AidsToNavigationType is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_AidsToNavigationTypeIs( AidsToNavigationType value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.AidsToNavigationType ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.ReferenceForPositionA is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_ReferenceForPositionAIs( uint value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.ReferenceForPositionA ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.NameOfAidsToNavigation is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_NameOfAidsToNavigationIs( string value )
-        {
-            Then( parser =>
-            {
-                byte[] bytes = new byte[parser.NameOfAidsToNavigation.CharacterCount];
-                parser.NameOfAidsToNavigation.WriteAsAscii( bytes );
-                Assert.AreEqual( value, Encoding.ASCII.GetString( bytes ) );
-            } );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.ReferenceForPositionB is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_ReferenceForPositionBIs( uint value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.ReferenceForPositionB ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.PositionAccuracy is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_PositionAccuracyIs( bool value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.PositionAccuracy ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.ReferenceForPositionC is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_ReferenceForPositionCIs( uint value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.ReferenceForPositionC ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.Longitude10000thMins is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_Longitude10000thMinsIs( int value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.Longitude10000thMins ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.ReferenceForPositionD is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_ReferenceForPositionDIs( uint value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.ReferenceForPositionD ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.Latitude10000thMins is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_Latitude10000thMinsIs( int value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.Latitude10000thMins ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.EpfdFixType is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_EpfdFixTypeIs( EpfdFixType value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.EpfdFixType ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.ReferenceForPositionA is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_ReferenceForPositionAIs( uint value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.ReferenceForPositionA ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.TimeStampSecond is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_TimeStampSecondIs( uint value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.TimeStampSecond ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.ReferenceForPositionB is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_ReferenceForPositionBIs( uint value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.ReferenceForPositionB ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.OffPositionIndicator is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_OffPositionIndicatorIs( bool value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.OffPositionIndicator ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.ReferenceForPositionC is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_ReferenceForPositionCIs( uint value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.ReferenceForPositionC ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.AtoNStatus is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_AtoNStatusIs( uint value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.AtoNStatus ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.ReferenceForPositionD is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_ReferenceForPositionDIs( uint value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.ReferenceForPositionD ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.RaimFlag is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_RaimFlagIs( bool value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.RaimFlag ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.EpfdFixType is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_EpfdFixTypeIs( EpfdFixType value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.EpfdFixType ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.VirtualAtoN is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_VirtualAtoNIs( bool value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.VirtualAtoN ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.TimeStampSecond is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_TimeStampSecondIs( uint value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.TimeStampSecond ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.AssignedMode is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_AssignedModeIs( bool value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.AssignedMode ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.OffPositionIndicator is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_OffPositionIndicatorIs( bool value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.OffPositionIndicator ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.SpareBit241 is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_SpareBit241Is( bool value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.SpareBit241 ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.AtoNStatus is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_AtoNStatusIs( uint value )
+    [Then( @"NmeaAisAidsToNavigationReportParser\.NameOfAidToNavigationExtension is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_NameOfAidToNavigationExtensionIs( string value )
+    {
+        Then( parser =>
         {
-            Then( parser => Assert.AreEqual( value, parser.AtoNStatus ) );
-        }
+            byte[] bytes = new byte[parser.NameOfAidToNavigationExtension.CharacterCount];
+            parser.NameOfAidToNavigationExtension.WriteAsAscii( bytes );
+            Assert.AreEqual( value, Encoding.ASCII.GetString( bytes ) );
+        } );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.RaimFlag is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_RaimFlagIs( bool value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.RaimFlag ) );
-        }
+    [Then( @"NmeaAisAidsToNavigationReportParser\.SpareBitsAtEnd is (.*)" )]
+    public void ThenNmeaAisAidsToNavigationReportParser_SpareBitsAtEndIs( uint value )
+    {
+        Then( parser => Assert.AreEqual( value, parser.SpareBitsAtEnd ) );
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.VirtualAtoN is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_VirtualAtoNIs( bool value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.VirtualAtoN ) );
-        }
+    void When( ParserMaker makeParser )
+    {
+        _makeParser = makeParser;
+    }
 
-        [Then( @"NmeaAisAidsToNavigationReportParser\.AssignedMode is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_AssignedModeIs( bool value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.AssignedMode ) );
-        }
-
-        [Then( @"NmeaAisAidsToNavigationReportParser\.SpareBit241 is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_SpareBit241Is( bool value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.SpareBit241 ) );
-        }
-
-        [Then( @"NmeaAisAidsToNavigationReportParser\.NameOfAidToNavigationExtension is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_NameOfAidToNavigationExtensionIs( string value )
-        {
-            Then( parser =>
-            {
-                byte[] bytes = new byte[parser.NameOfAidToNavigationExtension.CharacterCount];
-                parser.NameOfAidToNavigationExtension.WriteAsAscii( bytes );
-                Assert.AreEqual( value, Encoding.ASCII.GetString( bytes ) );
-            } );
-        }
-
-        [Then( @"NmeaAisAidsToNavigationReportParser\.SpareBitsAtEnd is (.*)" )]
-        public void ThenNmeaAisAidsToNavigationReportParser_SpareBitsAtEndIs( uint value )
-        {
-            Then( parser => Assert.AreEqual( value, parser.SpareBitsAtEnd ) );
-        }
-
-        void When( ParserMaker makeParser )
-        {
-            _makeParser = makeParser;
-        }
-
-        void Then( ParserTest test )
-        {
-            if( _makeParser is null ) throw new InvalidOperationException( $"When step must be called." );
-            NmeaAisAidsToNavigationReportParser parser = _makeParser();
-            test( parser );
-        }
+    void Then( ParserTest test )
+    {
+        if( _makeParser is null ) throw new InvalidOperationException( $"When step must be called." );
+        NmeaAisAidsToNavigationReportParser parser = _makeParser();
+        test( parser );
     }
 }

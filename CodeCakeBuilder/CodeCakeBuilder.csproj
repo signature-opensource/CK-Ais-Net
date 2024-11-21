@@ -6,17 +6,18 @@
     <SignAssembly>false</SignAssembly>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <Nullable>annotations</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.Core" Version="20.0.0" />
+    <PackageReference Include="CK.Core" Version="20.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NuGet.Credentials" Version="6.10.1" />
+    <PackageReference Include="NuGet.Credentials" Version="6.12.1" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="TestResult.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SimpleGitVersion.Cake" Version="10.0.0" />
+    <PackageReference Include="SimpleGitVersion.Cake" Version="11.0.2" />
   </ItemGroup>
 </Project>
