@@ -132,11 +132,11 @@ public readonly ref struct NmeaAisAidsToNavigationReportParser
     /// <summary>
     /// Gets the extension of the <see cref="NameOfAidsToNavigation"/>.
     /// </summary>
-    public NmeaAisTextFieldParser NameOfAidToNavigationExtension => new NmeaAisTextFieldParser( _bits, (_bits.BitCount - 272) / 6 * 6, 272 );
+    public NmeaAisTextFieldParser NameOfAidToNavigationExtension => checked(new NmeaAisTextFieldParser( _bits, (_bits.BitCount - 272) / 6 * 6, 272 ));
 
     /// <summary>
     /// Gets the value of the bits in this message for which no standard meaning is currently
     /// defined.
     /// </summary>
-    public uint SpareBitsAtEnd => _bits.GetUnsignedInteger( (_bits.BitCount - 272) % 6, 272 + ((_bits.BitCount - 272) / 6 * 6) );
+    public uint SpareBitsAtEnd => checked(_bits.GetUnsignedInteger( (_bits.BitCount - 272) % 6, 272 + ((_bits.BitCount - 272) / 6 * 6) ));
 }

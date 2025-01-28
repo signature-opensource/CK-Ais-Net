@@ -49,5 +49,5 @@ public readonly ref struct NmeaAisSafetyRelatedBroadcastParser
     /// <summary>
     /// Gets the safety related text.
     /// </summary>
-    public NmeaAisTextFieldParser SafetyRelatedText => new NmeaAisTextFieldParser( _bits, _bits.BitCount - 40, 40 );
+    public NmeaAisTextFieldParser SafetyRelatedText => checked(new NmeaAisTextFieldParser( _bits, _bits.BitCount - 40, 40 ));
 }
