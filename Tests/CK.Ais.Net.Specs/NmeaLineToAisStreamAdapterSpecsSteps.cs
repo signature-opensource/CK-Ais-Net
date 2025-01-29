@@ -57,6 +57,12 @@ public class NmeaLineToAisStreamAdapterSpecsSteps : IDisposable
         _parserOptions.EmptyGroupTolerance = tolerance;
     }
 
+    [Given( "I have configured a AllowNonZeroPaddingInNonLastFragment of (.*)" )]
+    public void GivenIHaveConfiguredAAllowNonZeroPaddingInNonLastFragmentOf( bool value )
+    {
+        _parserOptions.AllowNonZeroPaddingInNonLastFragment = value;
+    }
+
     [When( "the line to message adapter receives '(.*)'" )]
     public void WhenTheLineToMessageAdapterReceives( string line )
     {

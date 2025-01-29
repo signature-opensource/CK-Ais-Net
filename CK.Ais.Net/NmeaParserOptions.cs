@@ -78,4 +78,12 @@ public class NmeaParserOptions
     /// </para>
     /// </summary>
     public EmptyGroupTolerance EmptyGroupTolerance { get; set; } = EmptyGroupTolerance.None;
+
+    /// <summary>
+    /// When enabled, this option allows non-zero padding in fragments that are not the last one in a multi-fragment AIS message.
+    /// <para>
+    /// If set to false and non-zero padding is encountered in a non-last fragment, the decoder will throw an error.
+    /// </para>
+    /// </summary>
+    public bool AllowNonZeroPaddingInNonLastFragment { get; set; } = false;
 }

@@ -380,32 +380,49 @@ Scenario: Tree-fragment message with two sentences and auto fix group
     And in ais message 0 the sentencesingroup from the first NMEA line should be 2
 
 Scenario: Tree-fragment message with only one sentence and allow empty sentence
-  Given I have configured a empty group tolerance of 1
+	Given I have configured a empty group tolerance of 1
 	When the line to message adapter receives '\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41'
 	And the line to message adapter receives '\g:2-3-1481*50\'
 	And the line to message adapter receives '\g:3-3-1481*51\'
 	Then INmeaAisMessageStreamProcessor.OnNext should have been called 1 times
-    And in ais message 0 the payload should be '13Ef?<3006wt9WlEMhi1S6uJ00Rq' with padding of 0
-    And in ais message 0 the source from the first NMEA line should be 99
-    And in ais message 0 the timestamp from the first NMEA line should be 1718701847
-    And in ais message 0 the isfixedmessage from the first NMEA line should be false
-    And in ais message 0 the sentencesingroup from the first NMEA line should be 3
-    
+	And in ais message 0 the payload should be '13Ef?<3006wt9WlEMhi1S6uJ00Rq' with padding of 0
+	And in ais message 0 the source from the first NMEA line should be 99
+	And in ais message 0 the timestamp from the first NMEA line should be 1718701847
+	And in ais message 0 the isfixedmessage from the first NMEA line should be false
+	And in ais message 0 the sentencesingroup from the first NMEA line should be 3
+
 Scenario: Tree-fragment message with only one sentence and empty sentence is not allowed
-  Given I have configured a empty group tolerance of 0
-  When the line to message adapter receives '\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41'
-  And the line to message adapter receives an error report for invalid content '\g:2-3-1481*50\' with line number 2
-  And the line to message adapter receives an error report for invalid content '\g:3-3-1481*51\' with line number 3
-  # And a line '\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41'
+	Given I have configured a empty group tolerance of 0
+	When the line to message adapter receives '\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41'
+	And the line to message adapter receives an error report for invalid content '\g:2-3-1481*50\' with line number 2
+	And the line to message adapter receives an error report for invalid content '\g:3-3-1481*51\' with line number 3
+	# And a line '\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41'
 	# And a line '\g:2-3-1481*50\'
 	# And a line '\g:3-3-1481*51\'
-  # When I parse the content by message
+	# When I parse the content by message
 	Then INmeaAisMessageStreamProcessor.OnNext should have been called 0 time
 	And INmeaAisMessageStreamProcessor.OnError should have been called 2 times
 	And the message error report 0 should include the problematic line '\g:2-3-1481*50\'
 	And the message error report 0 should include an exception reporting that the message appears to be missing some characters
 	And the message error report 1 should include the problematic line '\g:3-3-1481*51\'
 	And the message error report 1 should include an exception reporting that the message appears to be missing some characters
+
+Scenario: Multiple lines with non-zero padding in non last fragment disallowed
+	Given I have configured a AllowNonZeroPaddingInNonLastFragment of false
+	When the line to message adapter receives '\c:1717977721*54\!AIVDM,2,1,2,B,53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1l,2*15'
+	And the line to message adapter receives '\c:1717977721*54\!AIVDM,2,2,2,B,SmCQ4p00000,2*4D'
+	Then INmeaAisMessageStreamProcessor.OnNext should have been called 0 times
+	And INmeaAisMessageStreamProcessor.OnError should have been called 1 time
+	And the message error report 0 should include the problematic line '\c:1717977721*54\!AIVDM,2,1,2,B,53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1l,2*15'
+	And the message error report 0 should include an exception reporting unexpected padding on a non-terminal message fragment
+
+Scenario: Multiple lines with non-zero padding in non last fragment allowed
+	Given I have configured a AllowNonZeroPaddingInNonLastFragment of true
+	When the line to message adapter receives '\c:1717977721*54\!AIVDM,2,1,2,B,53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1l,2*15'
+	And the line to message adapter receives '\c:1717977721*54\!AIVDM,2,2,2,B,SmCQ4p00000,2*4D'
+	Then INmeaAisMessageStreamProcessor.OnNext should have been called 1 times
+	And in ais message 0 the payload should be '53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1lSmCQ4p00000' with padding of 2
+	And INmeaAisMessageStreamProcessor.OnError should have been called 0 time
 
 # TODO:
 # Got to end with unclosed fragments (#4067)

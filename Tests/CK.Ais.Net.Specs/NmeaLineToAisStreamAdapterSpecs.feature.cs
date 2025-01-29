@@ -1340,7 +1340,7 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 this.ScenarioStart();
 #line 383
-  testRunner.Given("I have configured a empty group tolerance of 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have configured a empty group tolerance of 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 384
  testRunner.When("the line to message adapter receives \'\\g:1-3-1481,s:99,c:1718701847*41\\!AIVDM,1,1" +
@@ -1356,20 +1356,20 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Then("INmeaAisMessageStreamProcessor.OnNext should have been called 1 times", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 388
-    testRunner.And("in ais message 0 the payload should be \'13Ef?<3006wt9WlEMhi1S6uJ00Rq\' with paddin" +
+ testRunner.And("in ais message 0 the payload should be \'13Ef?<3006wt9WlEMhi1S6uJ00Rq\' with paddin" +
                         "g of 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 389
-    testRunner.And("in ais message 0 the source from the first NMEA line should be 99", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("in ais message 0 the source from the first NMEA line should be 99", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 390
-    testRunner.And("in ais message 0 the timestamp from the first NMEA line should be 1718701847", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("in ais message 0 the timestamp from the first NMEA line should be 1718701847", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 391
-    testRunner.And("in ais message 0 the isfixedmessage from the first NMEA line should be false", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("in ais message 0 the isfixedmessage from the first NMEA line should be false", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 392
-    testRunner.And("in ais message 0 the sentencesingroup from the first NMEA line should be 3", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("in ais message 0 the sentencesingroup from the first NMEA line should be 3", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -1393,18 +1393,18 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 this.ScenarioStart();
 #line 395
-  testRunner.Given("I have configured a empty group tolerance of 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have configured a empty group tolerance of 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 396
-  testRunner.When("the line to message adapter receives \'\\g:1-3-1481,s:99,c:1718701847*41\\!AIVDM,1,1" +
+ testRunner.When("the line to message adapter receives \'\\g:1-3-1481,s:99,c:1718701847*41\\!AIVDM,1,1" +
                         ",,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 397
-  testRunner.And("the line to message adapter receives an error report for invalid content \'\\g:2-3-" +
+ testRunner.And("the line to message adapter receives an error report for invalid content \'\\g:2-3-" +
                         "1481*50\\\' with line number 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 398
-  testRunner.And("the line to message adapter receives an error report for invalid content \'\\g:3-3-" +
+ testRunner.And("the line to message adapter receives an error report for invalid content \'\\g:3-3-" +
                         "1481*51\\\' with line number 3", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 403
@@ -1426,6 +1426,95 @@ this.ScenarioInitialize(scenarioInfo);
 #line 408
  testRunner.And("the message error report 1 should include an exception reporting that the message" +
                         " appears to be missing some characters", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Multiple lines with non-zero padding in non last fragment disallowed")]
+        public void MultipleLinesWithNon_ZeroPaddingInNonLastFragmentDisallowed()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Multiple lines with non-zero padding in non last fragment disallowed", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 410
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 411
+ testRunner.Given("I have configured a AllowNonZeroPaddingInNonLastFragment of false", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 412
+ testRunner.When("the line to message adapter receives \'\\c:1717977721*54\\!AIVDM,2,1,2,B,53P7hnD0000" +
+                        "0LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1l,2*15\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 413
+ testRunner.And("the line to message adapter receives \'\\c:1717977721*54\\!AIVDM,2,2,2,B,SmCQ4p00000" +
+                        ",2*4D\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 414
+ testRunner.Then("INmeaAisMessageStreamProcessor.OnNext should have been called 0 times", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 415
+ testRunner.And("INmeaAisMessageStreamProcessor.OnError should have been called 1 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 416
+ testRunner.And("the message error report 0 should include the problematic line \'\\c:1717977721*54\\" +
+                        "!AIVDM,2,1,2,B,53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1l,2*15" +
+                        "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 417
+ testRunner.And("the message error report 0 should include an exception reporting unexpected paddi" +
+                        "ng on a non-terminal message fragment", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Multiple lines with non-zero padding in non last fragment allowed")]
+        public void MultipleLinesWithNon_ZeroPaddingInNonLastFragmentAllowed()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Multiple lines with non-zero padding in non last fragment allowed", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 419
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 420
+ testRunner.Given("I have configured a AllowNonZeroPaddingInNonLastFragment of true", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 421
+ testRunner.When("the line to message adapter receives \'\\c:1717977721*54\\!AIVDM,2,1,2,B,53P7hnD0000" +
+                        "0LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1l,2*15\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 422
+ testRunner.And("the line to message adapter receives \'\\c:1717977721*54\\!AIVDM,2,2,2,B,SmCQ4p00000" +
+                        ",2*4D\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 423
+ testRunner.Then("INmeaAisMessageStreamProcessor.OnNext should have been called 1 times", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 424
+ testRunner.And("in ais message 0 the payload should be \'53P7hnD00000LQLF220<P4hhDpLF22200000000N1" +
+                        "h4245Ra001RDj2CQp1lSmCQ4p00000\' with padding of 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 425
+ testRunner.And("INmeaAisMessageStreamProcessor.OnError should have been called 0 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

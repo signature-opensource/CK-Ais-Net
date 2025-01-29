@@ -48,7 +48,8 @@ public class NmeaAisMessageStreamProcessorBindings
     [Then( "in ais message (.*) the source from the first NMEA line should be (.*)" )]
     public void ThenInAisMessageTheSourceFromTheFirstNMEALineShouldBe( int callIndex, int source )
     {
-        Assert.AreEqual( source, OnNextCalls[callIndex].Source );
+        Assert.IsTrue( OnNextCalls[callIndex].Source.HasValue );
+        Assert.AreEqual( source, OnNextCalls[callIndex].Source!.Value );
     }
 
     [Then( "in ais message (.*) the timestamp from the first NMEA line should be (.*)" )]
@@ -159,7 +160,7 @@ public class NmeaAisMessageStreamProcessorBindings
     {
         public Message(
             long? unixTimestamp,
-            int source,
+            int? source,
             string asciiPayload,
             uint padding,
             bool isFixedMessage,
@@ -175,7 +176,7 @@ public class NmeaAisMessageStreamProcessorBindings
 
         public long? UnixTimestamp { get; }
 
-        public int Source { get; }
+        public int? Source { get; }
 
         public string AsciiPayload { get; }
 
@@ -276,7 +277,11 @@ public class NmeaAisMessageStreamProcessorBindings
 
             _parent.OnNextCalls.Add( new Message(
                 firstLine.TagBlock.UnixTimestamp,
-                Utf8Parser.TryParse( firstLine.TagBlock.Source, out int sourceId, out _ ) ? sourceId : throw new ArgumentException( "Test must supply valid source" ),
+                firstLine.TagBlock.Source.IsEmpty
+                    ? null
+                    : Utf8Parser.TryParse( firstLine.TagBlock.Source, out int sourceId, out _ )
+                        ? sourceId
+                        : throw new ArgumentException( "Test must supply valid source" ),
                 Encoding.ASCII.GetString( asciiPayload ),
                 padding,
                 firstLine.IsFixedMessage,
