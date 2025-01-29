@@ -60,7 +60,7 @@ public class NmeaStreamParserSpecsSteps
     [When( "I parse the content by line" )]
     public async Task WhenIParseTheContentByLineAsync()
     {
-        await NmeaStreamParser.ParseStreamAsync<DefaultExtraFieldParser>(
+        await NmeaStreamParser.ParseStreamAsync(
             new MemoryStream( Encoding.ASCII.GetBytes( _content.ToString() ) ),
             _lineProcessor ).ConfigureAwait( false );
     }
@@ -243,33 +243,8 @@ public class NmeaStreamParserSpecsSteps
         {
         }
 
-        public class Line
-        {
-            public Line( string tagBlock, string sentence )
-            {
-                TagBlock = tagBlock;
-                Sentence = sentence;
-            }
+        public record Line( string TagBlock, string Sentence );
 
-            public string TagBlock { get; }
-
-            public string Sentence { get; }
-        }
-
-        public class ErrorReport
-        {
-            public ErrorReport( string line, Exception error, int lineNumber )
-            {
-                Line = line;
-                Error = error;
-                LineNumber = lineNumber;
-            }
-
-            public string Line { get; }
-
-            public Exception Error { get; }
-
-            public int LineNumber { get; }
-        }
+        public record ErrorReport( string Line, Exception Error, int LineNumber );
     }
 }

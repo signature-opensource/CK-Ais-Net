@@ -110,13 +110,15 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
             }
 
             isLastSentenceInGroup = oneBasedSentenceNumber == sentencesInGroup;
-            // TODO: Manage the case when only the first line of the group have a sentence and it's have a padding of 0.
-            if( !isDesyncGroup && !isLastSentenceInGroup && parsedLine.Padding != 0 )
+
+            if( !isDesyncGroup && !isLastSentenceInGroup && parsedLine.Padding != 0 && !_options.AllowNonZeroPaddingInNonLastFragment )
             {
                 _messageProcessor.OnError(
                     parsedLine.Line,
                     new ArgumentException( "Can only handle non-zero padding on the final message in a fragment" ),
                     lineNumber );
+                // To not throw an "Received incomplete fragmented message." error, collect all fragments
+                // from this group and when all fragments are received, just not call OnNext.
             }
 
             if( !_messageFragments.TryGetValue( groupId, out FragmentedMessage fragments ) )
@@ -172,24 +174,37 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                     int reassemblyIndex = 0;
                     Span<byte> reassemblyBuffer = reassemblyUnderlyingArray.AsSpan().Slice( 0, totalPayloadSize );
                     uint finalPadding = 0;
+                    bool nonLastFragmentHaveNonZeroPadding = false;
 
                     for( int i = 0; i < fragmentBuffers.Length; ++i )
                     {
                         var storedParsedLine = new NmeaLineParser<TExtraFieldParser>( fragmentBuffers[i], _options.ThrowWhenTagBlockContainsUnknownFields, _options.TagBlockStandard, _options.EmptyGroupTolerance );
+
+                        // If a non last fragment have a non zero padding, disallow it and not in fix grouping mode,
+                        // then not populate reassemblyUnderlyingArray and not call OnNext.
+                        if( !_options.AllowNonZeroPaddingInNonLastFragment && i < fragmentBuffers.Length - 1 && storedParsedLine.Padding != 0 && !fixGrouping )
+                        {
+                            nonLastFragmentHaveNonZeroPadding = true;
+                            break;
+                        }
+
                         ReadOnlySpan<byte> payload = storedParsedLine.Payload;
                         payload.CopyTo( reassemblyBuffer.Slice( reassemblyIndex, payload.Length ) );
                         reassemblyIndex += payload.Length;
                         if( payload.Length > 0 ) finalPadding = storedParsedLine.Padding;
                     }
 
-                    var lineParser = new NmeaLineParser<TExtraFieldParser>( fragmentBuffers[0], _options.ThrowWhenTagBlockContainsUnknownFields, _options.TagBlockStandard, _options.EmptyGroupTolerance );
-                    if( fixGrouping ) lineParser = NmeaLineParser<TExtraFieldParser>.OverrideGrouping( lineParser, customGroup );
+                    if( !nonLastFragmentHaveNonZeroPadding )
+                    {
+                        var lineParser = new NmeaLineParser<TExtraFieldParser>( fragmentBuffers[0], _options.ThrowWhenTagBlockContainsUnknownFields, _options.TagBlockStandard, _options.EmptyGroupTolerance );
+                        if( fixGrouping ) lineParser = NmeaLineParser<TExtraFieldParser>.OverrideGrouping( lineParser, customGroup );
 
-                    _messageProcessor.OnNext(
-                        lineParser,
-                        reassemblyBuffer.Slice( 0, totalPayloadSize ),
-                        finalPadding );
-                    _messagesProcessed += 1;
+                        _messageProcessor.OnNext(
+                            lineParser,
+                            reassemblyBuffer.Slice( 0, totalPayloadSize ),
+                            finalPadding );
+                        _messagesProcessed += 1;
+                    }
                 }
                 finally
                 {

@@ -162,6 +162,32 @@ public class AidsToNavigationReportParserSpecsSteps
         Then( parser => Assert.AreEqual( value, parser.SpareBitsAtEnd ) );
     }
 
+    [Then( @"throw an overflow error" )]
+    public void ThenThrowAnOutOfRangeError()
+    {
+        Then( parser =>
+        {
+            try
+            {
+                var _ = parser.NameOfAidToNavigationExtension;
+                Assert.Fail( "Was excepting an error for NameOfAidToNavigationExtension" );
+            }
+            catch( Exception e )
+            {
+                Assert.IsInstanceOf<OverflowException>( e );
+            }
+            try
+            {
+                var _ = parser.SpareBitsAtEnd;
+                Assert.Fail( "Was excepting an error SpareBitsAtEnd" );
+            }
+            catch( Exception e )
+            {
+                Assert.IsInstanceOf<OverflowException>( e );
+            }
+        } );
+    }
+
     void When( ParserMaker makeParser )
     {
         _makeParser = makeParser;

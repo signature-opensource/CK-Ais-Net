@@ -39,3 +39,7 @@ Scenario: Full message
     | Evlt<Cf50QUaWW@97QUP0000000D8U=0r5W0P00003jP10              | 0       | 21   | 3               | 995036238 | 28       | JACKSON ROCK@@@@@@@@ | true     | 69358400  | -12399100 | 0         | 0         | 0         | 0         | 7           | 37        | false       | 0          | false    | true        | false        | false    |               | 0        |
     | E>nRFnO77h0W1T7a9hFh84`2V4W@3AEb1fHgh00003aP11H0DQ@H>@      | 0       | 21   | 0               | 996710105 | 30       | NO ANCHORS - PIPELIN | true     | 857450    | 3617150   | 0         | 0         | 0         | 0         | 7           | 19        | false       | 0          | false    | true        | false        | false    | E AREA 9      | 0        |
     | E>nlfV1`:Rab7h;4Sh<h1WW:@:9MbW`ghDbC@10888gh20A`0UAC`4m@iDh | 0       | 21   | 0               | 997011096 | 3        | PUESTO VIG Y CONT TR | true     | -39159249 | -32877414 | 1         | 1         | 1         | 1         | 1           | 31        | true        | 0          | true     | false       | false        | false    | AF BUEN SUCES | 0        |
+
+Scenario: Invalid out of range
+    When I parse 'ENjV3u0;4a::PV@0b7WDHlP0000@IH6:@u?S800000I00' with padding 6 as a Aids to Navigation Report
+    Then throw an overflow error

@@ -56,7 +56,7 @@ Scenario: Multiple mixed blank lines only
 	Given a CRLF line ''
 	And a line ''
 	And a CRLF line ''
-  And a CR line ''
+	And a CR line ''
 	When I parse the content by message
 	Then INmeaAisMessageStreamProcessor.OnNext should have been called 0 times
 	And INmeaAisMessageStreamProcessor.OnComplete should have been called

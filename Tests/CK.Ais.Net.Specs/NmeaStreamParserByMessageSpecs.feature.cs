@@ -311,7 +311,7 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.And("a CRLF line \'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 59
-  testRunner.And("a CR line \'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("a CR line \'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 60
  testRunner.When("I parse the content by message", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
