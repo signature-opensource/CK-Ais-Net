@@ -86,4 +86,11 @@ public class NmeaParserOptions
     /// </para>
     /// </summary>
     public bool AllowNonZeroPaddingInNonLastFragment { get; set; } = false;
+
+    /// <summary>
+    /// If <c>true</c> and the talker id does not follow the specs (see <see href="https://gpsd.gitlab.io/gpsd/AIVDM.html#_talker_ids"/>),
+    /// <see cref="NmeaLineParser{TExtraFieldParser}.AisTalker"/> will be set to <see cref="TalkerId.Unreconized"/>.
+    /// Otherwise, <c>false</c> an error will be thrown.
+    /// </summary>
+    public bool AllowUnreconizedTalkerId { get; set; } = false;
 }
