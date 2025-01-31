@@ -247,3 +247,21 @@ Scenario: One unparseable line and one good line
 	And the line error report 0 should include an exception reporting that the expected exclamation mark is missing
 	And the line error report 0 should include the line number 2
 	And INmeaLineStreamProcessor.OnComplete should have been called
+    
+
+Scenario: Allow unreconized takler id
+	Given I have configured a AllowUnreconizedTalkerId of true
+	And a line '\i:<O>NOR</O>,s:2573105,c:1668997143*00\!B2VDM,1,1,9,A,H3mWb5P5HT4pD00000000000000,2*0A'
+	When I parse the content by line
+	Then INmeaLineStreamProcessor.OnNext should have been called 1 times
+	Then OnError should have been called 0 time
+
+Scenario: Disallow unreconized takler id
+	Given I have configured a AllowUnreconizedTalkerId of false
+	And a line '\i:<O>NOR</O>,s:2573105,c:1668997147*04\!B1VDM,2,1,9,A,53m6J4p00000dp=@E=@dp=@E=@0000000000000000000t00000P00000000,0*20'
+	And a line '\i:<O>NOR</O>,s:2573105,c:1668997143*00\!B2VDM,1,1,9,A,H3mWb5P5HT4pD00000000000000,2*0A'
+	When I parse the content by line
+	Then INmeaLineStreamProcessor.OnNext should have been called 0 times
+	Then OnError should have been called 2 time
+	And the line error report 0 should include an exception reporting an invalid talker id with invalid char '49'
+	And the line error report 1 should include an exception reporting an invalid talker id with invalid char '50'

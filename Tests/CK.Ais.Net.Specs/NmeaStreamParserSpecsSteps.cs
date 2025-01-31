@@ -18,6 +18,7 @@ public class NmeaStreamParserSpecsSteps
     readonly StringBuilder _content = new();
     readonly LineProcessor<DefaultExtraFieldParser> _lineProcessor = new();
     readonly NmeaAisMessageStreamProcessorBindings _messageProcessor;
+    readonly NmeaParserOptions _parserOptions = new();
 
     public NmeaStreamParserSpecsSteps( NmeaAisMessageStreamProcessorBindings messageProcessor )
     {
@@ -62,7 +63,13 @@ public class NmeaStreamParserSpecsSteps
     {
         await NmeaStreamParser.ParseStreamAsync(
             new MemoryStream( Encoding.ASCII.GetBytes( _content.ToString() ) ),
-            _lineProcessor ).ConfigureAwait( false );
+            _lineProcessor, _parserOptions ).ConfigureAwait( false );
+    }
+
+    [Given( "I have configured a AllowUnreconizedTalkerId of (.*)" )]
+    public void GivenIHaveConfiguredAAllowUnreconizedTalkerIdOf( bool value )
+    {
+        _parserOptions.AllowUnreconizedTalkerId = value;
     }
 
     [When( "I parse the content by message" )]
@@ -201,6 +208,13 @@ public class NmeaStreamParserSpecsSteps
     {
         LineProcessor<DefaultExtraFieldParser>.ErrorReport call = _lineProcessor.OnErrorCalls[errorCallNumber];
         Assert.AreEqual( lineNumber, call.LineNumber );
+    }
+
+    [Then( "the line error report (.*) should include an exception reporting an invalid talker id with invalid char '(.*)'" )]
+    public void ThenTheMessageErrorReportShouldIncludeAnExceptionReportingAnInvalidTalkerId( int errorCallNumber, string invalidChar )
+    {
+        var call = _lineProcessor.OnErrorCalls[errorCallNumber];
+        Assert.AreEqual( "Invalid data. Unrecognized talker id - cannot end with " + invalidChar, call.Error.Message );
     }
 
     class LineProcessor<TExtraFieldParser> : INmeaLineStreamProcessor<TExtraFieldParser>

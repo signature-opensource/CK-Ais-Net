@@ -23,7 +23,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
     /// </summary>
     /// <param name="line">The ASCII-encoded text containing the NMEA message.</param>
     public NmeaLineParser( ReadOnlySpan<byte> line )
-        : this( line, false, TagBlockStandard.Unspecified, EmptyGroupTolerance.None )
+        : this( line, false, TagBlockStandard.Unspecified, EmptyGroupTolerance.None, false )
     {
     }
 
@@ -37,7 +37,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
     /// </param>
     /// <param name="tagBlockStandard">Defined in whick standard the tag block is.</param>
     /// <param name="emptyGroupTolerance">The empty group tolerance.</param>
-    public NmeaLineParser( ReadOnlySpan<byte> line, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard, EmptyGroupTolerance emptyGroupTolerance )
+    public NmeaLineParser( ReadOnlySpan<byte> line, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard, EmptyGroupTolerance emptyGroupTolerance, bool allowUnreconizedTalkerId )
     {
         Line = line;
 
@@ -112,21 +112,25 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
                 (byte)'S' => TalkerId.LimitedBaseStation,
                 (byte)'T' => TalkerId.TransmittingStation,
                 (byte)'X' => TalkerId.RepeaterStation,
+                _ when allowUnreconizedTalkerId => TalkerId.Unreconized,
                 _ => throw new ArgumentException( "Invalid data. Unrecognized talker id - cannot start with " + talkerFirstChar ),
             },
 
             (byte)'B' => talkerSecondChar switch
             {
                 (byte)'S' => TalkerId.DeprecatedBaseStation,
+                _ when allowUnreconizedTalkerId => TalkerId.Unreconized,
                 _ => throw new ArgumentException( "Invalid data. Unrecognized talker id - cannot end with " + talkerSecondChar ),
             },
 
             (byte)'S' => talkerSecondChar switch
             {
                 (byte)'A' => TalkerId.PhysicalShoreStation,
+                _ when allowUnreconizedTalkerId => TalkerId.Unreconized,
                 _ => throw new ArgumentException( "Invalid data. Unrecognized talker id - cannot end with " + talkerSecondChar ),
             },
 
+            _ when allowUnreconizedTalkerId => TalkerId.Unreconized,
             _ => throw new ArgumentException( "Invalid data. Unrecognized talker id" ),
         };
         if( Sentence.Slice( 3, 3 ).SequenceEqual( _vdmAscii ) )

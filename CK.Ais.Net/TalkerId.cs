@@ -58,4 +58,6 @@ public enum TalkerId
     /// <c>SA</c>
     /// </summary>
     PhysicalShoreStation,
+
+    Unreconized,
 }

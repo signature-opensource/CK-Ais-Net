@@ -919,6 +919,92 @@ this.ScenarioInitialize(scenarioInfo);
             }
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Allow unreconized takler id")]
+        public void AllowUnreconizedTaklerId()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Allow unreconized takler id", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 252
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 253
+ testRunner.Given("I have configured a AllowUnreconizedTalkerId of true", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 254
+ testRunner.And("a line \'\\i:<O>NOR</O>,s:2573105,c:1668997143*00\\!B2VDM,1,1,9,A,H3mWb5P5HT4pD00000" +
+                        "000000000,2*0A\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 255
+ testRunner.When("I parse the content by line", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 256
+ testRunner.Then("INmeaLineStreamProcessor.OnNext should have been called 1 times", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 257
+ testRunner.Then("OnError should have been called 0 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Disallow unreconized takler id")]
+        public void DisallowUnreconizedTaklerId()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Disallow unreconized takler id", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 259
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 260
+ testRunner.Given("I have configured a AllowUnreconizedTalkerId of false", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 261
+ testRunner.And("a line \'\\i:<O>NOR</O>,s:2573105,c:1668997147*04\\!B1VDM,2,1,9,A,53m6J4p00000dp=@E=" +
+                        "@dp=@E=@0000000000000000000t00000P00000000,0*20\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 262
+ testRunner.And("a line \'\\i:<O>NOR</O>,s:2573105,c:1668997143*00\\!B2VDM,1,1,9,A,H3mWb5P5HT4pD00000" +
+                        "000000000,2*0A\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 263
+ testRunner.When("I parse the content by line", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 264
+ testRunner.Then("INmeaLineStreamProcessor.OnNext should have been called 0 times", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 265
+ testRunner.Then("OnError should have been called 2 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 266
+ testRunner.And("the line error report 0 should include an exception reporting an invalid talker i" +
+                        "d with invalid char \'49\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 267
+ testRunner.And("the line error report 1 should include an exception reporting an invalid talker i" +
+                        "d with invalid char \'50\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore
