@@ -54,7 +54,6 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
     /// <inheritdoc/>
     public void OnCompleted()
     {
-        FreeRentedBuffers();
         _messageProcessor.OnCompleted();
     }
 
