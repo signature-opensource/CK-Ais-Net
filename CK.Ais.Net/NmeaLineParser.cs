@@ -23,7 +23,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
     /// </summary>
     /// <param name="line">The ASCII-encoded text containing the NMEA message.</param>
     public NmeaLineParser( ReadOnlySpan<byte> line )
-        : this( line, false, TagBlockStandard.Unspecified, EmptyGroupTolerance.None, false )
+        : this( line, false, TagBlockStandard.Unspecified, EmptyGroupTolerance.None, false, false )
     {
     }
 
@@ -37,7 +37,12 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
     /// </param>
     /// <param name="tagBlockStandard">Defined in whick standard the tag block is.</param>
     /// <param name="emptyGroupTolerance">The empty group tolerance.</param>
-    public NmeaLineParser( ReadOnlySpan<byte> line, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard, EmptyGroupTolerance emptyGroupTolerance, bool allowUnreconizedTalkerId )
+    public NmeaLineParser( ReadOnlySpan<byte> line,
+                           bool throwWhenTagBlockContainsUnknownFields,
+                           TagBlockStandard tagBlockStandard,
+                           EmptyGroupTolerance emptyGroupTolerance,
+                           bool allowUnreconizedTalkerId,
+                           bool allowTagBlockEmptyField )
     {
         Line = line;
 
@@ -53,7 +58,10 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
             }
 
             TagBlockAsciiWithoutDelimiters = line.Slice( 1, tagBlockEndIndex );
-            TagBlock = new NmeaTagBlockParser<TExtraFieldParser>( TagBlockAsciiWithoutDelimiters, throwWhenTagBlockContainsUnknownFields, tagBlockStandard );
+            TagBlock = new NmeaTagBlockParser<TExtraFieldParser>( TagBlockAsciiWithoutDelimiters,
+                                                                  throwWhenTagBlockContainsUnknownFields,
+                                                                  tagBlockStandard,
+                                                                  allowTagBlockEmptyField );
 
             sentenceStartIndex = tagBlockEndIndex + 2;
         }
