@@ -183,7 +183,12 @@ public static class NmeaStreamParser
                     {
                         try
                         {
-                            var parsedLine = new NmeaLineParser<TExtraFieldParser>( lineSpan, options.ThrowWhenTagBlockContainsUnknownFields, options.TagBlockStandard, options.EmptyGroupTolerance, options.AllowUnreconizedTalkerId );
+                            var parsedLine = new NmeaLineParser<TExtraFieldParser>( lineSpan,
+                                                                                    options.ThrowWhenTagBlockContainsUnknownFields,
+                                                                                    options.TagBlockStandard,
+                                                                                    options.EmptyGroupTolerance,
+                                                                                    options.AllowUnreconizedTalkerId,
+                                                                                    options.AllowTagBlockEmptyFields );
 
                             processor.OnNext( parsedLine, lines + 1 );
                         }
