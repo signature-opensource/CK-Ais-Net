@@ -95,6 +95,13 @@ public class NmeaParserOptions
     public bool AllowUnreconizedTalkerId { get; set; } = false;
 
     /// <summary>
+    /// If <c>true</c> and the data origin is not VDM or VDO,
+    /// <see cref="NmeaLineParser{TExtraFieldParser}.DataOrigin"/> will be set to <see cref="VesselDataOrigin.Unreconized"/>.
+    /// Otherwise, <c>false</c> an error will be thrown.
+    /// </summary>
+    public bool AllowUnreconizedDataOrigin { get; set; } = false;
+
+    /// <summary>
     /// Determines whether empty fields within an AIS tag block are permitted. If <c>true</c>, empty fields will be allowed; otherwise, they will be considered invalid.
     /// </summary>
     public bool AllowTagBlockEmptyFields { get; set; } = false;

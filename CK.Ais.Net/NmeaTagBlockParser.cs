@@ -298,7 +298,7 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
 
     static NmeaTagBlockSentenceGrouping? ParseNmeaSentenceGrouping( ref ReadOnlySpan<byte> source, bool allowTagBlockEmptyFields )
     {
-        if( (source.IsEmpty || source.IndexOf( (byte)',' ) is <= 0) && allowTagBlockEmptyFields )
+        if( (source.IsEmpty || source.IndexOf( (byte)',' ) is 0) && allowTagBlockEmptyFields )
         {
             return null;
         }

@@ -265,3 +265,28 @@ Scenario: Disallow unreconized takler id
 	Then OnError should have been called 2 time
 	And the line error report 0 should include an exception reporting an invalid talker id with invalid char '49'
 	And the line error report 1 should include an exception reporting an invalid talker id with invalid char '50'
+
+Scenario: Invalid talker id with AllowUnreconizedTalkerId to false throw an error
+	Given I have configured a AllowUnreconizedDataOrigin of false
+    And a line '\c:1725231098,t:TER*78\!AIVDI,1,1,,B,37Oftm3Oh:bcIrUkmmv5`Qfp01o0,0*05'
+	When I parse the content by line
+	Then INmeaLineStreamProcessor.OnNext should have been called 0 time
+	Then OnError should have been called 1 time
+	And the line error report 0 should include an exception reporting an invalid talker data origin
+
+Scenario: Invalid talker id with AllowUnreconizedTalkerId to true not throw error
+	Given I have configured a AllowUnreconizedDataOrigin of true
+	And I have configured a AllowUnreconizedTalkerId of true
+    And a line '<payload>'
+	When I parse the content by line
+    Then line 0 should AisTakler of <talkerId>, a DataOrigin of <dataOrigin> and a SentenceFormatter of <sentenceFormatter>
+	And INmeaLineStreamProcessor.OnNext should have been called 1 time
+	And OnError should have been called 0 time
+
+    Examples:
+    | payload                                                                                 | talkerId | dataOrigin | sentenceFormatter |
+    | \c:1725231098,t:TER*78\!AIVDI,1,1,,B,37Oftm3Oh:bcIrUkmmv5`Qfp01o0,0*05                  | 2        | 2          | !AIVDI            |
+    | \c:1725173550,t:TER*7C\!AIDMV,1,1,,B,15?dMCh01`9ORmnCKTLQ<hnj0<2?,0*4A                  | 2        | 2          | !AIDMV            |
+    | \c:1725176210,t:TER*7A\!AIvDM,1,1,,A,402;bK1vR@wTgPbmd4HVqs700l76,0*7A                  | 2        | 2          | !AIvDM            |
+    | \c:1725181228,t:TERA*38\!AIVFM,1,1,,A,33f?cT?P00PfpT8I6=:>4?vl2>`<,0*08                 | 2        | 2          | !AIVFM            |
+    | \i:<O>NOR</O>,s:2573105,c:1668997143*00\!B2VDM,1,1,9,A,H3mWb5P5HT4pD00000000000000,2*0A | 10       | 0          | !B2VDM            |

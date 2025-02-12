@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
@@ -72,6 +73,12 @@ public class NmeaStreamParserSpecsSteps
         _parserOptions.AllowUnreconizedTalkerId = value;
     }
 
+    [Given( "I have configured a AllowUnreconizedDataOrigin of (.*)" )]
+    public void GivenIHaveConfiguredAAllowUnreconizedDataOriginOf( bool value )
+    {
+        _parserOptions.AllowUnreconizedDataOrigin = value;
+    }
+
     [When( "I parse the content by message" )]
     public async Task WhenIParseTheContentByMessageAsync()
     {
@@ -122,6 +129,15 @@ public class NmeaStreamParserSpecsSteps
         LineProcessor<DefaultExtraFieldParser>.Line call = _lineProcessor.OnNextCalls[line];
         Assert.AreEqual( tagBlock, call.TagBlock );
         Assert.AreEqual( sentence, call.Sentence );
+    }
+
+    [Then( "line (.*) should AisTakler of (.*), a DataOrigin of (.*) and a SentenceFormatter of (.*)" )]
+    public void ThenLineShouldHaveAAisTalkerOfADataOrigineOfAndASentenceFormatterOf( int line, TalkerId talkerId, VesselDataOrigin dataOrigin, string sentenceFormatter )
+    {
+        LineProcessor<DefaultExtraFieldParser>.Line call = _lineProcessor.OnNextCalls[line];
+        Assert.AreEqual( talkerId, call.TalkerId );
+        Assert.AreEqual( dataOrigin, call.DataOrigin );
+        Assert.AreEqual( sentenceFormatter, call.SentenceFormatter );
     }
 
     [Then( "the line error report (.*) should include the problematic line '(.*)'" )]
@@ -210,6 +226,13 @@ public class NmeaStreamParserSpecsSteps
         Assert.AreEqual( lineNumber, call.LineNumber );
     }
 
+    [Then( "the line error report (.*) should include an exception reporting an invalid talker data origin" )]
+    public void ThenTheMessageErrorReportShouldIncludeAnExceptionReportingAnInvalidTalkerDataOrigin( int errorCallNumber )
+    {
+        var call = _lineProcessor.OnErrorCalls[errorCallNumber];
+        Assert.AreEqual( "Invalid data. Unrecognized origin in AIS talker ID - must be VDM or VDO", call.Error.Message );
+    }
+
     [Then( "the line error report (.*) should include an exception reporting an invalid talker id with invalid char '(.*)'" )]
     public void ThenTheMessageErrorReportShouldIncludeAnExceptionReportingAnInvalidTalkerId( int errorCallNumber, string invalidChar )
     {
@@ -250,14 +273,17 @@ public class NmeaStreamParserSpecsSteps
 
             OnNextCalls.Add( new Line(
                 Encoding.ASCII.GetString( value.TagBlockAsciiWithoutDelimiters ),
-                Encoding.ASCII.GetString( value.Sentence ) ) );
+                Encoding.ASCII.GetString( value.Sentence ),
+                value.AisTalker,
+                value.DataOrigin,
+                Encoding.ASCII.GetString( value.SentenceFormatter ) ) );
         }
 
         public void Progress( bool done, int totalLines, int totalTicks, int linesSinceLastUpdate, int ticksSinceLastUpdate )
         {
         }
 
-        public record Line( string TagBlock, string Sentence );
+        public record Line( string TagBlock, string Sentence, TalkerId TalkerId, VesselDataOrigin DataOrigin, string SentenceFormatter );
 
         public record ErrorReport( string Line, Exception Error, int LineNumber );
     }

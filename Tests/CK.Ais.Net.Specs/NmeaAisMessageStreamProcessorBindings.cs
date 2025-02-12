@@ -70,6 +70,8 @@ public class NmeaAisMessageStreamProcessorBindings
         Assert.AreEqual( sentencesInGroup, OnNextCalls[callIndex].SentencesInGroup );
     }
 
+    [Then( "in ais")]
+
     [Then( "INmeaAisMessageStreamProcessor.Progress should have been called (.*) times" )]
     public void ThenTheAisMessageProcessorShouldReceiveProgressReports( int callCount )
     {
@@ -156,73 +158,22 @@ public class NmeaAisMessageStreamProcessorBindings
         Assert.AreEqual( ticksSinceLastUpdate, call.TicksSinceLastUpdate );
     }
 
-    public class Message
-    {
-        public Message(
-            long? unixTimestamp,
-            int? source,
-            string asciiPayload,
-            uint padding,
-            bool isFixedMessage,
-            int sentencesInGroup )
-        {
-            UnixTimestamp = unixTimestamp;
-            Source = source;
-            AsciiPayload = asciiPayload;
-            Padding = padding;
-            IsFixedMessage = isFixedMessage;
-            SentencesInGroup = sentencesInGroup;
-        }
+    public record Message(
+        long? UnixTimestamp,
+        int? Source,
+        string AsciiPayload,
+        uint Padding,
+        bool IsFixedMessage,
+        int SentencesInGroup );
 
-        public long? UnixTimestamp { get; }
-
-        public int? Source { get; }
-
-        public string AsciiPayload { get; }
-
-        public uint Padding { get; }
-
-        public bool IsFixedMessage { get; }
-
-        public int SentencesInGroup { get; }
-    }
-
-    public class ProgressReport
-    {
-        public ProgressReport(
-            bool done,
-            int totalNmeaLines,
-            int totalAisMessages,
-            int totalTicks,
-            int nmeaLinesSinceLastUpdate,
-            int aisMessagesSinceLastUpdate,
-            int ticksSinceLastUpdate )
-        {
-            Done = done;
-            TotalNmeaLines = totalNmeaLines;
-            TotalAisMessages = totalAisMessages;
-            TotalTicks = totalTicks;
-            TicksSinceLastUpdate = ticksSinceLastUpdate;
-            NmeaLinesSinceLastUpdate = nmeaLinesSinceLastUpdate;
-            AisMessagesSinceLastUpdate = aisMessagesSinceLastUpdate;
-        }
-
-        public bool Done { get; }
-
-        public int TotalNmeaLines { get; }
-
-        public int TotalAisMessages { get; }
-
-        public int TotalTicks { get; }
-
-        public int LinesSinceLastUpdate { get; }
-
-        public int TicksSinceLastUpdate { get; }
-
-        public int NmeaLinesSinceLastUpdate { get; }
-
-        public int AisMessagesSinceLastUpdate { get; }
-    }
+    public record ProgressReport(
+            bool Done,
+            int TotalNmeaLines,
+            int TotalAisMessages,
+            int TotalTicks,
+            int NmeaLinesSinceLastUpdate,
+            int AisMessagesSinceLastUpdate,
+            int TicksSinceLastUpdate );
 
     public class ErrorReport
     {

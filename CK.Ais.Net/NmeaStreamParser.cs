@@ -188,6 +188,7 @@ public static class NmeaStreamParser
                                                                                     options.TagBlockStandard,
                                                                                     options.EmptyGroupTolerance,
                                                                                     options.AllowUnreconizedTalkerId,
+                                                                                    options.AllowUnreconizedDataOrigin,
                                                                                     options.AllowTagBlockEmptyFields );
 
                             processor.OnNext( parsedLine, lines + 1 );
