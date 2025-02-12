@@ -23,7 +23,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
     /// </summary>
     /// <param name="line">The ASCII-encoded text containing the NMEA message.</param>
     public NmeaLineParser( ReadOnlySpan<byte> line )
-        : this( line, false, TagBlockStandard.Unspecified, EmptyGroupTolerance.None, false, false )
+        : this( line, false, TagBlockStandard.Unspecified, EmptyGroupTolerance.None, false, false, false )
     {
     }
 
@@ -42,6 +42,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
                            TagBlockStandard tagBlockStandard,
                            EmptyGroupTolerance emptyGroupTolerance,
                            bool allowUnreconizedTalkerId,
+                           bool allowUnreconizedDataOrigin,
                            bool allowTagBlockEmptyField )
     {
         Line = line;
@@ -149,17 +150,23 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
         {
             DataOrigin = VesselDataOrigin.Vdo;
         }
+        else if( allowUnreconizedDataOrigin )
+        {
+            DataOrigin = VesselDataOrigin.Unreconized;
+        }
         else
         {
             throw new ArgumentException( "Invalid data. Unrecognized origin in AIS talker ID - must be VDM or VDO" );
         }
 
-        if( Sentence[6] != (byte)',' )
+        if( Sentence[6] != (byte)',' && !allowUnreconizedDataOrigin )
         {
-            throw new ArgumentException( "Invalid data. Talker ID must be followed by ','" );
+            throw new ArgumentException( "Invalid data. Takler ID and Data Origin must have a count of 5 charactes and be followed by ','" );
         }
 
-        ReadOnlySpan<byte> remainingFields = Sentence.Slice( 7 );
+        SentenceFormatter = Sentence.Slice( 0, Sentence.IndexOf( (byte)',' ) );
+
+        ReadOnlySpan<byte> remainingFields = Sentence.Slice( SentenceFormatter.Length + 1 );
 
         TotalFragmentCount = GetSingleDigitField( ref remainingFields, true );
         FragmentNumberOneBased = GetSingleDigitField( ref remainingFields, true );
@@ -202,6 +209,11 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
     /// Gets the talker ID that produced the message.
     /// </summary>
     public TalkerId AisTalker { get; }
+
+    /// <summary>
+    /// Gets the sentence formatter of the message. Contains exclamation mark (!) + <see cref="AisTalker"/> + <see cref="DataOrigin"/>.
+    /// </summary>
+    public ReadOnlySpan<byte> SentenceFormatter { get; }
 
     /// <summary>
     /// Gets the radio channel code, if present.
@@ -281,6 +293,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
     private NmeaLineParser( NmeaLineParser<TExtraFieldParser> parser, NmeaTagBlockSentenceGrouping? grouping )
     {
         AisTalker = parser.AisTalker;
+        SentenceFormatter = parser.SentenceFormatter;
         ChannelCode = parser.ChannelCode;
         DataOrigin = parser.DataOrigin;
         FragmentNumberOneBased = grouping.HasValue ? grouping.Value.SentenceNumber : 1;

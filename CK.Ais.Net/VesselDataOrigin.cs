@@ -18,4 +18,6 @@ public enum VesselDataOrigin
     /// Information on your own vessel.
     /// </summary>
     Vdo,
+
+    Unreconized
 }
