@@ -116,6 +116,12 @@ public class NmeaTagBlockParserSpecsSteps
         Assert.AreEqual( errorMessage, call.Error.Message );
     }
 
+    [Then( "no error message reported")]
+    public void ThenNoMessageReported()
+    {
+        Assert.IsEmpty( _messageProcessor.OnErrorCalls );
+    }
+
     [Then( "the TextString is '(.*)'" )]
     public void TheTheTextStringIs( string text )
     {

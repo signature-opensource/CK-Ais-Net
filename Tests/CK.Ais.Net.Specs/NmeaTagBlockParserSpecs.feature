@@ -130,30 +130,38 @@ Scenario: Allow tag block empty fields
     And the SentenceGrouping is null
 
     Examples:
-    | payload |
-    | s:*49   | 
-    | c:*59   |
-    | i:*53   |
-    | t:*4E   |
-    | d:*5E   |
-    | n:*54   |
-    | r:*48   |
-    | x:*42   |
+    | payload                    |
+    | c:,i:,t:,d:,n:,r:,x:,s:*21 |
+    | s:,i:,t:,d:,n:,r:,x:,c:*21 |
+    | s:,c:,t:,d:,n:,r:,x:,i:*21 |
+    | s:,c:,i:,d:,n:,r:,x:,t:*21 |
+    | s:,c:,i:,t:,n:,r:,x:,d:*21 |
+    | s:,c:,i:,t:,d:,r:,x:,n:*21 |
+    | s:,c:,i:,t:,d:,n:,x:,r:*21 |
+    | s:,c:,i:,t:,d:,n:,r:,x:*21 |
 
 Scenario: Allow tag block empty fields but invlid field
     When I parse '<payload>' with allowTagBlockEmptyFields of true and throwWhenTagBlockContainsUnknownFields of false
     Then the parser throw an error message 'Tag block entries should start with a type character followed by a colon, and there was no colon'
 
     Examples:
-    | payload |
-    | s*73    |
-    | c*63    |
-    | i*69    |
-    | t*74    |
-    | d*64    |
-    | n*6E    |
-    | r*72    |
-    | x*78    |
+    | payload                   |
+    | c:,i:,t:,d:,n:,r:,x:,s*21 |
+    | s:,i:,t:,d:,n:,r:,x:,c*21 |
+    | s:,c:,t:,d:,n:,r:,x:,i*21 |
+    | s:,c:,i:,d:,n:,r:,x:,t*21 |
+    | s:,c:,i:,t:,n:,r:,x:,d*21 |
+    | s:,c:,i:,t:,d:,r:,x:,n*21 |
+    | s:,c:,i:,t:,d:,n:,x:,r*21 |
+    | s:,c:,i:,t:,d:,n:,r:,x*21 |
+    | s,c:,i:,t:,d:,n:,r:,x:*21 |
+    | c,s:,i:,t:,d:,n:,r:,x:*21 |
+    | i,s:,c:,t:,d:,n:,r:,x:*21 |
+    | t,s:,c:,i:,d:,n:,r:,x:*21 |
+    | d,s:,c:,i:,t:,n:,r:,x:*21 |
+    | n,s:,c:,i:,t:,d:,r:,x:*21 |
+    | r,s:,c:,i:,t:,d:,n:,x:*21 |
+    | x,s:,c:,i:,t:,d:,n:,r:*21 |
 
 Scenario: Disallow tag block empty fields
     When I parse '<payload>' with allowTagBlockEmptyFields of false and throwWhenTagBlockContainsUnknownFields of false
@@ -177,3 +185,20 @@ Scenario: Disallow tag block empty fields
     | n*54    |
     | r*48    |
     | x*42    |
+
+Scenario: Group field is the last of the tag block
+    When I parse 'i:<O>IRL</O>,c:1738367940,g:2-2-1470*2F' with allowTagBlockEmptyFields of true and throwWhenTagBlockContainsUnknownFields of false
+    Then the TextString is '<O>IRL</O>'
+	And the Timestamp is '1738367940'
+	And the SentenceGrouping is 2 2 1470
+    And no error message reported
+
+Scenario: Group field is the last of the tag block throw an error when allowTagBlockEmptyFields is false
+    When I parse 'i:<O>IRL</O>,c:1738367940,g:2-2-1470*2F' with allowTagBlockEmptyFields of false and throwWhenTagBlockContainsUnknownFields of false
+    Then the TextString is '<O>IRL</O>'
+	And the Timestamp is '1738367940'
+	And the SentenceGrouping is 2 2 1470
+    And no error message reported
+
+#    When I parse 'i:<O>IRL</O>,c:1738367940,g:2-2-1470*2F' with allowTagBlockEmptyFields of false and throwWhenTagBlockContainsUnknownFields of false
+#    Then the parser throw an error message 'Tag block entries should start with a type character followed by a colon, and there was no colon'
