@@ -54,7 +54,6 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
     /// <inheritdoc/>
     public void OnCompleted()
     {
-        FreeRentedBuffers();
         _messageProcessor.OnCompleted();
     }
 
@@ -156,7 +155,9 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                     _options.ThrowWhenTagBlockContainsUnknownFields,
                     _options.TagBlockStandard,
                     _options.EmptyGroupTolerance,
-                    _options.AllowUnreconizedTalkerId );
+                    _options.AllowUnreconizedTalkerId,
+                    _options.AllowUnreconizedDataOrigin,
+                    _options.AllowTagBlockEmptyFields );
                 totalPayloadSize += storedParsedLine.Payload.Length;
 
                 if( storedParsedLine.Sentence.Length > 0 ) fragmentsWithSentences++;
@@ -188,7 +189,9 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                             _options.ThrowWhenTagBlockContainsUnknownFields,
                             _options.TagBlockStandard,
                             _options.EmptyGroupTolerance,
-                            _options.AllowUnreconizedTalkerId );
+                            _options.AllowUnreconizedTalkerId,
+                            _options.AllowUnreconizedDataOrigin,
+                            _options.AllowTagBlockEmptyFields );
 
                         // If a non last fragment have a non zero padding, disallow it and not in fix grouping mode,
                         // then not populate reassemblyUnderlyingArray and not call OnNext.
@@ -211,7 +214,9 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                             _options.ThrowWhenTagBlockContainsUnknownFields,
                             _options.TagBlockStandard,
                             _options.EmptyGroupTolerance,
-                            _options.AllowUnreconizedTalkerId );
+                            _options.AllowUnreconizedTalkerId,
+                            _options.AllowUnreconizedDataOrigin,
+                            _options.AllowTagBlockEmptyFields );
                         if( fixGrouping ) lineParser = NmeaLineParser<TExtraFieldParser>.OverrideGrouping( lineParser, customGroup );
 
                         _messageProcessor.OnNext(

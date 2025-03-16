@@ -20,7 +20,7 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
     /// <c>/</c> delimiters.
     /// </param>
     public NmeaTagBlockParser( ReadOnlySpan<byte> span )
-        : this( span, false, TagBlockStandard.Unspecified )
+        : this( span, false, TagBlockStandard.Unspecified, false )
     {
     }
 
@@ -35,7 +35,7 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
     /// data sources that add non-standard fields.
     /// </param>
     /// <param name="tagBlockStandard">Defined in whick standard the tag block is.</param>
-    public NmeaTagBlockParser( ReadOnlySpan<byte> span, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard )
+    public NmeaTagBlockParser( ReadOnlySpan<byte> span, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard, bool allowTagBlockEmptyFields )
     {
         OriginalSpan = span;
         SentenceGrouping = default;
@@ -75,19 +75,19 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
                         throw new ArgumentException( "Tag block sentence grouping should be <int>G<int>:<int>, but first part was not a decimal integer" );
                     }
 
-                    MoveAfterFieldKey( ref span );
-                    SentenceGrouping = ParseNmeaSentenceGrouping( ref span );
+                    MoveAfterFieldKey( ref span, allowTagBlockEmptyFields );
+                    SentenceGrouping = ParseNmeaSentenceGrouping( ref span, allowTagBlockEmptyFields );
                     break;
 
                 case 's':
-                    MoveAfterFieldKey( ref span );
+                    MoveAfterFieldKey( ref span, allowTagBlockEmptyFields );
                     Source = AdvanceToNextField( ref span );
 
                     break;
 
                 case 'c':
-                    MoveAfterFieldKey( ref span );
-                    if( !ParseDelimitedLong( ref span, out long timestamp ) )
+                    MoveAfterFieldKey( ref span, allowTagBlockEmptyFields );
+                    if( !ParseDelimitedLong( ref span, out long? timestamp, allowTagBlockEmptyFields ) )
                     {
                         throw new ArgumentException( "Tag block timestamp should be int" );
                     }
@@ -101,7 +101,7 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
                         throw new ArgumentException( "Unknown field type in Nmea tag block: i" );
                     }
 
-                    MoveAfterFieldKey( ref span );
+                    MoveAfterFieldKey( ref span, allowTagBlockEmptyFields );
                     TextString = AdvanceToNextField( ref span );
                     break;
 
@@ -111,7 +111,7 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
                         throw new ArgumentException( "Unknown field type in IEC tag block: t" );
                     }
 
-                    MoveAfterFieldKey( ref span );
+                    MoveAfterFieldKey( ref span, allowTagBlockEmptyFields );
                     TextString = AdvanceToNextField( ref span );
                     break;
 
@@ -154,9 +154,9 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
                     break;
             }
 
-            static void MoveAfterFieldKey( ref ReadOnlySpan<byte> source )
+            static void MoveAfterFieldKey( ref ReadOnlySpan<byte> source, bool allowEmptyTagBlockFields )
             {
-                if( source.Length < 3 || source[1] != (byte)':' )
+                if( (source.Length is 2 && !allowEmptyTagBlockFields) || source.Length < 2 || source[1] != (byte)':' )
                 {
                     throw new ArgumentException( "Tag block entries should start with a type character followed by a colon, and there was no colon" );
                 }
@@ -276,7 +276,7 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
         return true;
     }
 
-    static bool ParseDelimitedLong( ref ReadOnlySpan<byte> source, out long result, char? delimiter = null )
+    static bool ParseDelimitedLong( ref ReadOnlySpan<byte> source, out long? result, bool allowTagBlockEmptyFields, char? delimiter = null )
     {
         result = default;
 
@@ -286,17 +286,22 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
             return false;
         }
 
-        if( !Utf8Parser.TryParse( original, out result, out int consumed )
-            || consumed != length )
+        var successParse = Utf8Parser.TryParse( original, out long r, out int consumed );
+        if( (!successParse && !allowTagBlockEmptyFields) || consumed != length )
         {
             return false;
         }
+        result = successParse ? r : null;
 
         return true;
     }
 
-    static NmeaTagBlockSentenceGrouping ParseNmeaSentenceGrouping( ref ReadOnlySpan<byte> source )
+    static NmeaTagBlockSentenceGrouping? ParseNmeaSentenceGrouping( ref ReadOnlySpan<byte> source, bool allowTagBlockEmptyFields )
     {
+        if( (source.IsEmpty || source.IndexOf( (byte)',' ) is 0) && allowTagBlockEmptyFields )
+        {
+            return null;
+        }
         if( !ParseDelimitedInt( ref source, out int sentenceNumber, '-' ) )
         {
             throw new ArgumentException( "Tag block sentence grouping should be <int>-<int>-<int>, but first part was not a decimal integer" );

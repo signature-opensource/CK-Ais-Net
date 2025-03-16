@@ -33,7 +33,7 @@ public class NmeaTagBlockParserSpecsSteps
     [When( "I parse '(.*)' with throwWhenTagBlockContainsUnknownFields of (.*) and tagBlockStandard of (.*) as a NMEA tag block parser" )]
     public void WhenIParseWithThrowWhenTagBlockContainsUnknownFieldsOfAndTagBlockStandardOfAsANMEATagBlockParser( string messageLine, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard )
     {
-        When( messageLine, throwWhenTagBlockContainsUnknownFields, tagBlockStandard );
+        When( messageLine, throwWhenTagBlockContainsUnknownFields, tagBlockStandard, false );
     }
 
     [When( "I parse the content by message with throwWhenTagBlockContainsUnknownFields of (.*) and tagBlockStandard of (.*)" )]
@@ -48,16 +48,28 @@ public class NmeaTagBlockParserSpecsSteps
     [When( "I parse '(.*)' with throwWhenTagBlockContainsUnknownFields of (.*), tagBlockStandard of (.*) and extra parser" )]
     public void WhenIParseTheContentByMessageWithExtraFieldParser( string messageLine, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard )
     {
-        WhenExtra( messageLine, throwWhenTagBlockContainsUnknownFields, tagBlockStandard );
+        WhenExtra( messageLine, throwWhenTagBlockContainsUnknownFields, tagBlockStandard, false );
     }
 
-    [Then( "the Source is (.*)" )]
+    [When( "I parse '(.*)' with allowTagBlockEmptyFields of (.*) and throwWhenTagBlockContainsUnknownFields of (.*)" )]
+    public void WhenIParsePayloadWithAllowTagBlockEmptyFieldsOf( string messageLine, bool allowTagBlockEmptyFields, bool throwWhenTagBlockContainsUnknownFields )
+    {
+        When( messageLine, throwWhenTagBlockContainsUnknownFields, TagBlockStandard.Unspecified, allowTagBlockEmptyFields );
+    }
+
+    [Then( "the Source is '(.*)'" )]
     public void ThenSourceIs( string source )
     {
         Then( parser => Assert.AreEqual( source, Encoding.ASCII.GetString( parser.Source ) ) );
     }
 
-    [Then( "the Timestamp is (.*)" )]
+    [Then( "the Source is empty" )]
+    public void ThenSourceIsEmpty()
+    {
+        Then( parser => Assert.IsTrue( parser.Source.IsEmpty ) );
+    }
+
+    [Then( "the Timestamp is '(.*)'" )]
     public void ThenTimestampIs( double source )
     {
         Then( parser =>
@@ -85,6 +97,18 @@ public class NmeaTagBlockParserSpecsSteps
         Then( parser => Assert.IsFalse( parser.SentenceGrouping.HasValue ) );
     }
 
+    [Then( "there are no error" )]
+    public void ThereAreNoError()
+    {
+        Assert.Zero( _messageProcessor.OnErrorCalls.Count );
+    }
+
+    [Then( "the Timestamp is null" )]
+    public void ThenTimestampIsNull()
+    {
+        Then( parser => Assert.IsFalse( parser.UnixTimestamp.HasValue ) );
+    }
+
     [Then( "the message error report (.*) should include the error message '(.*)'" )]
     public void ThenTheLineErrorReportShouldIncludeTheProblematicLine( int errorCallNumber, string errorMessage )
     {
@@ -92,10 +116,22 @@ public class NmeaTagBlockParserSpecsSteps
         Assert.AreEqual( errorMessage, call.Error.Message );
     }
 
-    [Then( "the TextString is (.*)" )]
+    [Then( "no error message reported")]
+    public void ThenNoMessageReported()
+    {
+        Assert.IsEmpty( _messageProcessor.OnErrorCalls );
+    }
+
+    [Then( "the TextString is '(.*)'" )]
     public void TheTheTextStringIs( string text )
     {
         Then( parser => Assert.AreEqual( text, Encoding.ASCII.GetString( parser.TextString ) ) );
+    }
+
+    [Then( "the TextString is empty" )]
+    public void TheTheTextStringIsEmpty()
+    {
+        Then( parser => Assert.IsTrue( parser.TextString.IsEmpty ) );
     }
 
     [Then( "the extra field parser q value is '(.*)'" )]
@@ -110,14 +146,28 @@ public class NmeaTagBlockParserSpecsSteps
         ThenExtra( parser => Assert.AreEqual( value, Encoding.ASCII.GetString( parser.ExtraFieldParser.GetVValue( parser.OriginalSpan ) ) ) );
     }
 
-    void When( string messageLine, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard )
+    [Then( "the parser throw an error message '(.*)'" )]
+    public void ThenTheParserThrowAnErrorMessage( string message )
     {
-        _makeParser = () => new NmeaTagBlockParser<DefaultExtraFieldParser>( Encoding.ASCII.GetBytes( messageLine ), throwWhenTagBlockContainsUnknownFields, tagBlockStandard );
+        try
+        {
+            Debug.Assert( _makeParser is not null );
+            _makeParser();
+        }
+        catch( Exception e )
+        {
+            Assert.AreEqual( e.Message, message );
+        }
     }
 
-    void WhenExtra( string messageLine, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard )
+    void When( string messageLine, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard, bool allowEmptyTagBlockFields )
     {
-        _makeExtraParser = () => new NmeaTagBlockParser<ExtraFieldParser>( Encoding.ASCII.GetBytes( messageLine ), throwWhenTagBlockContainsUnknownFields, tagBlockStandard );
+        _makeParser = () => new NmeaTagBlockParser<DefaultExtraFieldParser>( Encoding.ASCII.GetBytes( messageLine ), throwWhenTagBlockContainsUnknownFields, tagBlockStandard, allowEmptyTagBlockFields );
+    }
+
+    void WhenExtra( string messageLine, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard, bool allowEmptyTagBlockFields )
+    {
+        _makeExtraParser = () => new NmeaTagBlockParser<ExtraFieldParser>( Encoding.ASCII.GetBytes( messageLine ), throwWhenTagBlockContainsUnknownFields, tagBlockStandard, allowEmptyTagBlockFields );
     }
 
     void Then( ParserTest test )

@@ -1005,6 +1005,99 @@ this.ScenarioInitialize(scenarioInfo);
             }
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Invalid talker id with AllowUnreconizedTalkerId to false throw an error")]
+        public void InvalidTalkerIdWithAllowUnreconizedTalkerIdToFalseThrowAnError()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Invalid talker id with AllowUnreconizedTalkerId to false throw an error", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 269
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 270
+ testRunner.Given("I have configured a AllowUnreconizedDataOrigin of false", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 271
+    testRunner.And("a line \'\\c:1725231098,t:TER*78\\!AIVDI,1,1,,B,37Oftm3Oh:bcIrUkmmv5`Qfp01o0,0*05\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 272
+ testRunner.When("I parse the content by line", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 273
+ testRunner.Then("INmeaLineStreamProcessor.OnNext should have been called 0 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 274
+ testRunner.Then("OnError should have been called 1 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 275
+ testRunner.And("the line error report 0 should include an exception reporting an invalid talker d" +
+                        "ata origin", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Invalid talker id with AllowUnreconizedTalkerId to true not throw error")]
+        [NUnit.Framework.TestCaseAttribute("\\c:1725231098,t:TER*78\\!AIVDI,1,1,,B,37Oftm3Oh:bcIrUkmmv5`Qfp01o0,0*05", "2", "2", "!AIVDI", null)]
+        [NUnit.Framework.TestCaseAttribute("\\c:1725173550,t:TER*7C\\!AIDMV,1,1,,B,15?dMCh01`9ORmnCKTLQ<hnj0<2?,0*4A", "2", "2", "!AIDMV", null)]
+        [NUnit.Framework.TestCaseAttribute("\\c:1725176210,t:TER*7A\\!AIvDM,1,1,,A,402;bK1vR@wTgPbmd4HVqs700l76,0*7A", "2", "2", "!AIvDM", null)]
+        [NUnit.Framework.TestCaseAttribute("\\c:1725181228,t:TERA*38\\!AIVFM,1,1,,A,33f?cT?P00PfpT8I6=:>4?vl2>`<,0*08", "2", "2", "!AIVFM", null)]
+        [NUnit.Framework.TestCaseAttribute("\\i:<O>NOR</O>,s:2573105,c:1668997143*00\\!B2VDM,1,1,9,A,H3mWb5P5HT4pD0000000000000" +
+            "0,2*0A", "10", "0", "!B2VDM", null)]
+        public void InvalidTalkerIdWithAllowUnreconizedTalkerIdToTrueNotThrowError(string payload, string talkerId, string dataOrigin, string sentenceFormatter, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            argumentsOfScenario.Add("talkerId", talkerId);
+            argumentsOfScenario.Add("dataOrigin", dataOrigin);
+            argumentsOfScenario.Add("sentenceFormatter", sentenceFormatter);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Invalid talker id with AllowUnreconizedTalkerId to true not throw error", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 277
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 278
+ testRunner.Given("I have configured a AllowUnreconizedDataOrigin of true", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 279
+ testRunner.And("I have configured a AllowUnreconizedTalkerId of true", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 280
+    testRunner.And(string.Format("a line \'{0}\'", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 281
+ testRunner.When("I parse the content by line", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 282
+    testRunner.Then(string.Format("line 0 should AisTakler of {0}, a DataOrigin of {1} and a SentenceFormatter of {2" +
+                            "}", talkerId, dataOrigin, sentenceFormatter), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 283
+ testRunner.And("INmeaLineStreamProcessor.OnNext should have been called 1 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 284
+ testRunner.And("OnError should have been called 0 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

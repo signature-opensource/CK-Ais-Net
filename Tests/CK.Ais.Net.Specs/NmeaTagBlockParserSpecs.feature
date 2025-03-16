@@ -14,8 +14,8 @@ Feature: NmeaTagBlockParserSpecs
 
 Scenario Outline: Unspecified standard tag block
 	When I parse '<payload>' with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 0 as a NMEA tag block parser
-	Then the Source is <source>
-	And the Timestamp is <timestamp>
+	Then the Source is '<source>'
+	And the Timestamp is '<timestamp>'
 	And the SentenceGrouping is null
 
 	Examples:
@@ -25,8 +25,8 @@ Scenario Outline: Unspecified standard tag block
 
 Scenario Outline: Unspecified standard tag block with group
 	When I parse 'g:1-2-7764,s:AIS,c:1706800480*13' with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 0 as a NMEA tag block parser
-	Then the Source is <source>
-	And the Timestamp is <timestamp>
+	Then the Source is '<source>'
+	And the Timestamp is '<timestamp>'
 	And the SentenceGrouping is <sentence> <total> <groupid>
 
 	Examples:
@@ -36,8 +36,8 @@ Scenario Outline: Unspecified standard tag block with group
 
 Scenario: IEC tag block single line
 	When I parse '<payload>' with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 1 as a NMEA tag block parser
-	Then the Source is <source>
-	And the Timestamp is <timestamp>
+	Then the Source is '<source>'
+	And the Timestamp is '<timestamp>'
 	And the SentenceGrouping is null
 	
 	Examples:
@@ -47,8 +47,8 @@ Scenario: IEC tag block single line
 
 Scenario: IEC tag block single line with group
 	When I parse '1G2:7764,s:AIS,c:1706800480*13' with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 1 as a NMEA tag block parser
-	Then the Source is AIS
-	And the Timestamp is 1706800480
+	Then the Source is 'AIS'
+	And the Timestamp is '1706800480'
 	And the SentenceGrouping is 1 2 7764
 
 Scenario: IEM tag block but Nmea group
@@ -58,8 +58,8 @@ Scenario: IEM tag block but Nmea group
 
 Scenario Outline: Nmea tag block single line
 	When I parse '<payload>' with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 2 as a NMEA tag block parser
-	Then the Source is <source>
-	And the Timestamp is <timestamp>
+	Then the Source is '<source>'
+	And the Timestamp is '<timestamp>'
 	And the SentenceGrouping is null
 
 	Examples:
@@ -69,8 +69,8 @@ Scenario Outline: Nmea tag block single line
 
 Scenario: Nmea tag block single line with group
 	When I parse 'g:1-2-7764,s:AIS,c:1706800480*13' with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 2 as a NMEA tag block parser
-	Then the Source is AIS
-	And the Timestamp is 1706800480
+	Then the Source is 'AIS'
+	And the Timestamp is '1706800480'
 	And the SentenceGrouping is 1 2 7764
 
 Scenario: Nmea tag block but IEC group
@@ -80,7 +80,7 @@ Scenario: Nmea tag block but IEC group
 
 Scenario: IEC tag block TextString
 	When I parse '<payload>' with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 1 as a NMEA tag block parser
-  Then the TextString is <text>
+  Then the TextString is '<text>'
 
   Examples:
   | payload                     | text      |
@@ -89,7 +89,7 @@ Scenario: IEC tag block TextString
 
 Scenario: Nmea tag block TextString
 	When I parse '<payload>' with throwWhenTagBlockContainsUnknownFields of false and tagBlockStandard of 2 as a NMEA tag block parser
-  Then the TextString is <text>
+  Then the TextString is '<text>'
 
   Examples:
   | payload                     | text      |
@@ -120,3 +120,85 @@ Scenario: Nmea tag block Extra Fields with extra parser
   | payload                                        | qvalue         | vvalue |
   | s:KIN1B,c:1716810431,q:mt-pt-ct-st-kt*78       | mt-pt-ct-st-kt |        |
   | s:KIN1B,c:1716810431,q:mt-pt-ct-st-kt,v:123*28 | mt-pt-ct-st-kt | 123    |
+
+Scenario: Allow tag block empty fields
+    When I parse '<payload>' with allowTagBlockEmptyFields of true and throwWhenTagBlockContainsUnknownFields of false
+    Then there are no error
+    And the Source is empty
+    And the Timestamp is null
+    And the TextString is empty
+    And the SentenceGrouping is null
+
+    Examples:
+    | payload                    |
+    | c:,i:,t:,d:,n:,r:,x:,s:*21 |
+    | s:,i:,t:,d:,n:,r:,x:,c:*21 |
+    | s:,c:,t:,d:,n:,r:,x:,i:*21 |
+    | s:,c:,i:,d:,n:,r:,x:,t:*21 |
+    | s:,c:,i:,t:,n:,r:,x:,d:*21 |
+    | s:,c:,i:,t:,d:,r:,x:,n:*21 |
+    | s:,c:,i:,t:,d:,n:,x:,r:*21 |
+    | s:,c:,i:,t:,d:,n:,r:,x:*21 |
+
+Scenario: Allow tag block empty fields but invlid field
+    When I parse '<payload>' with allowTagBlockEmptyFields of true and throwWhenTagBlockContainsUnknownFields of false
+    Then the parser throw an error message 'Tag block entries should start with a type character followed by a colon, and there was no colon'
+
+    Examples:
+    | payload                   |
+    | c:,i:,t:,d:,n:,r:,x:,s*21 |
+    | s:,i:,t:,d:,n:,r:,x:,c*21 |
+    | s:,c:,t:,d:,n:,r:,x:,i*21 |
+    | s:,c:,i:,d:,n:,r:,x:,t*21 |
+    | s:,c:,i:,t:,n:,r:,x:,d*21 |
+    | s:,c:,i:,t:,d:,r:,x:,n*21 |
+    | s:,c:,i:,t:,d:,n:,x:,r*21 |
+    | s:,c:,i:,t:,d:,n:,r:,x*21 |
+    | s,c:,i:,t:,d:,n:,r:,x:*21 |
+    | c,s:,i:,t:,d:,n:,r:,x:*21 |
+    | i,s:,c:,t:,d:,n:,r:,x:*21 |
+    | t,s:,c:,i:,d:,n:,r:,x:*21 |
+    | d,s:,c:,i:,t:,n:,r:,x:*21 |
+    | n,s:,c:,i:,t:,d:,r:,x:*21 |
+    | r,s:,c:,i:,t:,d:,n:,x:*21 |
+    | x,s:,c:,i:,t:,d:,n:,r:*21 |
+
+Scenario: Disallow tag block empty fields
+    When I parse '<payload>' with allowTagBlockEmptyFields of false and throwWhenTagBlockContainsUnknownFields of false
+    Then the parser throw an error message 'Tag block entries should start with a type character followed by a colon, and there was no colon'
+
+    Examples:
+    | payload |
+    | s:*49   |
+    | c:*59   |
+    | i:*53   |
+    | t:*4E   |
+    | d:*5E   |
+    | n:*54   |
+    | r:*48   |
+    | x:*42   |
+    | s*49    |
+    | c*59    |
+    | i*53    |
+    | t*4E    |
+    | d*5E    |
+    | n*54    |
+    | r*48    |
+    | x*42    |
+
+Scenario: Group field is the last of the tag block
+    When I parse 'i:<O>IRL</O>,c:1738367940,g:2-2-1470*2F' with allowTagBlockEmptyFields of true and throwWhenTagBlockContainsUnknownFields of false
+    Then the TextString is '<O>IRL</O>'
+	And the Timestamp is '1738367940'
+	And the SentenceGrouping is 2 2 1470
+    And no error message reported
+
+Scenario: Group field is the last of the tag block throw an error when allowTagBlockEmptyFields is false
+    When I parse 'i:<O>IRL</O>,c:1738367940,g:2-2-1470*2F' with allowTagBlockEmptyFields of false and throwWhenTagBlockContainsUnknownFields of false
+    Then the TextString is '<O>IRL</O>'
+	And the Timestamp is '1738367940'
+	And the SentenceGrouping is 2 2 1470
+    And no error message reported
+
+#    When I parse 'i:<O>IRL</O>,c:1738367940,g:2-2-1470*2F' with allowTagBlockEmptyFields of false and throwWhenTagBlockContainsUnknownFields of false
+#    Then the parser throw an error message 'Tag block entries should start with a type character followed by a colon, and there was no colon'

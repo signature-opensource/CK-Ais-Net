@@ -101,10 +101,10 @@ this.ScenarioInitialize(scenarioInfo);
                             "andard of 0 as a NMEA tag block parser", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 17
- testRunner.Then(string.Format("the Source is {0}", source), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then(string.Format("the Source is \'{0}\'", source), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 18
- testRunner.And(string.Format("the Timestamp is {0}", timestamp), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And(string.Format("the Timestamp is \'{0}\'", timestamp), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 19
  testRunner.And("the SentenceGrouping is null", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -143,10 +143,10 @@ this.ScenarioInitialize(scenarioInfo);
                         "ields of false and tagBlockStandard of 0 as a NMEA tag block parser", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 28
- testRunner.Then(string.Format("the Source is {0}", source), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then(string.Format("the Source is \'{0}\'", source), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 29
- testRunner.And(string.Format("the Timestamp is {0}", timestamp), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And(string.Format("the Timestamp is \'{0}\'", timestamp), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 30
  testRunner.And(string.Format("the SentenceGrouping is {0} {1} {2}", sentence, total, groupid), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -182,10 +182,10 @@ this.ScenarioInitialize(scenarioInfo);
                             "andard of 1 as a NMEA tag block parser", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 39
- testRunner.Then(string.Format("the Source is {0}", source), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then(string.Format("the Source is \'{0}\'", source), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 40
- testRunner.And(string.Format("the Timestamp is {0}", timestamp), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And(string.Format("the Timestamp is \'{0}\'", timestamp), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 41
  testRunner.And("the SentenceGrouping is null", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -216,10 +216,10 @@ this.ScenarioInitialize(scenarioInfo);
                         "lds of false and tagBlockStandard of 1 as a NMEA tag block parser", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 50
- testRunner.Then("the Source is AIS", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the Source is \'AIS\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 51
- testRunner.And("the Timestamp is 1706800480", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("the Timestamp is \'1706800480\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 52
  testRunner.And("the SentenceGrouping is 1 2 7764", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -288,10 +288,10 @@ this.ScenarioInitialize(scenarioInfo);
                             "andard of 2 as a NMEA tag block parser", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 61
- testRunner.Then(string.Format("the Source is {0}", source), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then(string.Format("the Source is \'{0}\'", source), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 62
- testRunner.And(string.Format("the Timestamp is {0}", timestamp), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And(string.Format("the Timestamp is \'{0}\'", timestamp), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 63
  testRunner.And("the SentenceGrouping is null", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -322,10 +322,10 @@ this.ScenarioInitialize(scenarioInfo);
                         "ields of false and tagBlockStandard of 2 as a NMEA tag block parser", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 72
- testRunner.Then("the Source is AIS", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the Source is \'AIS\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 73
- testRunner.And("the Timestamp is 1706800480", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("the Timestamp is \'1706800480\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 74
  testRunner.And("the SentenceGrouping is 1 2 7764", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -393,7 +393,7 @@ this.ScenarioInitialize(scenarioInfo);
                             "andard of 1 as a NMEA tag block parser", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 83
-  testRunner.Then(string.Format("the TextString is {0}", text), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+  testRunner.Then(string.Format("the TextString is \'{0}\'", text), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -425,7 +425,7 @@ this.ScenarioInitialize(scenarioInfo);
                             "andard of 2 as a NMEA tag block parser", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 92
-  testRunner.Then(string.Format("the TextString is {0}", text), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+  testRunner.Then(string.Format("the TextString is \'{0}\'", text), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -561,6 +561,223 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
 #line 117
   testRunner.And(string.Format("the extra field parser v value is \'{0}\'", vvalue), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Allow tag block empty fields")]
+        [NUnit.Framework.TestCaseAttribute("c:,i:,t:,d:,n:,r:,x:,s:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,i:,t:,d:,n:,r:,x:,c:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,c:,t:,d:,n:,r:,x:,i:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,c:,i:,d:,n:,r:,x:,t:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,c:,i:,t:,n:,r:,x:,d:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,c:,i:,t:,d:,r:,x:,n:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,c:,i:,t:,d:,n:,x:,r:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,c:,i:,t:,d:,n:,r:,x:*21", null)]
+        public void AllowTagBlockEmptyFields(string payload, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Allow tag block empty fields", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 124
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 125
+    testRunner.When(string.Format("I parse \'{0}\' with allowTagBlockEmptyFields of true and throwWhenTagBlockContains" +
+                            "UnknownFields of false", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 126
+    testRunner.Then("there are no error", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 127
+    testRunner.And("the Source is empty", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 128
+    testRunner.And("the Timestamp is null", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 129
+    testRunner.And("the TextString is empty", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 130
+    testRunner.And("the SentenceGrouping is null", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Allow tag block empty fields but invlid field")]
+        [NUnit.Framework.TestCaseAttribute("c:,i:,t:,d:,n:,r:,x:,s*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,i:,t:,d:,n:,r:,x:,c*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,c:,t:,d:,n:,r:,x:,i*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,c:,i:,d:,n:,r:,x:,t*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,c:,i:,t:,n:,r:,x:,d*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,c:,i:,t:,d:,r:,x:,n*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,c:,i:,t:,d:,n:,x:,r*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s:,c:,i:,t:,d:,n:,r:,x*21", null)]
+        [NUnit.Framework.TestCaseAttribute("s,c:,i:,t:,d:,n:,r:,x:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("c,s:,i:,t:,d:,n:,r:,x:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("i,s:,c:,t:,d:,n:,r:,x:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("t,s:,c:,i:,d:,n:,r:,x:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("d,s:,c:,i:,t:,n:,r:,x:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("n,s:,c:,i:,t:,d:,r:,x:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("r,s:,c:,i:,t:,d:,n:,x:*21", null)]
+        [NUnit.Framework.TestCaseAttribute("x,s:,c:,i:,t:,d:,n:,r:*21", null)]
+        public void AllowTagBlockEmptyFieldsButInvlidField(string payload, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Allow tag block empty fields but invlid field", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 143
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 144
+    testRunner.When(string.Format("I parse \'{0}\' with allowTagBlockEmptyFields of true and throwWhenTagBlockContains" +
+                            "UnknownFields of false", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 145
+    testRunner.Then("the parser throw an error message \'Tag block entries should start with a type cha" +
+                        "racter followed by a colon, and there was no colon\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Disallow tag block empty fields")]
+        [NUnit.Framework.TestCaseAttribute("s:*49", null)]
+        [NUnit.Framework.TestCaseAttribute("c:*59", null)]
+        [NUnit.Framework.TestCaseAttribute("i:*53", null)]
+        [NUnit.Framework.TestCaseAttribute("t:*4E", null)]
+        [NUnit.Framework.TestCaseAttribute("d:*5E", null)]
+        [NUnit.Framework.TestCaseAttribute("n:*54", null)]
+        [NUnit.Framework.TestCaseAttribute("r:*48", null)]
+        [NUnit.Framework.TestCaseAttribute("x:*42", null)]
+        [NUnit.Framework.TestCaseAttribute("s*49", null)]
+        [NUnit.Framework.TestCaseAttribute("c*59", null)]
+        [NUnit.Framework.TestCaseAttribute("i*53", null)]
+        [NUnit.Framework.TestCaseAttribute("t*4E", null)]
+        [NUnit.Framework.TestCaseAttribute("d*5E", null)]
+        [NUnit.Framework.TestCaseAttribute("n*54", null)]
+        [NUnit.Framework.TestCaseAttribute("r*48", null)]
+        [NUnit.Framework.TestCaseAttribute("x*42", null)]
+        public void DisallowTagBlockEmptyFields(string payload, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Disallow tag block empty fields", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 166
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 167
+    testRunner.When(string.Format("I parse \'{0}\' with allowTagBlockEmptyFields of false and throwWhenTagBlockContain" +
+                            "sUnknownFields of false", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 168
+    testRunner.Then("the parser throw an error message \'Tag block entries should start with a type cha" +
+                        "racter followed by a colon, and there was no colon\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Group field is the last of the tag block")]
+        public void GroupFieldIsTheLastOfTheTagBlock()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Group field is the last of the tag block", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 189
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 190
+    testRunner.When("I parse \'i:<O>IRL</O>,c:1738367940,g:2-2-1470*2F\' with allowTagBlockEmptyFields o" +
+                        "f true and throwWhenTagBlockContainsUnknownFields of false", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 191
+    testRunner.Then("the TextString is \'<O>IRL</O>\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 192
+ testRunner.And("the Timestamp is \'1738367940\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 193
+ testRunner.And("the SentenceGrouping is 2 2 1470", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 194
+    testRunner.And("no error message reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Group field is the last of the tag block throw an error when allowTagBlockEmptyFi" +
+            "elds is false")]
+        public void GroupFieldIsTheLastOfTheTagBlockThrowAnErrorWhenAllowTagBlockEmptyFieldsIsFalse()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Group field is the last of the tag block throw an error when allowTagBlockEmptyFi" +
+                    "elds is false", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 196
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 197
+    testRunner.When("I parse \'i:<O>IRL</O>,c:1738367940,g:2-2-1470*2F\' with allowTagBlockEmptyFields o" +
+                        "f false and throwWhenTagBlockContainsUnknownFields of false", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 198
+    testRunner.Then("the TextString is \'<O>IRL</O>\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 199
+ testRunner.And("the Timestamp is \'1738367940\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 200
+ testRunner.And("the SentenceGrouping is 2 2 1470", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 201
+    testRunner.And("no error message reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();
