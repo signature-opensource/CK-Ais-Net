@@ -162,12 +162,12 @@ public class NmeaTagBlockParserSpecsSteps
 
     void When( string messageLine, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard, bool allowEmptyTagBlockFields )
     {
-        _makeParser = () => new NmeaTagBlockParser<DefaultExtraFieldParser>( Encoding.ASCII.GetBytes( messageLine ), throwWhenTagBlockContainsUnknownFields, tagBlockStandard, allowEmptyTagBlockFields );
+        _makeParser = () => new NmeaTagBlockParser<DefaultExtraFieldParser>( Encoding.ASCII.GetBytes( messageLine ), throwWhenTagBlockContainsUnknownFields, tagBlockStandard, allowEmptyTagBlockFields, ChecksumOption.ValidateStandardFormat );
     }
 
     void WhenExtra( string messageLine, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard, bool allowEmptyTagBlockFields )
     {
-        _makeExtraParser = () => new NmeaTagBlockParser<ExtraFieldParser>( Encoding.ASCII.GetBytes( messageLine ), throwWhenTagBlockContainsUnknownFields, tagBlockStandard, allowEmptyTagBlockFields );
+        _makeExtraParser = () => new NmeaTagBlockParser<ExtraFieldParser>( Encoding.ASCII.GetBytes( messageLine ), throwWhenTagBlockContainsUnknownFields, tagBlockStandard, allowEmptyTagBlockFields, ChecksumOption.ValidateStandardFormat );
     }
 
     void Then( ParserTest test )

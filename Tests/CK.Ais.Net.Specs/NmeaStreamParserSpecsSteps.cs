@@ -79,6 +79,12 @@ public class NmeaStreamParserSpecsSteps
         _parserOptions.AllowUnreconizedDataOrigin = value;
     }
 
+    [Given( "I have configured ChecksumOption of (.*)")]
+    public void GivenIHaveConfiguredChecksumOptionOf( ChecksumOption checksumOption )
+    {
+        _parserOptions.ChecksumOption = checksumOption;
+    }
+
     [When( "I parse the content by message" )]
     public async Task WhenIParseTheContentByMessageAsync()
     {
@@ -238,6 +244,41 @@ public class NmeaStreamParserSpecsSteps
     {
         var call = _lineProcessor.OnErrorCalls[errorCallNumber];
         Assert.AreEqual( "Invalid data. Unrecognized talker id - cannot end with " + invalidChar, call.Error.Message );
+    }
+
+    [Then( "the line error report (.*) should include an exception reporting that the checksum is missing" )]
+    public void ThenTheLineErrorReportShouldIncludeAnExceptionReportingThatTheChecksumIsMissing( int errorCallNumber )
+    {
+        var call = _lineProcessor.OnErrorCalls[errorCallNumber];
+        Assert.AreEqual( "Invalid data. Payload checksum not present - the message may have been corrupted or truncated", call.Error.Message );
+    }
+
+    [Then( "the line error report (.*) should include an invalid checksum format." )]
+    public void ThenTheLineErrorReportShouldIncludeAnInvalidChecksumFormat( int errorCallNumber )
+    {
+        var call = _lineProcessor.OnErrorCalls[errorCallNumber];
+        Assert.AreEqual( "Line section should end with *X or *XX hexadecimal checksum.", call.Error.Message );
+    }
+
+    [Then( "the line error report (.*) should include an invalid strict checksum format.")]
+    public void ThenTheLineErrorReportShouldIncludeAnInvalidStrictChecksumFormat( int errorCallNumber )
+    {
+        var call = _lineProcessor.OnErrorCalls[errorCallNumber];
+        Assert.AreEqual( "Line section should end with *XX hexadecimal checksum.", call.Error.Message );
+    }
+
+    [Then( "the line error report (.*) should include an invalid checksum character '(.*)'" )]
+    public void ThenTheLineErrorReportShouldIncludeAnInvalidChecksumValue( int errorCallNumber, char invalidChar )
+    {
+        var call = _lineProcessor.OnErrorCalls[errorCallNumber];
+        Assert.AreEqual( $"Section checksum should contains hexadecimal digit but receice '{invalidChar}'.", call.Error.Message );
+    }
+
+    [Then( "the line error report (.*) should include an invalid checksum result '(.*)' but expect '(.*)'" )]
+    public void ThenTheLineErrorReportShouldIncludeAnInvalidChecksumResultButExpected( int errorCallNumber, string result, string expect )
+    {
+        var call = _lineProcessor.OnErrorCalls[errorCallNumber];
+        Assert.AreEqual( $"Section checksum not match checksum. Exepcted {expect} but value is {result}.", call.Error.Message );
     }
 
     class LineProcessor<TExtraFieldParser> : INmeaLineStreamProcessor<TExtraFieldParser>

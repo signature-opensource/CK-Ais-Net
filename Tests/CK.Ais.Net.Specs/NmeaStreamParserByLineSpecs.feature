@@ -290,3 +290,113 @@ Scenario: Invalid talker id with AllowUnreconizedTalkerId to true not throw erro
     | \c:1725176210,t:TER*7A\!AIvDM,1,1,,A,402;bK1vR@wTgPbmd4HVqs700l76,0*7A                  | 2        | 2          | !AIvDM            |
     | \c:1725181228,t:TERA*38\!AIVFM,1,1,,A,33f?cT?P00PfpT8I6=:>4?vl2>`<,0*08                 | 2        | 2          | !AIVFM            |
     | \i:<O>NOR</O>,s:2573105,c:1668997143*00\!B2VDM,1,1,9,A,H3mWb5P5HT4pD00000000000000,2*0A | 10       | 0          | !B2VDM            |
+
+Scenario: Missing checksum
+    Given I have configured ChecksumOption of 1
+    And a line '\s:rMT9999,c:1747907742\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09'
+    And a line '\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0'
+	When I parse the content by line
+	Then OnError should have been called 2 times
+	And the line error report 0 should include an exception reporting that the checksum is missing
+	And the line error report 1 should include an exception reporting that the checksum is missing
+
+Scenario: Invalid checksum format
+    Given I have configured ChecksumOption of 2
+    And a line '<payload>'
+	When I parse the content by line
+	Then OnError should have been called 1 time
+	And the line error report 0 should include an invalid checksum format.
+
+    Examples:
+    | payload                                                                     |
+    | \s:rMT9999,c:1747907742*\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09    |
+    | \s:rMT9999,c:1747907742*5DD\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09 |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*    |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*099 |
+
+Scenario: Invalid strict checksum format
+    Given I have configured ChecksumOption of 1
+    And a line '<payload>'
+	When I parse the content by line
+	Then OnError should have been called 1 time
+	And the line error report 0 should include an invalid strict checksum format.
+
+    Examples:
+    | payload                                                                     |
+    | \s:rMT9999,c:1747907742*\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09    |
+    | \s:rMT9999,c:1747907742*5\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09   |
+    | \s:rMT9999,c:1747907742*5DD\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09 |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*    |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*0   |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*099 |
+
+Scenario: Invalid checksum skipped
+    Given I have configured ChecksumOption of 0
+    And a line '<payload>'
+	When I parse the content by line
+	Then OnError should have been called 0 time
+    
+    Examples:
+    | payload                                                                     |
+    | \s:rMT9999,c:1747907742*\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09    |
+    | \s:rMT9999,c:1747907742*5\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09   |
+    | \s:rMT9999,c:1747907742*5DD\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09 |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*    |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*0   |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*099 |
+
+Scenario: Invalid cheksum value
+    Given I have configured ChecksumOption of 3
+    And a line '<payload>'
+	When I parse the content by line
+	Then OnError should have been called 1 time
+	And the line error report 0 should include an invalid checksum character '<char>'
+
+    Examples:
+    | payload                                                                    | char |
+    | \s:rMT9999,c:1747907742*0Z\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09 | Z    |
+    | \s:rMT9999,c:1747907742*H5\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09 | H    |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*0X | X    |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*O0 | O    |
+    
+Scenario: Invalid cheksum result
+    Given I have configured ChecksumOption of <co>
+    And a line '<payload>'
+	When I parse the content by line
+	Then OnError should have been called 1 time
+	And the line error report 0 should include an invalid checksum result '<result>' but expect '<expect>'
+
+    Examples:
+    | payload                                                                    | result | expect | co |
+    | \s:rMT9999,c:1747907742*E3\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09 | 5D     | E3     | 3  |
+    | \s:rMT9999,c:1747907742*0B\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09 | 5D     | 0B     | 3  |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*03 | 09     | 03     | 3  |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*AA | 09     | AA     | 3  |
+    | \s:rMT9999,c:1747907742*3\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09  | 5D     | 03     | 2  |
+    | \s:rMT9999,c:1747907742*B\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09  | 5D     | 0B     | 2  |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*3  | 09     | 03     | 2  |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*A  | 09     | 0A     | 2  |
+
+Scenario: Validate checksum with one digit
+    Given I have configured ChecksumOption of 2
+    And a line '<payload>'
+	When I parse the content by line
+	Then OnError should have been called 0 time
+
+    Examples:
+    | payload                                                                    |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*9  |
+
+Scenario: Validate checksum with two digits
+    Given I have configured ChecksumOption of 3
+    And a line '<payload>'
+	When I parse the content by line
+	Then OnError should have been called 0 time
+
+    Examples:
+    | payload                                                                                                   |
+    | \s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09                                |
+    | \s:rMT7304,c:1747704784*5A\!AIVDM,1,1,,A,23:q:j0001WaoVN616Vm?hml082e,0*7F                                |
+    | \s:rMT1667,c:1747704784*5C\!AIVDM,1,1,,A,ENkb;0<Hah@@@@@@@@@@@@@@@@@;Wd6F:ewt800003vP003,2*2A             |
+    | \s:rMT7800,c:1747704786*57\!AIVDM,1,1,,A,8@2<HW@0BkdhF0dcH50h3j8412VrGwdfwwwwwwwwwwwwwwwwwwwwwwwwwt0,2*3F |
+    | \s:rMT5465,c:1747908456*56\!AIVDM,1,1,,A,Dh400QAMe>fp,0*2E                                                |

@@ -1098,6 +1098,341 @@ this.ScenarioInitialize(scenarioInfo);
             }
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Missing checksum")]
+        public void MissingChecksum()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Missing checksum", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 294
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 295
+    testRunner.Given("I have configured ChecksumOption of 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 296
+    testRunner.And("a line \'\\s:rMT9999,c:1747907742\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 297
+    testRunner.And("a line \'\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 298
+ testRunner.When("I parse the content by line", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 299
+ testRunner.Then("OnError should have been called 2 times", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 300
+ testRunner.And("the line error report 0 should include an exception reporting that the checksum i" +
+                        "s missing", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 301
+ testRunner.And("the line error report 1 should include an exception reporting that the checksum i" +
+                        "s missing", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Invalid checksum format")]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5DD\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*099", null)]
+        public void InvalidChecksumFormat(string payload, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Invalid checksum format", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 303
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 304
+    testRunner.Given("I have configured ChecksumOption of 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 305
+    testRunner.And(string.Format("a line \'{0}\'", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 306
+ testRunner.When("I parse the content by line", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 307
+ testRunner.Then("OnError should have been called 1 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 308
+ testRunner.And("the line error report 0 should include an invalid checksum format.", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Invalid strict checksum format")]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5DD\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*0", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*099", null)]
+        public void InvalidStrictChecksumFormat(string payload, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Invalid strict checksum format", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 317
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 318
+    testRunner.Given("I have configured ChecksumOption of 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 319
+    testRunner.And(string.Format("a line \'{0}\'", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 320
+ testRunner.When("I parse the content by line", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 321
+ testRunner.Then("OnError should have been called 1 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 322
+ testRunner.And("the line error report 0 should include an invalid strict checksum format.", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Invalid checksum skipped")]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5DD\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*0", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*099", null)]
+        public void InvalidChecksumSkipped(string payload, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Invalid checksum skipped", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 333
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 334
+    testRunner.Given("I have configured ChecksumOption of 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 335
+    testRunner.And(string.Format("a line \'{0}\'", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 336
+ testRunner.When("I parse the content by line", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 337
+ testRunner.Then("OnError should have been called 0 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Invalid cheksum value")]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*0Z\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "Z", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*H5\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "H", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*0X", "X", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*O0", "O", null)]
+        public void InvalidCheksumValue(string payload, string @char, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            argumentsOfScenario.Add("char", @char);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Invalid cheksum value", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 348
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 349
+    testRunner.Given("I have configured ChecksumOption of 3", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 350
+    testRunner.And(string.Format("a line \'{0}\'", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 351
+ testRunner.When("I parse the content by line", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 352
+ testRunner.Then("OnError should have been called 1 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 353
+ testRunner.And(string.Format("the line error report 0 should include an invalid checksum character \'{0}\'", @char), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Invalid cheksum result")]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*E3\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "5D", "E3", "3", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*0B\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "5D", "0B", "3", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*03", "09", "03", "3", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*AA", "09", "AA", "3", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*3\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "5D", "03", "2", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*B\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "5D", "0B", "2", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*3", "09", "03", "2", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*A", "09", "0A", "2", null)]
+        public void InvalidCheksumResult(string payload, string result, string expect, string co, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            argumentsOfScenario.Add("result", result);
+            argumentsOfScenario.Add("expect", expect);
+            argumentsOfScenario.Add("co", co);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Invalid cheksum result", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 362
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 363
+    testRunner.Given(string.Format("I have configured ChecksumOption of {0}", co), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 364
+    testRunner.And(string.Format("a line \'{0}\'", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 365
+ testRunner.When("I parse the content by line", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 366
+ testRunner.Then("OnError should have been called 1 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 367
+ testRunner.And(string.Format("the line error report 0 should include an invalid checksum result \'{0}\' but expec" +
+                            "t \'{1}\'", result, expect), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Validate checksum with one digit")]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*9", null)]
+        public void ValidateChecksumWithOneDigit(string payload, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Validate checksum with one digit", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 380
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 381
+    testRunner.Given("I have configured ChecksumOption of 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 382
+    testRunner.And(string.Format("a line \'{0}\'", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 383
+ testRunner.When("I parse the content by line", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 384
+ testRunner.Then("OnError should have been called 0 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Validate checksum with two digits")]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT9999,c:1747907742*5D\\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT7304,c:1747704784*5A\\!AIVDM,1,1,,A,23:q:j0001WaoVN616Vm?hml082e,0*7F", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT1667,c:1747704784*5C\\!AIVDM,1,1,,A,ENkb;0<Hah@@@@@@@@@@@@@@@@@;Wd6F:ewt8000" +
+            "03vP003,2*2A", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT7800,c:1747704786*57\\!AIVDM,1,1,,A,8@2<HW@0BkdhF0dcH50h3j8412VrGwdfwwwwwwww" +
+            "wwwwwwwwwwwwwwwwwt0,2*3F", null)]
+        [NUnit.Framework.TestCaseAttribute("\\s:rMT5465,c:1747908456*56\\!AIVDM,1,1,,A,Dh400QAMe>fp,0*2E", null)]
+        public void ValidateChecksumWithTwoDigits(string payload, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            argumentsOfScenario.Add("payload", payload);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Validate checksum with two digits", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 390
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 391
+    testRunner.Given("I have configured ChecksumOption of 3", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 392
+    testRunner.And(string.Format("a line \'{0}\'", payload), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 393
+ testRunner.When("I parse the content by line", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 394
+ testRunner.Then("OnError should have been called 0 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

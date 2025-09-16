@@ -74,7 +74,8 @@ public class NmeaLineToAisStreamAdapterSpecsSteps : IDisposable
             _parserOptions.EmptyGroupTolerance,
             _parserOptions.AllowUnreconizedTalkerId,
             _parserOptions.AllowUnreconizedDataOrigin,
-            _parserOptions.AllowTagBlockEmptyFields );
+            _parserOptions.AllowTagBlockEmptyFields,
+            _parserOptions.ChecksumOption );
         Adapter.OnNext( lineParser, _lineNumber++ );
     }
 
@@ -99,7 +100,8 @@ public class NmeaLineToAisStreamAdapterSpecsSteps : IDisposable
                 _parserOptions.EmptyGroupTolerance,
                 _parserOptions.AllowUnreconizedTalkerId,
                 _parserOptions.AllowUnreconizedDataOrigin,
-                _parserOptions.AllowTagBlockEmptyFields );
+                _parserOptions.AllowTagBlockEmptyFields,
+                _parserOptions.ChecksumOption );
             Assert.Fail( $"No throw when parsing line '{line}'." );
         }
         catch( Exception e )
