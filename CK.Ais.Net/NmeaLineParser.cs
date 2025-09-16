@@ -23,7 +23,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
     /// </summary>
     /// <param name="line">The ASCII-encoded text containing the NMEA message.</param>
     public NmeaLineParser( ReadOnlySpan<byte> line )
-        : this( line, false, TagBlockStandard.Unspecified, EmptyGroupTolerance.None, false, false, false )
+        : this( line, false, TagBlockStandard.Unspecified, EmptyGroupTolerance.None, false, false, false, ChecksumOption.ValidateStandardFormat )
     {
     }
 
@@ -43,7 +43,8 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
                            EmptyGroupTolerance emptyGroupTolerance,
                            bool allowUnreconizedTalkerId,
                            bool allowUnreconizedDataOrigin,
-                           bool allowTagBlockEmptyField )
+                           bool allowTagBlockEmptyField,
+                           ChecksumOption checksumOption )
     {
         Line = line;
 
@@ -62,7 +63,8 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
             TagBlock = new NmeaTagBlockParser<TExtraFieldParser>( TagBlockAsciiWithoutDelimiters,
                                                                   throwWhenTagBlockContainsUnknownFields,
                                                                   tagBlockStandard,
-                                                                  allowTagBlockEmptyField );
+                                                                  allowTagBlockEmptyField,
+                                                                  checksumOption );
 
             sentenceStartIndex = tagBlockEndIndex + 2;
         }
@@ -197,9 +199,11 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
 
         remainingFields = remainingFields.Slice( nextComma + 1 );
 
-        if( remainingFields.Length < 4 )
+        checksumOption.Check( Sentence[1..] /* Skip exclamation mark */ );
+
+        if( remainingFields.Length == 0 )
         {
-            throw new ArgumentException( "Invalid data. Payload checksum not present - the message may have been corrupted or truncated" );
+            throw new ArgumentException( "Invalid data. Padding not present - the message may have been corrupted or truncated" );
         }
 
         Padding = (uint)GetSingleDigitField( ref remainingFields, true );
