@@ -26,6 +26,7 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
     readonly Dictionary<int, FragmentedMessage> _messageFragments = [];
     int _messagesProcessed = 0;
     int _messagesProcessedAtLastUpdate = 0;
+    readonly bool _clearReturedBuffer;
 
     /// <summary>
     /// Creates a <see cref="NmeaLineToAisStreamAdapter"/>.
@@ -49,6 +50,7 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
     {
         _messageProcessor = messageProcessor;
         _options = options;
+        _clearReturedBuffer = (options.ChecksumOption & (ChecksumOption.ValidateStandardFormat | ChecksumOption.CheckValidity)) != 0;
     }
 
     /// <inheritdoc/>
@@ -157,7 +159,8 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                     _options.EmptyGroupTolerance,
                     _options.AllowUnreconizedTalkerId,
                     _options.AllowUnreconizedDataOrigin,
-                    _options.AllowTagBlockEmptyFields );
+                    _options.AllowTagBlockEmptyFields,
+                    _options.ChecksumOption );
                 totalPayloadSize += storedParsedLine.Payload.Length;
 
                 if( storedParsedLine.Sentence.Length > 0 ) fragmentsWithSentences++;
@@ -191,7 +194,8 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                             _options.EmptyGroupTolerance,
                             _options.AllowUnreconizedTalkerId,
                             _options.AllowUnreconizedDataOrigin,
-                            _options.AllowTagBlockEmptyFields );
+                            _options.AllowTagBlockEmptyFields,
+                            _options.ChecksumOption );
 
                         // If a non last fragment have a non zero padding, disallow it and not in fix grouping mode,
                         // then not populate reassemblyUnderlyingArray and not call OnNext.
@@ -216,7 +220,8 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                             _options.EmptyGroupTolerance,
                             _options.AllowUnreconizedTalkerId,
                             _options.AllowUnreconizedDataOrigin,
-                            _options.AllowTagBlockEmptyFields );
+                            _options.AllowTagBlockEmptyFields,
+                            _options.ChecksumOption );
                         if( fixGrouping ) lineParser = NmeaLineParser<TExtraFieldParser>.OverrideGrouping( lineParser, customGroup );
 
                         _messageProcessor.OnNext(
@@ -230,7 +235,7 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                 {
                     if( reassemblyUnderlyingArray is not null )
                     {
-                        ArrayPool<byte>.Shared.Return( reassemblyUnderlyingArray );
+                        ArrayPool<byte>.Shared.Return( reassemblyUnderlyingArray, _clearReturedBuffer );
                     }
                 }
 
@@ -332,11 +337,11 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
         {
             if( fragmentBuffers[i] != null )
             {
-                ArrayPool<byte>.Shared.Return( fragmentBuffers[i] );
+                ArrayPool<byte>.Shared.Return( fragmentBuffers[i], _clearReturedBuffer );
             }
         }
 
-        ArrayPool<byte[]>.Shared.Return( fragmentedMessage.RentedBufferArray );
+        ArrayPool<byte[]>.Shared.Return( fragmentedMessage.RentedBufferArray, _clearReturedBuffer );
 
         _messageFragments.Remove( groupId );
     }

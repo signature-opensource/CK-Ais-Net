@@ -20,7 +20,7 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
     /// <c>/</c> delimiters.
     /// </param>
     public NmeaTagBlockParser( ReadOnlySpan<byte> span )
-        : this( span, false, TagBlockStandard.Unspecified, false )
+        : this( span, false, TagBlockStandard.Unspecified, false, ChecksumOption.ValidateStandardFormat )
     {
     }
 
@@ -35,7 +35,11 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
     /// data sources that add non-standard fields.
     /// </param>
     /// <param name="tagBlockStandard">Defined in whick standard the tag block is.</param>
-    public NmeaTagBlockParser( ReadOnlySpan<byte> span, bool throwWhenTagBlockContainsUnknownFields, TagBlockStandard tagBlockStandard, bool allowTagBlockEmptyFields )
+    public NmeaTagBlockParser( ReadOnlySpan<byte> span,
+                               bool throwWhenTagBlockContainsUnknownFields,
+                               TagBlockStandard tagBlockStandard,
+                               bool allowTagBlockEmptyFields,
+                               ChecksumOption checksumOption )
     {
         OriginalSpan = span;
         SentenceGrouping = default;
@@ -47,12 +51,9 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
         // we will need to add a TExtraFieldParser parameter in the constructor of the NmeaTagBlockParser.
         ExtraFieldParser = default;
 
-        if( span[^3] != (byte)'*' )
-        {
-            throw new ArgumentException( "Tag blocks should end with *XX where XX is a two-digit hexadecimal checksum" );
-        }
+        checksumOption.Check( OriginalSpan );
 
-        span = span.Slice( 0, span.Length - 3 );
+        span = span.Slice( 0, span.LastIndexOf( (byte)'*' ) );
 
         while( span.Length > 0 )
         {

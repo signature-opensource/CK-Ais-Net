@@ -105,4 +105,9 @@ public class NmeaParserOptions
     /// Determines whether empty fields within an AIS tag block are permitted. If <c>true</c>, empty fields will be allowed; otherwise, they will be considered invalid.
     /// </summary>
     public bool AllowTagBlockEmptyFields { get; set; } = false;
+
+    /// <summary>
+    /// Defines the checksum policy.
+    /// </summary>
+    public ChecksumOption ChecksumOption { get; set; } = ChecksumOption.ValidateStandardFormat;
 }
