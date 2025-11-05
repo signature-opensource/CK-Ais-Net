@@ -110,4 +110,22 @@ public class NmeaParserOptions
     /// Defines the checksum policy.
     /// </summary>
     public ChecksumOption ChecksumOption { get; set; } = ChecksumOption.ValidateStandardFormat;
+
+    /// <summary>
+    /// Copy all values of this objet to another instance.
+    /// </summary>
+    /// <returns>A new instance with same values.</returns>
+    public NmeaParserOptions Copy() => new()
+    {
+        TagBlockStandard = TagBlockStandard,
+        ThrowWhenTagBlockContainsUnknownFields = ThrowWhenTagBlockContainsUnknownFields,
+        MaximumUnmatchedFragmentAge = MaximumUnmatchedFragmentAge,
+        EmptyGroupTolerance = EmptyGroupTolerance,
+        AllowNonZeroPaddingInNonLastFragment = AllowNonZeroPaddingInNonLastFragment,
+        AllowUnreconizedTalkerId = AllowUnreconizedTalkerId,
+        AllowUnreconizedDataOrigin = AllowUnreconizedDataOrigin,
+        AllowTagBlockEmptyFields = AllowTagBlockEmptyFields,
+        ChecksumOption = ChecksumOption,
+        ThrowWhenNoExclamationMark = ThrowWhenNoExclamationMark
+    };
 }
