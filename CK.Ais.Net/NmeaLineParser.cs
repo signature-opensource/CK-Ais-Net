@@ -23,7 +23,18 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
     /// </summary>
     /// <param name="line">The ASCII-encoded text containing the NMEA message.</param>
     public NmeaLineParser( ReadOnlySpan<byte> line )
-        : this( line, false, TagBlockStandard.Unspecified, EmptyGroupTolerance.None, false, false, false, ChecksumOption.ValidateStandardFormat )
+        : this( line,
+                new NmeaParserOptions
+                {
+                    ThrowWhenTagBlockContainsUnknownFields = false,
+                    TagBlockStandard = TagBlockStandard.Unspecified,
+                    EmptyGroupTolerance = EmptyGroupTolerance.None,
+                    AllowUnreconizedTalkerId = false,
+                    AllowUnreconizedDataOrigin = false,
+                    AllowTagBlockEmptyFields = false,
+                    ChecksumOption = ChecksumOption.ValidateStandardFormat,
+                    ThrowWhenNoExclamationMark = true
+                } )
     {
     }
 
@@ -37,14 +48,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
     /// </param>
     /// <param name="tagBlockStandard">Defined in whick standard the tag block is.</param>
     /// <param name="emptyGroupTolerance">The empty group tolerance.</param>
-    public NmeaLineParser( ReadOnlySpan<byte> line,
-                           bool throwWhenTagBlockContainsUnknownFields,
-                           TagBlockStandard tagBlockStandard,
-                           EmptyGroupTolerance emptyGroupTolerance,
-                           bool allowUnreconizedTalkerId,
-                           bool allowUnreconizedDataOrigin,
-                           bool allowTagBlockEmptyField,
-                           ChecksumOption checksumOption )
+    public NmeaLineParser( ReadOnlySpan<byte> line, NmeaParserOptions options )
     {
         Line = line;
 
@@ -61,10 +65,10 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
 
             TagBlockAsciiWithoutDelimiters = line.Slice( 1, tagBlockEndIndex );
             TagBlock = new NmeaTagBlockParser<TExtraFieldParser>( TagBlockAsciiWithoutDelimiters,
-                                                                  throwWhenTagBlockContainsUnknownFields,
-                                                                  tagBlockStandard,
-                                                                  allowTagBlockEmptyField,
-                                                                  checksumOption );
+                                                                  options.ThrowWhenTagBlockContainsUnknownFields,
+                                                                  options.TagBlockStandard,
+                                                                  options.AllowTagBlockEmptyFields,
+                                                                  options.ChecksumOption );
 
             sentenceStartIndex = tagBlockEndIndex + 2;
         }
@@ -83,7 +87,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
         if( !TagBlockAsciiWithoutDelimiters.IsEmpty &&
             TagBlock.SentenceGrouping.HasValue &&
             !HasSentence( Sentence ) &&
-            emptyGroupTolerance >= EmptyGroupTolerance.Allow )
+            options.EmptyGroupTolerance >= EmptyGroupTolerance.Allow )
         {
             Sentence = ReadOnlySpan<byte>.Empty;
             Payload = ReadOnlySpan<byte>.Empty;
@@ -103,7 +107,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
             throw new ArgumentException( "Invalid data. The message appears to be missing some characters - it may have been corrupted or truncated." );
         }
 
-        if( Sentence[0] != _exclamationMark )
+        if( Sentence[0] != _exclamationMark && options.ThrowWhenNoExclamationMark )
         {
             throw new ArgumentException( "Invalid data. Expected '!' at sentence start" );
         }
@@ -123,25 +127,25 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
                 (byte)'S' => TalkerId.LimitedBaseStation,
                 (byte)'T' => TalkerId.TransmittingStation,
                 (byte)'X' => TalkerId.RepeaterStation,
-                _ when allowUnreconizedTalkerId => TalkerId.Unreconized,
+                _ when options.AllowUnreconizedTalkerId => TalkerId.Unreconized,
                 _ => throw new ArgumentException( "Invalid data. Unrecognized talker id - cannot start with " + talkerFirstChar ),
             },
 
             (byte)'B' => talkerSecondChar switch
             {
                 (byte)'S' => TalkerId.DeprecatedBaseStation,
-                _ when allowUnreconizedTalkerId => TalkerId.Unreconized,
+                _ when options.AllowUnreconizedTalkerId => TalkerId.Unreconized,
                 _ => throw new ArgumentException( "Invalid data. Unrecognized talker id - cannot end with " + talkerSecondChar ),
             },
 
             (byte)'S' => talkerSecondChar switch
             {
                 (byte)'A' => TalkerId.PhysicalShoreStation,
-                _ when allowUnreconizedTalkerId => TalkerId.Unreconized,
+                _ when options.AllowUnreconizedTalkerId => TalkerId.Unreconized,
                 _ => throw new ArgumentException( "Invalid data. Unrecognized talker id - cannot end with " + talkerSecondChar ),
             },
 
-            _ when allowUnreconizedTalkerId => TalkerId.Unreconized,
+            _ when options.AllowUnreconizedTalkerId => TalkerId.Unreconized,
             _ => throw new ArgumentException( "Invalid data. Unrecognized talker id" ),
         };
         if( Sentence.Slice( 3, 3 ).SequenceEqual( _vdmAscii ) )
@@ -152,7 +156,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
         {
             DataOrigin = VesselDataOrigin.Vdo;
         }
-        else if( allowUnreconizedDataOrigin )
+        else if( options.AllowUnreconizedDataOrigin )
         {
             DataOrigin = VesselDataOrigin.Unreconized;
         }
@@ -161,7 +165,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
             throw new ArgumentException( "Invalid data. Unrecognized origin in AIS talker ID - must be VDM or VDO" );
         }
 
-        if( Sentence[6] != (byte)',' && !allowUnreconizedDataOrigin )
+        if( Sentence[6] != (byte)',' && !options.AllowUnreconizedDataOrigin )
         {
             throw new ArgumentException( "Invalid data. Takler ID and Data Origin must have a count of 5 charactes and be followed by ','" );
         }
@@ -199,7 +203,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
 
         remainingFields = remainingFields.Slice( nextComma + 1 );
 
-        checksumOption.Check( Sentence[1..] /* Skip exclamation mark */ );
+        options.ChecksumOption.Check( Sentence[1..] /* Skip exclamation mark */ );
 
         if( remainingFields.Length == 0 )
         {

@@ -1519,6 +1519,84 @@ this.ScenarioInitialize(scenarioInfo);
             }
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Sentence without exclamation mark is disallowed")]
+        public void SentenceWithoutExclamationMarkIsDisallowed()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Sentence without exclamation mark is disallowed", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 427
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 428
+ testRunner.Given("I have configured a ThrowWhenNoExclamationMark of true", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 429
+ testRunner.When("the line to message adapter receives an error report for invalid content \'\\c:1717" +
+                        "977721*54\\$AIVDM,2,1,2,B,53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2" +
+                        "CQp1l,2*15\' with line number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 430
+ testRunner.Then("INmeaAisMessageStreamProcessor.OnNext should have been called 0 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 431
+ testRunner.And("INmeaAisMessageStreamProcessor.OnError should have been called 1 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 432
+ testRunner.And("the message error report 0 should include the problematic line \'\\c:1717977721*54\\" +
+                        "$AIVDM,2,1,2,B,53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1l,2*15" +
+                        "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 433
+ testRunner.And("the message error report 0 should include an exception reporting that the expecte" +
+                        "d exclamation mark is missing", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Sentence without exclamation mark is allowed")]
+        public void SentenceWithoutExclamationMarkIsAllowed()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Sentence without exclamation mark is allowed", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 435
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 436
+ testRunner.Given("I have configured a ThrowWhenNoExclamationMark of false", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 437
+ testRunner.When("the line to message adapter receives \'\\s:808,c:1567693618*0A\\$AIVDM,1,1,,B,B3o8B<" +
+                        "00F8:0h694gOtbgwqUoP06,0*73\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 438
+ testRunner.Then("INmeaAisMessageStreamProcessor.OnNext should have been called 1 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 439
+ testRunner.And("INmeaAisMessageStreamProcessor.OnError should have been called 0 time", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

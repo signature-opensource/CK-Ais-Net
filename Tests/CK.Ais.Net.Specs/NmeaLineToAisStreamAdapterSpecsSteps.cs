@@ -63,19 +63,17 @@ public class NmeaLineToAisStreamAdapterSpecsSteps : IDisposable
         _parserOptions.AllowNonZeroPaddingInNonLastFragment = value;
     }
 
+    [Given( "I have configured a ThrowWhenNoExclamationMark of (.*)" )]
+    public void GivenIHaveConfiguredAThrowWhenNoExclamationMarkOf( bool value )
+    {
+        _parserOptions.ThrowWhenNoExclamationMark = value;
+    }
+
     [When( "the line to message adapter receives '(.*)'" )]
     public void WhenTheLineToMessageAdapterReceives( string line )
     {
         byte[] ascii = Encoding.ASCII.GetBytes( line );
-        var lineParser = new NmeaLineParser<DefaultExtraFieldParser>(
-            ascii,
-            _parserOptions.ThrowWhenTagBlockContainsUnknownFields,
-            _parserOptions.TagBlockStandard,
-            _parserOptions.EmptyGroupTolerance,
-            _parserOptions.AllowUnreconizedTalkerId,
-            _parserOptions.AllowUnreconizedDataOrigin,
-            _parserOptions.AllowTagBlockEmptyFields,
-            _parserOptions.ChecksumOption );
+        var lineParser = new NmeaLineParser<DefaultExtraFieldParser>( ascii, _parserOptions );
         Adapter.OnNext( lineParser, _lineNumber++ );
     }
 
@@ -93,15 +91,7 @@ public class NmeaLineToAisStreamAdapterSpecsSteps : IDisposable
         byte[] ascii = Encoding.ASCII.GetBytes( line );
         try
         {
-            var lineParser = new NmeaLineParser<DefaultExtraFieldParser>(
-                ascii,
-                _parserOptions.ThrowWhenTagBlockContainsUnknownFields,
-                _parserOptions.TagBlockStandard,
-                _parserOptions.EmptyGroupTolerance,
-                _parserOptions.AllowUnreconizedTalkerId,
-                _parserOptions.AllowUnreconizedDataOrigin,
-                _parserOptions.AllowTagBlockEmptyFields,
-                _parserOptions.ChecksumOption );
+            var lineParser = new NmeaLineParser<DefaultExtraFieldParser>( ascii, _parserOptions );
             Assert.Fail( $"No throw when parsing line '{line}'." );
         }
         catch( Exception e )

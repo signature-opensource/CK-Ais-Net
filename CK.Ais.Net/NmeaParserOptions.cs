@@ -110,4 +110,27 @@ public class NmeaParserOptions
     /// Defines the checksum policy.
     /// </summary>
     public ChecksumOption ChecksumOption { get; set; } = ChecksumOption.ValidateStandardFormat;
+
+    /// <summary>
+    /// Determines whether an exception is thrown when the sentence does not start with an exclamation mark '!'.
+    /// </summary>
+    public bool ThrowWhenNoExclamationMark { get; set; } = true;
+
+    /// <summary>
+    /// Copy all values of this objet to another instance.
+    /// </summary>
+    /// <returns>A new instance with same values.</returns>
+    public NmeaParserOptions Copy() => new()
+    {
+        TagBlockStandard = TagBlockStandard,
+        ThrowWhenTagBlockContainsUnknownFields = ThrowWhenTagBlockContainsUnknownFields,
+        MaximumUnmatchedFragmentAge = MaximumUnmatchedFragmentAge,
+        EmptyGroupTolerance = EmptyGroupTolerance,
+        AllowNonZeroPaddingInNonLastFragment = AllowNonZeroPaddingInNonLastFragment,
+        AllowUnreconizedTalkerId = AllowUnreconizedTalkerId,
+        AllowUnreconizedDataOrigin = AllowUnreconizedDataOrigin,
+        AllowTagBlockEmptyFields = AllowTagBlockEmptyFields,
+        ChecksumOption = ChecksumOption,
+        ThrowWhenNoExclamationMark = ThrowWhenNoExclamationMark
+    };
 }
