@@ -112,6 +112,11 @@ public class NmeaParserOptions
     public ChecksumOption ChecksumOption { get; set; } = ChecksumOption.ValidateStandardFormat;
 
     /// <summary>
+    /// Determines whether an exception is thrown when the sentence does not start with an exclamation mark '!'.
+    /// </summary>
+    public bool ThrowWhenNoExclamationMark { get; set; } = true;
+
+    /// <summary>
     /// Copy all values of this objet to another instance.
     /// </summary>
     /// <returns>A new instance with same values.</returns>

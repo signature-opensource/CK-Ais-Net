@@ -63,6 +63,12 @@ public class NmeaLineToAisStreamAdapterSpecsSteps : IDisposable
         _parserOptions.AllowNonZeroPaddingInNonLastFragment = value;
     }
 
+    [Given( "I have configured a ThrowWhenNoExclamationMark of (.*)" )]
+    public void GivenIHaveConfiguredAThrowWhenNoExclamationMarkOf( bool value )
+    {
+        _parserOptions.ThrowWhenNoExclamationMark = value;
+    }
+
     [When( "the line to message adapter receives '(.*)'" )]
     public void WhenTheLineToMessageAdapterReceives( string line )
     {

@@ -424,6 +424,20 @@ Scenario: Multiple lines with non-zero padding in non last fragment allowed
 	And in ais message 0 the payload should be '53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1lSmCQ4p00000' with padding of 2
 	And INmeaAisMessageStreamProcessor.OnError should have been called 0 time
 
+Scenario: Sentence without exclamation mark is disallowed
+	Given I have configured a ThrowWhenNoExclamationMark of true
+	When the line to message adapter receives an error report for invalid content '\c:1717977721*54\$AIVDM,2,1,2,B,53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1l,2*15' with line number 1
+	Then INmeaAisMessageStreamProcessor.OnNext should have been called 0 time
+	And INmeaAisMessageStreamProcessor.OnError should have been called 1 time
+	And the message error report 0 should include the problematic line '\c:1717977721*54\$AIVDM,2,1,2,B,53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1l,2*15'
+	And the message error report 0 should include an exception reporting that the expected exclamation mark is missing
+
+Scenario: Sentence without exclamation mark is allowed
+	Given I have configured a ThrowWhenNoExclamationMark of false
+	When the line to message adapter receives '\s:808,c:1567693618*0A\$AIVDM,1,1,,B,B3o8B<00F8:0h694gOtbgwqUoP06,0*73'
+	Then INmeaAisMessageStreamProcessor.OnNext should have been called 1 time
+	And INmeaAisMessageStreamProcessor.OnError should have been called 0 time
+
 # TODO:
 # Got to end with unclosed fragments (#4067)
 # 2nd fragment received without first (#4067)

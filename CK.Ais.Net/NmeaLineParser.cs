@@ -107,7 +107,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
             throw new ArgumentException( "Invalid data. The message appears to be missing some characters - it may have been corrupted or truncated." );
         }
 
-        if( Sentence[0] != _exclamationMark )
+        if( Sentence[0] != _exclamationMark && options.ThrowWhenNoExclamationMark )
         {
             throw new ArgumentException( "Invalid data. Expected '!' at sentence start" );
         }
