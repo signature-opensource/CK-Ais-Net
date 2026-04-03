@@ -101,5 +101,5 @@ public readonly ref struct NmeaAisGroupAssignmentCommandParser
     /// Gets the value of the bits in this message for which no standard meaning is currently
     /// defined.
     /// </summary>
-    public uint SpareBits154 => _bits.GetUnsignedInteger( 22, 154 );
+    public uint SpareBits154 => _bits.GetUnsignedInteger( 6, 154 );
 }
