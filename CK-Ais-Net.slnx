@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="appveyor.yml" />
+    <File Path="NuGet.config" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/CK.Ais.Net.Specs/CK.Ais.Net.Specs.csproj" />
+  </Folder>
+  <Project Path="CK.Ais.Net/CK.Ais.Net.csproj" />
+</Solution>
