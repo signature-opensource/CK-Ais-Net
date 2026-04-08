@@ -26,10 +26,7 @@ static class ChecksumOptionExtensions
 {
     internal static void Check( this ChecksumOption checksumOption, in ReadOnlySpan<byte> span )
     {
-        var endOfSequenceIdx = span.IndexOf( (byte)'\0' );
-        var s = endOfSequenceIdx > -1 ? span[..endOfSequenceIdx] : span;
-
-        var hashIdx = s.LastIndexOf( (byte)'*' );
+        var hashIdx = MemoryExtensions.LastIndexOf( span, (byte)'*' );
         if( hashIdx == -1 )
         {
             throw new ArgumentException( "Invalid data. Payload checksum not present - the message may have been corrupted or truncated" );
@@ -37,28 +34,28 @@ static class ChecksumOptionExtensions
 
         if( (checksumOption & ChecksumOption.ValidateStandardFormat) == ChecksumOption.ValidateStandardFormat )
         {
-            if( hashIdx != s.Length - 3 )
+            if( hashIdx != span.Length - 3 )
             {
                 throw new ArgumentException( "Line section should end with *XX hexadecimal checksum." );
             }
             if( (checksumOption & ChecksumOption.CheckValidity) == ChecksumOption.CheckValidity )
             {
-                var checksum = (byte)((GetHexValue( s[^2] ) << 4) | GetHexValue( s[^1] ));
-                InternalCheck( s[..hashIdx], checksum );
+                var checksum = (byte)((GetHexValue( span[^2] ) << 4) | GetHexValue( span[^1] ));
+                InternalCheck( span[..hashIdx], checksum );
             }
         }
         else if( (checksumOption & ChecksumOption.CheckValidity) == ChecksumOption.CheckValidity )
         {
-            if( hashIdx != s.Length - 3 && hashIdx != s.Length - 2 )
+            if( hashIdx != span.Length - 3 && hashIdx != span.Length - 2 )
             {
                 throw new ArgumentException( "Line section should end with *X or *XX hexadecimal checksum." );
             }
-            var checksum = GetHexValue( s[^1] );
-            if( hashIdx == s.Length - 3 )
+            var checksum = GetHexValue( span[^1] );
+            if( hashIdx == span.Length - 3 )
             {
-                checksum |= (byte)(GetHexValue( s[^2] ) << 4);
+                checksum |= (byte)(GetHexValue( span[^2] ) << 4);
             }
-            InternalCheck( s[..hashIdx], checksum );
+            InternalCheck( span[..hashIdx], checksum );
         }
     }
 
