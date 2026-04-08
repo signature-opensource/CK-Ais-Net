@@ -117,6 +117,11 @@ public class NmeaParserOptions
     public bool ThrowWhenNoExclamationMark { get; set; } = true;
 
     /// <summary>
+    /// Defines if need to clear <see cref="System.Buffers.ArrayPool{T}.Shared"/> When using <see cref="NmeaLineToAisStreamAdapter{TExtraFieldParser}"/>
+    /// </summary>
+    public bool ClearReturnedBuffer { get; set; } = false;
+
+    /// <summary>
     /// Copy all values of this objet to another instance.
     /// </summary>
     /// <returns>A new instance with same values.</returns>
@@ -131,6 +136,7 @@ public class NmeaParserOptions
         AllowUnreconizedDataOrigin = AllowUnreconizedDataOrigin,
         AllowTagBlockEmptyFields = AllowTagBlockEmptyFields,
         ChecksumOption = ChecksumOption,
-        ThrowWhenNoExclamationMark = ThrowWhenNoExclamationMark
+        ThrowWhenNoExclamationMark = ThrowWhenNoExclamationMark,
+        ClearReturnedBuffer = ClearReturnedBuffer
     };
 }
