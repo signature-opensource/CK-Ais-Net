@@ -15,7 +15,7 @@ public interface INmeaLineToAisStreamAdapter : INmeaLineStreamProcessor, IDispos
 
 /// <summary>
 /// Processes NMEA message lines, and passes their payloads as complete AIS messages to an
-/// <see cref="INmeaAisMessageStreamProcessor"/>, reassembling any messages that were split
+/// <see cref="INmeaAisMessageStreamProcessor{TExtraFieldParser}"/>, reassembling any messages that were split
 /// across multiple NMEA lines.
 /// </summary>
 public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProcessor<TExtraFieldParser>, INmeaLineToAisStreamAdapter
@@ -26,10 +26,9 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
     readonly Dictionary<int, FragmentedMessage> _messageFragments = [];
     int _messagesProcessed = 0;
     int _messagesProcessedAtLastUpdate = 0;
-    readonly bool _clearReturedBuffer;
 
     /// <summary>
-    /// Creates a <see cref="NmeaLineToAisStreamAdapter"/>.
+    /// Creates a <see cref="NmeaLineToAisStreamAdapter{TExtraFieldParser}"/>.
     /// </summary>
     /// <param name="messageProcessor">
     /// The message process to which complete AIS messages are to be passed.
@@ -40,7 +39,7 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
     }
 
     /// <summary>
-    /// Creates a <see cref="NmeaLineToAisStreamAdapter"/>.
+    /// Creates a <see cref="NmeaLineToAisStreamAdapter{TExtraFieldParser}"/>.
     /// </summary>
     /// <param name="messageProcessor">
     /// The message process to which complete AIS messages are to be passed.
@@ -50,7 +49,6 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
     {
         _messageProcessor = messageProcessor;
         _options = options.Copy();
-        _clearReturedBuffer = (options.ChecksumOption & (ChecksumOption.ValidateStandardFormat | ChecksumOption.CheckValidity)) != 0;
     }
 
     /// <inheritdoc/>
@@ -129,6 +127,8 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
             }
 
             Span<byte[]> fragmentBuffers = fragments.Buffers;
+            Span<int> fragmentBuffersLength = fragments.BuffersLength;
+
             if( fragmentBuffers[oneBasedSentenceNumber - 1] != null )
             {
                 _messageProcessor.OnError(
@@ -140,6 +140,7 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
             byte[] buffer = ArrayPool<byte>.Shared.Rent( parsedLine.Line.Length );
             fragmentBuffers[oneBasedSentenceNumber - 1] = buffer;
             parsedLine.Line.CopyTo( buffer );
+            fragmentBuffersLength[oneBasedSentenceNumber - 1] = parsedLine.Line.Length;
 
             bool allFragmentsReceived = true;
             int totalPayloadSize = 0;
@@ -152,7 +153,7 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                     break;
                 }
 
-                var storedParsedLine = new NmeaLineParser<TExtraFieldParser>( fragmentBuffers[i], _options );
+                var storedParsedLine = new NmeaLineParser<TExtraFieldParser>( fragmentBuffers[i].AsSpan( 0, fragmentBuffersLength[i] ), _options );
                 totalPayloadSize += storedParsedLine.Payload.Length;
 
                 if( storedParsedLine.Sentence.Length > 0 ) fragmentsWithSentences++;
@@ -179,7 +180,7 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
 
                     for( int i = 0; i < fragmentBuffers.Length; ++i )
                     {
-                        var storedParsedLine = new NmeaLineParser<TExtraFieldParser>( fragmentBuffers[i], _options );
+                        var storedParsedLine = new NmeaLineParser<TExtraFieldParser>( fragmentBuffers[i].AsSpan( 0, fragmentBuffersLength[i] ), _options );
 
                         // If a non last fragment have a non zero padding, disallow it and not in fix grouping mode,
                         // then not populate reassemblyUnderlyingArray and not call OnNext.
@@ -197,7 +198,7 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
 
                     if( !nonLastFragmentHaveNonZeroPadding )
                     {
-                        var lineParser = new NmeaLineParser<TExtraFieldParser>( fragmentBuffers[0], _options );
+                        var lineParser = new NmeaLineParser<TExtraFieldParser>( fragmentBuffers[0].AsSpan( 0, fragmentBuffersLength[0] ), _options );
                         if( fixGrouping ) lineParser = NmeaLineParser<TExtraFieldParser>.OverrideGrouping( lineParser, customGroup );
 
                         _messageProcessor.OnNext(
@@ -211,7 +212,7 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                 {
                     if( reassemblyUnderlyingArray is not null )
                     {
-                        ArrayPool<byte>.Shared.Return( reassemblyUnderlyingArray, _clearReturedBuffer );
+                        ArrayPool<byte>.Shared.Return( reassemblyUnderlyingArray, _options.ClearReturnedBuffer );
                     }
                 }
 
@@ -248,17 +249,14 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                 // although since this is a case we don't expect to hit much in normal
                 // operation, it's not clear how much that matters.)
                 byte[]? lastFragmentBuffer = null;
+                int lastFragmentBufferLength = default;
                 for( int o = fragmentBuffers.Length - 1; lastFragmentBuffer is null; --o )
                 {
                     lastFragmentBuffer = fragmentBuffers[o];
+                    lastFragmentBufferLength = fragmentedMessage.BuffersLength[o];
                 }
 
-                ReadOnlySpan<byte> line = lastFragmentBuffer;
-                int endOfMessages = line.IndexOf( (byte)0 );
-                if( endOfMessages >= 0 )
-                {
-                    line = line.Slice( 0, endOfMessages );
-                }
+                ReadOnlySpan<byte> line = lastFragmentBuffer.AsSpan( 0, lastFragmentBufferLength );
 
                 _messageProcessor.OnError(
                     line,
@@ -313,11 +311,13 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
         {
             if( fragmentBuffers[i] != null )
             {
-                ArrayPool<byte>.Shared.Return( fragmentBuffers[i], _clearReturedBuffer );
+                ArrayPool<byte>.Shared.Return( fragmentBuffers[i], _options.ClearReturnedBuffer );
             }
         }
 
-        ArrayPool<byte[]>.Shared.Return( fragmentedMessage.RentedBufferArray, _clearReturedBuffer );
+        ArrayPool<byte[]>.Shared.Return( fragmentedMessage.RentedBufferArray, _options.ClearReturnedBuffer );
+
+        ArrayPool<int>.Shared.Return( fragmentedMessage.RentedBufferArrayLength, _options.ClearReturnedBuffer );
 
         _messageFragments.Remove( groupId );
     }
@@ -331,8 +331,10 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
             RentedBufferArray = ArrayPool<byte[]>.Shared.Rent( count );
             BufferCount = count;
             LineNumber = lineNumber;
+            RentedBufferArrayLength = ArrayPool<int>.Shared.Rent( count );
 
             Buffers.Clear();
+            BuffersLength.Clear();
         }
 
         /// <summary>
@@ -375,8 +377,12 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
         /// the line is longer than it needs to be.
         /// </para>
         /// </remarks>
-        public readonly Span<byte[]> Buffers => RentedBufferArray.AsSpan().Slice( 0, BufferCount );
+        public readonly Span<byte[]> Buffers => RentedBufferArray.AsSpan( 0, BufferCount );
 
         public int LineNumber { get; }
+
+        public readonly int[] RentedBufferArrayLength { get; }
+
+        public readonly Span<int> BuffersLength => RentedBufferArrayLength.AsSpan( 0, BufferCount );
     }
 }
