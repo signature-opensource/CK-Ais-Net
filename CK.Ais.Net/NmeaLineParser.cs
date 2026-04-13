@@ -203,7 +203,7 @@ public readonly ref struct NmeaLineParser<TExtraFieldParser>
 
         remainingFields = remainingFields.Slice( nextComma + 1 );
 
-        options.ChecksumOption.Check( Sentence[1..] /* Skip exclamation mark */ );
+        options.ChecksumOption.Check( Sentence.Slice( 1 ) /* Skip exclamation mark */ );
 
         if( remainingFields.Length == 0 )
         {
