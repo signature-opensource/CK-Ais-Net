@@ -127,16 +127,18 @@ public readonly ref struct NmeaAisAidsToNavigationReportParser
     /// <summary>
     /// Gets a value indicating whether the spare bit at offset 241 is set.
     /// </summary>
-    public bool SpareBit241 => _bits.GetBit( 271 );
+    public bool SpareBit241 => _bits.BitCount >= 272 && _bits.GetBit( 271 );
 
     /// <summary>
     /// Gets the extension of the <see cref="NameOfAidsToNavigation"/>.
     /// </summary>
-    public NmeaAisTextFieldParser NameOfAidToNavigationExtension => checked(new NmeaAisTextFieldParser( _bits, (_bits.BitCount - 272) / 6 * 6, 272 ));
+    public NmeaAisTextFieldParser NameOfAidToNavigationExtension => checked(new NmeaAisTextFieldParser( _bits, (Math.Max( _bits.BitCount, 272 ) - 272) / 6 * 6, 272 ));
 
     /// <summary>
     /// Gets the value of the bits in this message for which no standard meaning is currently
     /// defined.
     /// </summary>
-    public uint SpareBitsAtEnd => checked(_bits.GetUnsignedInteger( (_bits.BitCount - 272) % 6, 272 + ((_bits.BitCount - 272) / 6 * 6) ));
+    public uint SpareBitsAtEnd => _bits.BitCount > 272
+        ? checked(_bits.GetUnsignedInteger( (_bits.BitCount - 272) % 6, 272 + ((_bits.BitCount - 272) / 6 * 6) ))
+        : 0;
 }

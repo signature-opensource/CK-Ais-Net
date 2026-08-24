@@ -246,12 +246,20 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Invalid out of range")]
-        public void InvalidOutOfRange()
+        [NUnit.Framework.DescriptionAttribute("Message without spare bit at 271")]
+        [NUnit.Framework.TestCaseAttribute("E>jN6CQcb3hKH@80cSh;TW26WV2P9`dh?2aHhu7gg`N000", "5", "false", "", "0", null)]
+        [NUnit.Framework.TestCaseAttribute("E>k`sFdJUP00000000000000000=31wP7up8H00000N000", "5", "false", "", "0", null)]
+        [NUnit.Framework.TestCaseAttribute("E>kaTLdqK000000000000000000<t0K78WdMp00000N010", "5", "false", "", "0", null)]
+        public void MessageWithoutSpareBitAt271(string payload, string padding, string spare241, string nameatonext, string spareend, string[] exampleTags)
         {
-            string[] tagsOfScenario = ((string[])(null));
+            string[] tagsOfScenario = exampleTags;
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Invalid out of range", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            argumentsOfScenario.Add("payload", payload);
+            argumentsOfScenario.Add("padding", padding);
+            argumentsOfScenario.Add("spare241", spare241);
+            argumentsOfScenario.Add("nameatonext", nameatonext);
+            argumentsOfScenario.Add("spareend", spareend);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Message without spare bit at 271", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 43
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -263,11 +271,16 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 this.ScenarioStart();
 #line 44
-    testRunner.When("I parse \'ENjV3u0;4a::PV@0b7WDHlP0000@IH6:@u?S800000I00\' with padding 6 as a Aids " +
-                        "to Navigation Report", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+    testRunner.When(string.Format("I parse \'{0}\' with padding {1} as a Aids to Navigation Report", payload, padding), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 45
-    testRunner.Then("throw an overflow error", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.Then(string.Format("NmeaAisAidsToNavigationReportParser.SpareBit241 is {0}", spare241), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 46
+    testRunner.And(string.Format("NmeaAisAidsToNavigationReportParser.NameOfAidToNavigationExtension is {0}", nameatonext), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 47
+    testRunner.And(string.Format("NmeaAisAidsToNavigationReportParser.SpareBitsAtEnd is {0}", spareend), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();
