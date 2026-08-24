@@ -108,11 +108,11 @@ Scenario Outline: Ship Type
     Examples:
     | payload                                                                 | padding | type                           |
     | 50000000000000000000000000000000000000000000000000000000000000000000000 | 2       | NotAvailable                   |
-    | 500000000000000000000000000000000000000E0000000000000000000000000000000 | 2       | WingInGroundHazardousCategoryA |
-    | 53mg2o400000hOSGOJ18E=@hE=>0<P4hhDpLE:0Q0H<6640008hj<M`1Sl`2CQSp8888880 | 2       | DredgingOrUnderwaterOps        |		# ais.kystverket.no
-    | 53mFoV000000hf3C3S08`u8pH`Dhh0000000000m1@6334rdR0888888888888888888880 | 2       | PortTender                     |		# ais.kystverket.no
+    | 500000000000000000000000000000000000000E0000000000000000000000000000000 | 2       | WingInGroundHazardousCategoryX |
+    | 53mg2o400000hOSGOJ18E=@hE=>0<P4hhDpLE:0Q0H<6640008hj<M`1Sl`2CQSp8888880 | 2       | Dredger                        |		# ais.kystverket.no
+    | 53mFoV000000hf3C3S08`u8pH`Dhh0000000000m1@6334rdR0888888888888888888880 | 2       | PortOrFishTender               |		# ais.kystverket.no
     | 53JIbD42BlHOTP7;WSIHth622222222222222216D@L;B5n8NITSm51DQ0CH88888888880 | 2       | CargoAll                       |		# ais.kystverket.no
-    | 548dvb02<<pTiT8l0008DhLT61<D5L5U<00000183jJC65mE0?DiAkm0000000000000000 | 2       | CargoHazardousCategoryB        |		# ais.kystverket.no
+    | 548dvb02<<pTiT8l0008DhLT61<D5L5U<00000183jJC65mE0?DiAkm0000000000000000 | 2       | CargoHazardousCategoryY        |		# ais.kystverket.no
     | 53m7TH800000hS;3?P0Hu<p604ltp0000000001?0P;5340Ht5531Wu=N=eN=u000000000 | 2       | CargoNoAdditionalInformation   |		# ais.kystverket.no
     | 53QI:t02=oDi`@Q3B20dEV0l58Tr22222222221@8PD765lcN>4SkSRCQiC`88888888880 | 2       | TankerAll                      |		# ais.kystverket.no
 

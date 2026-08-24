@@ -139,7 +139,7 @@ Scenario Outline: Ship type
     Examples:
     | payload                                              | padding | type                           |
     | C000000000000000000000000000000000000000000000000000 | 0       | NotAvailable                   |
-    | C0000000000000000000000000000000000000000000:P000000 | 0       | WingInGroundHazardousCategoryA |
+    | C0000000000000000000000000000000000000000000:P000000 | 0       | WingInGroundHazardousCategoryX |
 
 Scenario Outline: Dimension to Bow
     When I parse '<payload>' with padding <padding> as a Position Report Extended Class B

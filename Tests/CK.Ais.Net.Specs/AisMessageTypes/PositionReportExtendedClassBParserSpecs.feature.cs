@@ -485,7 +485,7 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Ship type")]
         [NUnit.Framework.TestCaseAttribute("C000000000000000000000000000000000000000000000000000", "0", "NotAvailable", null)]
-        [NUnit.Framework.TestCaseAttribute("C0000000000000000000000000000000000000000000:P000000", "0", "WingInGroundHazardousCategoryA", null)]
+        [NUnit.Framework.TestCaseAttribute("C0000000000000000000000000000000000000000000:P000000", "0", "WingInGroundHazardousCategoryX", null)]
         public void ShipType(string payload, string padding, string type, string[] exampleTags)
         {
             string[] tagsOfScenario = exampleTags;
