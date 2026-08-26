@@ -457,10 +457,10 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Part B: Ship Type")]
         [NUnit.Framework.TestCaseAttribute("H000004000000000000000000000", "0", "NotAvailable", null)]
-        [NUnit.Framework.TestCaseAttribute("H000004E00000000000000000000", "0", "WingInGroundHazardousCategoryA", null)]
+        [NUnit.Framework.TestCaseAttribute("H000004E00000000000000000000", "0", "WingInGroundHazardousCategoryX", null)]
         [NUnit.Framework.TestCaseAttribute("H3m<KD4NC=D5l@<<:F;000204240", "0", "Fishing", null)]
         [NUnit.Framework.TestCaseAttribute("H3n0Vd561=30000<7qploP1@4430", "0", "CargoAll", null)]
-        [NUnit.Framework.TestCaseAttribute("H3uG2nTUCBD5l0Q00000001@4210", "0", "PleasureCraft", null)]
+        [NUnit.Framework.TestCaseAttribute("H3uG2nTUCBD5l0Q00000001@4210", "0", "PleasureMotorCraft", null)]
         public void PartBShipType(string payload, string padding, string type, string[] exampleTags)
         {
             string[] tagsOfScenario = exampleTags;

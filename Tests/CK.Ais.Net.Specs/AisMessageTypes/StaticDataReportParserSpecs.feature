@@ -156,10 +156,10 @@ Scenario Outline: Part B: Ship Type
     Examples:
     | payload                      | padding | type                           |
     | H000004000000000000000000000 | 0       | NotAvailable                   |
-    | H000004E00000000000000000000 | 0       | WingInGroundHazardousCategoryA |
+    | H000004E00000000000000000000 | 0       | WingInGroundHazardousCategoryX |
     | H3m<KD4NC=D5l@<<:F;000204240 | 0       | Fishing                        |		# ais.kystverket.no
     | H3n0Vd561=30000<7qploP1@4430 | 0       | CargoAll                       |		# ais.kystverket.no
-    | H3uG2nTUCBD5l0Q00000001@4210 | 0       | PleasureCraft                  |		# ais.kystverket.no
+    | H3uG2nTUCBD5l0Q00000001@4210 | 0       | PleasureMotorCraft             |		# ais.kystverket.no
 
 Scenario Outline: Part B: Vendor ID ITU-R 1371-3
     When I parse '<payload>' with padding <padding> as Static Data Report Part B
