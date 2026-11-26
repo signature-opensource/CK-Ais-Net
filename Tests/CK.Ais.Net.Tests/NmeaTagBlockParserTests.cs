@@ -30,6 +30,8 @@ public class NmeaTagBlockParserTests
 {
     const string MissingColonMessage = "Tag block entries should start with a type character followed by a colon, and there was no colon";
 
+    static string EmptyFieldMessage( char field ) => $"Tag block field '{field}' is empty, and empty fields are not allowed";
+
     // Without a standard, a tag block without group gives its source and timestamp.
     [TestCase( "s:ASS,c:1706745485*72", "ASS", 1706745485L )]
     [TestCase( "s:AIS,c:1706800491*63", "AIS", 1706800491L )]
@@ -203,24 +205,24 @@ public class NmeaTagBlockParserTests
     // Even with AllowTagBlockEmptyFields, a field without its ':' (first or last) is rejected.
     // Fixed: the SpecFlow step "the parser throw an error message" only asserted inside a catch, so it also
     // passed when nothing was thrown. It now requires an ArgumentException with the expected message.
-    // The rows whose malformed field is 'd', 'n', 'r' or 'x' are [Explicit]: the library skips these unsupported
-    // fields (when ThrowWhenTagBlockContainsUnknownFields is false) without validating them, so nothing is thrown.
+    // The 'd', 'n', 'r' and 'x' fields are ignored (ThrowWhenTagBlockContainsUnknownFields is false here) but their format
+    // is checked like the other ones: the library used to skip them without any check.
     [TestCase( "c:,i:,t:,d:,n:,r:,x:,s*21" )]
     [TestCase( "s:,i:,t:,d:,n:,r:,x:,c*21" )]
     [TestCase( "s:,c:,t:,d:,n:,r:,x:,i*21" )]
     [TestCase( "s:,c:,i:,d:,n:,r:,x:,t*21" )]
-    [TestCase( "s:,c:,i:,t:,n:,r:,x:,d*21", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    [TestCase( "s:,c:,i:,t:,d:,r:,x:,n*21", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    [TestCase( "s:,c:,i:,t:,d:,n:,x:,r*21", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    [TestCase( "s:,c:,i:,t:,d:,n:,r:,x*21", Explicit = true, Reason = UnvalidatedUnsupportedField )]
+    [TestCase( "s:,c:,i:,t:,n:,r:,x:,d*21" )]
+    [TestCase( "s:,c:,i:,t:,d:,r:,x:,n*21" )]
+    [TestCase( "s:,c:,i:,t:,d:,n:,x:,r*21" )]
+    [TestCase( "s:,c:,i:,t:,d:,n:,r:,x*21" )]
     [TestCase( "s,c:,i:,t:,d:,n:,r:,x:*21" )]
     [TestCase( "c,s:,i:,t:,d:,n:,r:,x:*21" )]
     [TestCase( "i,s:,c:,t:,d:,n:,r:,x:*21" )]
     [TestCase( "t,s:,c:,i:,d:,n:,r:,x:*21" )]
-    [TestCase( "d,s:,c:,i:,t:,n:,r:,x:*21", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    [TestCase( "n,s:,c:,i:,t:,d:,r:,x:*21", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    [TestCase( "r,s:,c:,i:,t:,d:,n:,x:*21", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    [TestCase( "x,s:,c:,i:,t:,d:,n:,r:*21", Explicit = true, Reason = UnvalidatedUnsupportedField )]
+    [TestCase( "d,s:,c:,i:,t:,n:,r:,x:*21" )]
+    [TestCase( "n,s:,c:,i:,t:,d:,r:,x:*21" )]
+    [TestCase( "r,s:,c:,i:,t:,d:,n:,x:*21" )]
+    [TestCase( "x,s:,c:,i:,t:,d:,n:,r:*21" )]
     public void AllowTagBlockEmptyFields_still_rejects_field_without_colon( string tagBlock )
     {
         Util.Invokable( () => { _ = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: true ); } )
@@ -228,32 +230,68 @@ public class NmeaTagBlockParserTests
             .Message.ShouldBe( MissingColonMessage );
     }
 
-    // Without AllowTagBlockEmptyFields, an empty field ('s:') or a field without ':' ('s') is rejected.
+    // Without AllowTagBlockEmptyFields, an empty field ('s:') is rejected with a dedicated message.
     // Fixed: same as above, the SpecFlow step passed when nothing was thrown.
-    // The rows whose field is 'd', 'n', 'r' or 'x' are [Explicit]: the library skips these unsupported
-    // fields (when ThrowWhenTagBlockContainsUnknownFields is false) without validating them, so nothing is thrown
-    // although the AllowTagBlockEmptyFields documentation says that empty fields are invalid when it is false.
-    [TestCase( "s:*49" )]
-    [TestCase( "c:*59" )]
-    [TestCase( "i:*53" )]
-    [TestCase( "t:*4E" )]
-    [TestCase( "d:*5E", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    [TestCase( "n:*54", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    [TestCase( "r:*48", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    [TestCase( "x:*42", Explicit = true, Reason = UnvalidatedUnsupportedField )]
+    // As above, the ignored 'd', 'n', 'r' and 'x' fields are checked too.
+    [TestCase( "s:*49", 's' )]
+    [TestCase( "c:*59", 'c' )]
+    [TestCase( "i:*53", 'i' )]
+    [TestCase( "t:*4E", 't' )]
+    [TestCase( "d:*5E", 'd' )]
+    [TestCase( "n:*54", 'n' )]
+    [TestCase( "r:*48", 'r' )]
+    [TestCase( "x:*42", 'x' )]
+    public void Empty_fields_are_rejected_without_AllowTagBlockEmptyFields( string tagBlock, char emptyField )
+    {
+        Util.Invokable( () => { _ = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: false ); } )
+            .ShouldThrow<ArgumentException>()
+            .Message.ShouldBe( EmptyFieldMessage( emptyField ) );
+    }
+
+    // Without AllowTagBlockEmptyFields, a field without ':' ('s') is rejected (as it is with the option).
+    // Fixed: same as above, the SpecFlow step passed when nothing was thrown.
     [TestCase( "s*49" )]
     [TestCase( "c*59" )]
     [TestCase( "i*53" )]
     [TestCase( "t*4E" )]
-    [TestCase( "d*5E", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    [TestCase( "n*54", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    [TestCase( "r*48", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    [TestCase( "x*42", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    public void Empty_fields_are_rejected_without_AllowTagBlockEmptyFields( string tagBlock )
+    [TestCase( "d*5E" )]
+    [TestCase( "n*54" )]
+    [TestCase( "r*48" )]
+    [TestCase( "x*42" )]
+    public void Fields_without_colon_are_rejected_without_AllowTagBlockEmptyFields( string tagBlock )
     {
         Util.Invokable( () => { _ = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: false ); } )
             .ShouldThrow<ArgumentException>()
             .Message.ShouldBe( MissingColonMessage );
+    }
+
+    // Without AllowTagBlockEmptyFields, an empty field is rejected wherever it is, not only when it ends the tag block
+    // (the library used to only reject an empty last field: 's:,c:1567684904' was accepted with an empty source).
+    [TestCase( "s:,c:1567684904*3E", 's' )]
+    [TestCase( "c:1567684904,s:,i:abc*21", 's' )]
+    [TestCase( "i:,s:42*30", 'i' )]
+    [TestCase( "d:,s:42*3D", 'd' )]
+    [TestCase( "s:42,x:,c:1567684904*56", 'x' )]
+    [TestCase( "g:,s:42*3E", 'g' )]
+    public void Empty_fields_are_rejected_without_AllowTagBlockEmptyFields_whatever_their_position( string tagBlock, char emptyField )
+    {
+        Util.Invokable( () => { _ = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: false ); } )
+            .ShouldThrow<ArgumentException>()
+            .Message.ShouldBe( EmptyFieldMessage( emptyField ) );
+    }
+
+    // With AllowTagBlockEmptyFields, the same tag blocks are accepted and the other fields are decoded.
+    [TestCase( "s:,c:1567684904*3E", "", 1567684904L )]
+    [TestCase( "c:1567684904,s:,i:abc*21", "", 1567684904L )]
+    [TestCase( "i:,s:42*30", "42", null )]
+    [TestCase( "d:,s:42*3D", "42", null )]
+    [TestCase( "s:42,x:,c:1567684904*56", "42", 1567684904L )]
+    [TestCase( "g:,s:42*3E", "42", null )]
+    public void Empty_fields_are_accepted_with_AllowTagBlockEmptyFields_whatever_their_position( string tagBlock, string source, long? timestamp )
+    {
+        var parser = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: true );
+        Encoding.ASCII.GetString( parser.Source ).ShouldBe( source );
+        parser.UnixTimestamp.ShouldBe( timestamp );
     }
 
     // A 'g:' grouping that ends the tag block is parsed, with AllowTagBlockEmptyFields.
@@ -286,8 +324,6 @@ public class NmeaTagBlockParserTests
         parser.UnixTimestamp.ShouldBe( 1738367940L );
         CheckGrouping( parser, 2, 2, 1470 );
     }
-
-    const string UnvalidatedUnsupportedField = "Library defect: unsupported 'd', 'n', 'r' and 'x' fields are skipped without checking their 'x:' form, so no error is raised.";
 
     static NmeaTagBlockParser<DefaultExtraFieldParser> Parse( string tagBlock, TagBlockStandard tagBlockStandard, bool allowTagBlockEmptyFields = false )
     {

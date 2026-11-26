@@ -17,7 +17,7 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
     /// Creates a <see cref="NmeaTagBlockParser"/>.
     /// </summary>
     /// <param name="span">The ASCII-encoded tag block, without the leading and trailing
-    /// <c>/</c> delimiters.
+    /// <c>\</c> delimiters, ending with its <c>*XX</c> checksum.
     /// </param>
     public NmeaTagBlockParser( ReadOnlySpan<byte> span )
         : this( span, false, TagBlockStandard.Unspecified, false, ChecksumOption.ValidateStandardFormat )
@@ -28,13 +28,20 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
     /// Creates a <see cref="NmeaTagBlockParser{TExtraFieldParser}"/>.
     /// </summary>
     /// <param name="span">The ASCII-encoded tag block, without the leading and trailing
-    /// <c>/</c> delimiters.
+    /// <c>\</c> delimiters, ending with its <c>*XX</c> checksum.
     /// </param>
     /// <param name="throwWhenTagBlockContainsUnknownFields">
-    /// Ignore non-standard and unsupported tag block field types. Useful when working with
-    /// data sources that add non-standard fields.
+    /// True to throw when the tag block contains a non-standard field (that the <typeparamref name="TExtraFieldParser"/>
+    /// doesn't handle) or a standard but unsupported one ('d', 'n', 'r' or 'x').
+    /// False to ignore them, which is useful when working with data sources that add non-standard fields.
+    /// The format of the ignored standard fields (a type character followed by a colon) is checked anyway.
     /// </param>
-    /// <param name="tagBlockStandard">Defined in whick standard the tag block is.</param>
+    /// <param name="tagBlockStandard">The standard that defines the tag block fields.</param>
+    /// <param name="allowTagBlockEmptyFields">
+    /// True to accept empty fields (like <c>s:</c>), whatever their position in the tag block.
+    /// False to reject them.
+    /// </param>
+    /// <param name="checksumOption">How the checksum of the tag block is checked.</param>
     public NmeaTagBlockParser( ReadOnlySpan<byte> span,
                                bool throwWhenTagBlockContainsUnknownFields,
                                TagBlockStandard tagBlockStandard,
@@ -136,6 +143,8 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
 
                         throw new NotSupportedException( "Unsupported field type: " + fieldType );
                     }
+                    // The content of these fields is ignored, but their format is checked like the other ones.
+                    MoveAfterFieldKey( ref span, allowTagBlockEmptyFields );
                     AdvanceToNextField( ref span );
                     break;
 
@@ -157,9 +166,15 @@ public readonly ref struct NmeaTagBlockParser<TExtraFieldParser>
 
             static void MoveAfterFieldKey( ref ReadOnlySpan<byte> source, bool allowEmptyTagBlockFields )
             {
-                if( (source.Length is 2 && !allowEmptyTagBlockFields) || source.Length < 2 || source[1] != (byte)':' )
+                if( source.Length < 2 || source[1] != (byte)':' )
                 {
                     throw new ArgumentException( "Tag block entries should start with a type character followed by a colon, and there was no colon" );
+                }
+                // An empty field is a key followed by its colon and then by the end of the tag block or by
+                // the ',' of the next field.
+                if( !allowEmptyTagBlockFields && (source.Length is 2 || source[2] == (byte)',') )
+                {
+                    throw new ArgumentException( $"Tag block field '{(char)source[0]}' is empty, and empty fields are not allowed" );
                 }
 
                 source = source.Slice( 2 );
