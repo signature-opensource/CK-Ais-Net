@@ -356,10 +356,10 @@ public class NmeaStreamParserByLineTests
 
     // With CheckValidity (strict 2-digit format or not), a checksum that does not match the content is an error
     // with the computed and the expected (read) values. In non strict mode, a 1-digit checksum is read as "0X".
-    [TestCase( @"\s:rMT9999,c:1747907742*E3\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "5D", "E3", ChecksumOption.ValidateStandardFormat | ChecksumOption.CheckValidity )]
-    [TestCase( @"\s:rMT9999,c:1747907742*0B\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "5D", "0B", ChecksumOption.ValidateStandardFormat | ChecksumOption.CheckValidity )]
-    [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*03", "09", "03", ChecksumOption.ValidateStandardFormat | ChecksumOption.CheckValidity )]
-    [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*AA", "09", "AA", ChecksumOption.ValidateStandardFormat | ChecksumOption.CheckValidity )]
+    [TestCase( @"\s:rMT9999,c:1747907742*E3\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "5D", "E3", ChecksumOption.ValidateStandardFormat | ChecksumOption.CheckValidity )] // Intentionally invalid checksum.
+    [TestCase( @"\s:rMT9999,c:1747907742*0B\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "5D", "0B", ChecksumOption.ValidateStandardFormat | ChecksumOption.CheckValidity )] // Intentionally invalid checksum.
+    [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*03", "09", "03", ChecksumOption.ValidateStandardFormat | ChecksumOption.CheckValidity )] // Intentionally invalid checksum.
+    [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*AA", "09", "AA", ChecksumOption.ValidateStandardFormat | ChecksumOption.CheckValidity )] // Intentionally invalid checksum.
     [TestCase( @"\s:rMT9999,c:1747907742*3\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "5D", "03", ChecksumOption.CheckValidity )]
     [TestCase( @"\s:rMT9999,c:1747907742*B\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "5D", "0B", ChecksumOption.CheckValidity )]
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*3", "09", "03", ChecksumOption.CheckValidity )]

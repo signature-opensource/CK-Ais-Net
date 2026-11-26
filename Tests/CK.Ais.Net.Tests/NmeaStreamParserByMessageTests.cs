@@ -200,7 +200,7 @@ public class NmeaStreamParserByMessageTests
     public async Task Single_line_where_padding_is_missing_Async()
     {
         // ais.kystverket.no
-        const string line = @"\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06*78";
+        const string line = @"\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06*78"; // Intentionally invalid checksum (truncated line).
         var p = await ParseByMessageAsync( Lf( line ) );
         p.OnNextCalls.ShouldBeEmpty();
         ShouldHaveSingleError( p, line, "Invalid data. Payload padding field not present - the message may have been corrupted or truncated", 1 );
@@ -212,7 +212,7 @@ public class NmeaStreamParserByMessageTests
     public async Task Single_line_where_padding_comma_present_but_value_missing_Async()
     {
         // ais.kystverket.no
-        const string line = @"\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,*78";
+        const string line = @"\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,*78"; // Intentionally invalid checksum (truncated line).
         var p = await ParseByMessageAsync( Lf( line ) );
         p.OnNextCalls.ShouldBeEmpty();
         ShouldHaveSingleError( p, line, "Invalid data. Payload padding field not present - the message may have been corrupted or truncated", 1 );
