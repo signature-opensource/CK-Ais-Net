@@ -37,7 +37,7 @@ public class NmeaLineToAisStreamAdapterTests
 {
     // A non-fragmented line: one message with its payload, padding, source and timestamp.
     [Test]
-    public void non_fragmented_message_received()
+    public void Non_fragmented_message_received()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -49,7 +49,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // Only the first fragment (with tag block grouping) of a 2-fragment message: no message.
     [Test]
-    public void first_fragment_of_two_part_message_received()
+    public void First_fragment_of_two_part_message_received()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -60,7 +60,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // Only the first fragment (without tag block grouping) of a 2-fragment message: no message.
     [Test]
-    public void first_fragment_of_two_part_message_without_grouping_in_header_received()
+    public void First_fragment_of_two_part_message_without_grouping_in_header_received()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -72,7 +72,7 @@ public class NmeaLineToAisStreamAdapterTests
     // The 2 fragments (with tag block grouping) one after the other: one reassembled message
     // (padding of the last fragment, source and timestamp of the first line).
     [Test]
-    public void two_fragment_message_fragments_received_adjacently()
+    public void Two_fragment_message_fragments_received_adjacently()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -87,7 +87,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // The 2 fragments (without tag block grouping) one after the other: one reassembled message.
     [Test]
-    public void two_fragment_message_fragments_without_grouping_in_header_received_adjacently()
+    public void Two_fragment_message_fragments_without_grouping_in_header_received_adjacently()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -103,7 +103,7 @@ public class NmeaLineToAisStreamAdapterTests
     // A single-fragment message between the 2 fragments (with tag block grouping): the single one comes first,
     // then the reassembled one.
     [Test]
-    public void two_fragment_message_fragments_received_with_single_fragment_message_in_the_middle()
+    public void Two_fragment_message_fragments_received_with_single_fragment_message_in_the_middle()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -123,7 +123,7 @@ public class NmeaLineToAisStreamAdapterTests
     // A single-fragment message between the 2 fragments (without tag block grouping): the single one comes first,
     // then the reassembled one.
     [Test]
-    public void two_fragment_message_fragments_without_grouping_in_header_received_with_single_fragment_message_in_the_middle()
+    public void Two_fragment_message_fragments_without_grouping_in_header_received_with_single_fragment_message_in_the_middle()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -142,7 +142,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // The 3 fragments (with tag block grouping) one after the other: one reassembled message.
     [Test]
-    public void three_fragment_message_fragments_received_adjacently()
+    public void Three_fragment_message_fragments_received_adjacently()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -159,7 +159,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // The 3 fragments (without tag block grouping) one after the other: one reassembled message.
     [Test]
-    public void three_fragment_message_fragments_without_grouping_in_header_received_adjacently()
+    public void Three_fragment_message_fragments_without_grouping_in_header_received_adjacently()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -177,7 +177,7 @@ public class NmeaLineToAisStreamAdapterTests
     // A 3-fragment and a 2-fragment message interleaved (with tag block grouping): the 2-fragment one completes
     // first and is reported first.
     [Test]
-    public void interleaved_multi_fragment_messages()
+    public void Interleaved_multi_fragment_messages()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -201,7 +201,7 @@ public class NmeaLineToAisStreamAdapterTests
     // A 3-fragment and a 2-fragment message interleaved (without tag block grouping, the AIS group ids 9 and 6
     // distinguish them): the 2-fragment one completes first and is reported first.
     [Test]
-    public void interleaved_multi_fragment_messages_without_grouping_in_header()
+    public void Interleaved_multi_fragment_messages_without_grouping_in_header()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -225,7 +225,7 @@ public class NmeaLineToAisStreamAdapterTests
     // A 3-fragment and a 2-fragment message interleaved, both with the same AIS group id 9: only the tag block
     // grouping (3451 and 8055) distinguishes them, and it takes precedence.
     [Test]
-    public void interleaved_multi_fragment_messages_distinguished_only_by_grouping_in_header()
+    public void Interleaved_multi_fragment_messages_distinguished_only_by_grouping_in_header()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -249,7 +249,7 @@ public class NmeaLineToAisStreamAdapterTests
     // MaximumUnmatchedFragmentAge = 10 (this interleaves more than ever seen in reality): 8 single-fragment messages
     // interleaved with a 3-fragment and a 2-fragment message give 10 messages in completion order.
     [Test]
-    public void interleaved_single_and_multi_fragment_messages()
+    public void Interleaved_single_and_multi_fragment_messages()
     {
         var h = new AdapterHarness( new NmeaParserOptions { MaximumUnmatchedFragmentAge = 10 } );
         // ais.kystverket.no
@@ -305,7 +305,7 @@ public class NmeaLineToAisStreamAdapterTests
     // Same interleaved lines with 3 progress reports from the line parser (after 6, 10 and 13 lines): each
     // forwarded report adds the total number of AIS messages and the number of messages since the previous report.
     [Test]
-    public void progress_reports()
+    public void Progress_reports()
     {
         var h = new AdapterHarness( new NmeaParserOptions { MaximumUnmatchedFragmentAge = 10 } );
         // ais.kystverket.no
@@ -351,7 +351,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // An error reported by the line parser ('foobar', line 42) is forwarded as is (same line, same exception, same line number).
     [Test]
-    public void line_stream_parser_reports_error_in_non_fragmented_message()
+    public void Line_stream_parser_reports_error_in_non_fragmented_message()
     {
         var h = new AdapterHarness();
         var error = h.ReceiveErrorReport( "foobar", 42 );
@@ -361,7 +361,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // An error reported by the line parser, then a fragment: the error is forwarded as is.
     [Test]
-    public void line_stream_parser_reports_error_in_first_fragment_of_two_part_message()
+    public void Line_stream_parser_reports_error_in_first_fragment_of_two_part_message()
     {
         var h = new AdapterHarness();
         var error = h.ReceiveErrorReport( "foobar", 42 );
@@ -375,7 +375,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // The first fragment of a 2-fragment message, then an error reported by the line parser: the error is forwarded as is.
     [Test]
-    public void line_stream_parser_reports_error_in_second_fragment_of_two_part_message()
+    public void Line_stream_parser_reports_error_in_second_fragment_of_two_part_message()
     {
         var h = new AdapterHarness();
         h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
@@ -386,7 +386,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // A first fragment with a padding of 1: an "only on the final message" error on the first line (line 1).
     [Test]
-    public void line_stream_parser_passes_a_message_with_padding_that_is_the_first_of_a_two_part_message()
+    public void Line_stream_parser_passes_a_message_with_padding_that_is_the_first_of_a_two_part_message()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -406,7 +406,7 @@ public class NmeaLineToAisStreamAdapterTests
     // The first fragment received twice (same group id, same position): an "Already received sentence" error on the
     // second one (line 2).
     [Test]
-    public void line_stream_parser_passes_the_same_sentence_of_a_two_part_message_twice()
+    public void Line_stream_parser_passes_the_same_sentence_of_a_two_part_message_twice()
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
@@ -425,7 +425,7 @@ public class NmeaLineToAisStreamAdapterTests
     // reported, the first fragment expires on the 3rd line: an "incomplete fragmented message" error with the first
     // line and line number 1. (The 2nd fragment then starts a new incomplete message that is never reported.)
     [Test]
-    public void two_fragment_message_fragments_received_too_many_sentences_in_the_middle()
+    public void Two_fragment_message_fragments_received_too_many_sentences_in_the_middle()
     {
         var h = new AdapterHarness( new NmeaParserOptions { MaximumUnmatchedFragmentAge = 1 } );
         // ais.kystverket.no
@@ -454,7 +454,7 @@ public class NmeaLineToAisStreamAdapterTests
     // EmptyGroupTolerance.AutoFix: a 3-sentence group where only the first line has a (complete, 1/1) sentence and the
     // 2 others are empty: one message, IsFixedMessage is true and the grouping is removed (SentencesInGroup is 0).
     [Test]
-    public void tree_fragment_message_with_only_one_sentence_and_auto_fix_group()
+    public void Three_fragment_message_with_only_one_sentence_and_auto_fix_group()
     {
         var h = new AdapterHarness( new NmeaParserOptions { EmptyGroupTolerance = EmptyGroupTolerance.AutoFix } );
         h.Receive( @"\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41" );
@@ -470,7 +470,7 @@ public class NmeaLineToAisStreamAdapterTests
     // EmptyGroupTolerance.AutoFix: a 3-sentence group where the first 2 lines hold a 2-fragment message and the 3rd
     // is empty: one reassembled message, IsFixedMessage is true and the grouping is fixed to 2 sentences.
     [Test]
-    public void tree_fragment_message_with_two_sentences_and_auto_fix_group()
+    public void Three_fragment_message_with_two_sentences_and_auto_fix_group()
     {
         var h = new AdapterHarness( new NmeaParserOptions { EmptyGroupTolerance = EmptyGroupTolerance.AutoFix } );
         h.Receive( @"\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,2,1,8,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*7A" );
@@ -486,7 +486,7 @@ public class NmeaLineToAisStreamAdapterTests
     // EmptyGroupTolerance.Allow: same lines as the "only one sentence and auto fix group" test: one message, not fixed,
     // with the original grouping (3 sentences).
     [Test]
-    public void tree_fragment_message_with_only_one_sentence_and_allow_empty_sentence()
+    public void Three_fragment_message_with_only_one_sentence_and_allow_empty_sentence()
     {
         var h = new AdapterHarness( new NmeaParserOptions { EmptyGroupTolerance = EmptyGroupTolerance.Allow } );
         h.Receive( @"\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41" );
@@ -503,7 +503,7 @@ public class NmeaLineToAisStreamAdapterTests
     // them as errors, they are forwarded and no message is reported.
     // (The source feature had commented-out steps here that did the same through "I parse the content by message".)
     [Test]
-    public void tree_fragment_message_with_only_one_sentence_and_empty_sentence_is_not_allowed()
+    public void Three_fragment_message_with_only_one_sentence_and_empty_sentence_is_not_allowed()
     {
         var h = new AdapterHarness( new NmeaParserOptions { EmptyGroupTolerance = EmptyGroupTolerance.None } );
         h.Receive( @"\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41" );
@@ -520,7 +520,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // AllowNonZeroPaddingInNonLastFragment = false: a first fragment with a padding of 2 is an error, no message.
     [Test]
-    public void multiple_lines_with_non_zero_padding_in_non_last_fragment_disallowed()
+    public void Multiple_lines_with_non_zero_padding_in_non_last_fragment_disallowed()
     {
         var h = new AdapterHarness( new NmeaParserOptions { AllowNonZeroPaddingInNonLastFragment = false } );
         h.Receive( @"\c:1717977721*54\!AIVDM,2,1,2,B,53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1l,2*15" );
@@ -534,7 +534,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // AllowNonZeroPaddingInNonLastFragment = true: the same 2 fragments give one reassembled message, no error.
     [Test]
-    public void multiple_lines_with_non_zero_padding_in_non_last_fragment_allowed()
+    public void Multiple_lines_with_non_zero_padding_in_non_last_fragment_allowed()
     {
         var h = new AdapterHarness( new NmeaParserOptions { AllowNonZeroPaddingInNonLastFragment = true } );
         h.Receive( @"\c:1717977721*54\!AIVDM,2,1,2,B,53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1l,2*15" );
@@ -549,7 +549,7 @@ public class NmeaLineToAisStreamAdapterTests
     // ThrowWhenNoExclamationMark = true: a sentence starting with '$' cannot be parsed ("expected '!'"); the line parser
     // reports it as an error, it is forwarded and no message is reported.
     [Test]
-    public void sentence_without_exclamation_mark_is_disallowed()
+    public void Sentence_without_exclamation_mark_is_disallowed()
     {
         var h = new AdapterHarness( new NmeaParserOptions { ThrowWhenNoExclamationMark = true } );
         h.ReceiveErrorReportForInvalidContent( @"\c:1717977721*54\$AIVDM,2,1,2,B,53P7hnD00000LQLF220<P4hhDpLF22200000000N1h4245Ra001RDj2CQp1l,2*15", 1 );
@@ -562,7 +562,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // ThrowWhenNoExclamationMark = false: a sentence starting with '$' is accepted, one message, no error.
     [Test]
-    public void sentence_without_exclamation_mark_is_allowed()
+    public void Sentence_without_exclamation_mark_is_allowed()
     {
         var h = new AdapterHarness( new NmeaParserOptions { ThrowWhenNoExclamationMark = false } );
         h.Receive( @"\s:808,c:1567693618*0A\$AIVDM,1,1,,B,B3o8B<00F8:0h694gOtbgwqUoP06,0*73" );

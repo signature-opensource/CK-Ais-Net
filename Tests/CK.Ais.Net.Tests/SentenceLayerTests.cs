@@ -24,7 +24,7 @@ public class SentenceLayerTests
 {
     // Without a leading '\...\' section, the tag block is empty.
     [Test]
-    public void tag_block_not_present()
+    public void TagBlock_is_empty_when_not_present()
     {
         var parser = Parse( AivdmExamples.ClassBPositionReportLine );
         parser.TagBlockAsciiWithoutDelimiters.Length.ShouldBe( 0 );
@@ -32,7 +32,7 @@ public class SentenceLayerTests
 
     // The tag block is exposed without its '\' delimiters.
     [Test]
-    public void tag_block_present()
+    public void TagBlock_is_exposed_without_delimiters()
     {
         var parser = Parse( AivdmExamples.ClassBPositionReportLineWithTagBlock );
         Encoding.ASCII.GetString( parser.TagBlockAsciiWithoutDelimiters ).ShouldBe( AivdmExamples.SimpleTagBlockWithoutDelimiters );
@@ -68,7 +68,7 @@ public class SentenceLayerTests
     // \s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78
     // A single-sentence message is fragment 1 of 1, without message id nor tag block grouping.
     [Test]
-    public void non_fragmented_messages()
+    public void Non_fragmented_message_is_fragment_1_of_1()
     {
         var parser = Parse( AivdmExamples.NonFragmentedMessage );
         parser.TotalFragmentCount.ShouldBe( 1 );
@@ -100,7 +100,7 @@ public class SentenceLayerTests
     [TestCase( 3, 1, "0", 3451 )]
     [TestCase( 3, 2, "0", 3451 )]
     [TestCase( 3, 3, "0", 3451 )]
-    public void fragmented_messages( int totalFragments, int currentFragment, string sequentialMessageId, int sentenceGroupId )
+    public void Fragment_fields_are_decoded( int totalFragments, int currentFragment, string sequentialMessageId, int sentenceGroupId )
     {
         var parser = Parse( string.Format( AivdmExamples.MessageFragmentFormat, currentFragment, totalFragments, sequentialMessageId, sentenceGroupId ) );
         parser.TotalFragmentCount.ShouldBe( totalFragments );
@@ -117,7 +117,7 @@ public class SentenceLayerTests
     [TestCase( 3, 1, "0" )]
     [TestCase( 3, 2, "0" )]
     [TestCase( 3, 3, "0" )]
-    public void fragmented_messages_without_group_ids_in_header( int totalFragments, int currentFragment, string sequentialMessageId )
+    public void Fragment_fields_are_decoded_without_group_in_tag_block( int totalFragments, int currentFragment, string sequentialMessageId )
     {
         var parser = Parse( string.Format( AivdmExamples.MessageFragmentWithoutGroupInHeaderFormat, currentFragment, totalFragments, sequentialMessageId ) );
         parser.TotalFragmentCount.ShouldBe( totalFragments );
@@ -130,7 +130,7 @@ public class SentenceLayerTests
     [TestCase( 'B' )]
     [TestCase( '1' )]
     [TestCase( '2' )]
-    public void radio_channel_code( char channelCode )
+    public void RadioChannelCode_is_decoded( char channelCode )
     {
         var parser = Parse( string.Format( AivdmExamples.MessageWithRadioChannelPlaceholderFormat, channelCode ) );
         parser.ChannelCode.ShouldBe( channelCode );
@@ -138,7 +138,7 @@ public class SentenceLayerTests
 
     // The armored payload is exposed as is.
     [Test]
-    public void payload()
+    public void Payload_is_exposed_as_is()
     {
         const string payload = "B3m:H900AP@b:79ae6:<OwnUoP06"; // ais.kystverket.no
         var parser = Parse( string.Format( AivdmExamples.MessageWithPayloadPlaceholderFormat, payload ) );
@@ -147,7 +147,7 @@ public class SentenceLayerTests
 
     // The number of padding bits is read from the field after the payload.
     [Test]
-    public void padding()
+    public void Padding_is_decoded()
     {
         var parser = Parse( string.Format( AivdmExamples.MessageWithPaddingPlaceholderFormat, 3 ) );
         parser.Padding.ShouldBe( 3u );

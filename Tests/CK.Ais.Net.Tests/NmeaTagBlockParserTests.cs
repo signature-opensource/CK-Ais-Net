@@ -33,7 +33,7 @@ public class NmeaTagBlockParserTests
     // Without a standard, a tag block without group gives its source and timestamp.
     [TestCase( "s:ASS,c:1706745485*72", "ASS", 1706745485L )]
     [TestCase( "s:AIS,c:1706800491*63", "AIS", 1706800491L )]
-    public void unspecified_standard_tag_block( string tagBlock, string source, long timestamp )
+    public void Unspecified_standard_tag_block_gives_source_and_timestamp( string tagBlock, string source, long timestamp )
     {
         var parser = Parse( tagBlock, TagBlockStandard.Unspecified );
         Encoding.ASCII.GetString( parser.Source ).ShouldBe( source );
@@ -46,7 +46,7 @@ public class NmeaTagBlockParserTests
     // so the IEC row ('1G2:7764,...') was never parsed. Each row now parses its own tag block.
     [TestCase( "g:1-2-7764,s:AIS,c:1706800480*13", "AIS", 1706800480L, 1, 2, 7764 )]
     [TestCase( "1G2:7764,s:AIS,c:1706800480*33", "AIS", 1706800480L, 1, 2, 7764 )]
-    public void unspecified_standard_tag_block_with_group( string tagBlock, string source, long timestamp, int sentence, int total, int groupId )
+    public void Unspecified_standard_tag_block_with_group_is_decoded( string tagBlock, string source, long timestamp, int sentence, int total, int groupId )
     {
         var parser = Parse( tagBlock, TagBlockStandard.Unspecified );
         Encoding.ASCII.GetString( parser.Source ).ShouldBe( source );
@@ -190,7 +190,7 @@ public class NmeaTagBlockParserTests
     [TestCase( "s:,c:,i:,t:,d:,r:,x:,n:*21" )]
     [TestCase( "s:,c:,i:,t:,d:,n:,x:,r:*21" )]
     [TestCase( "s:,c:,i:,t:,d:,n:,r:,x:*21" )]
-    public void allow_tag_block_empty_fields( string tagBlock )
+    public void AllowTagBlockEmptyFields_accepts_empty_fields( string tagBlock )
     {
         Util.Invokable( () => { _ = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: true ); } ).ShouldNotThrow();
         var parser = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: true );
@@ -221,7 +221,7 @@ public class NmeaTagBlockParserTests
     [TestCase( "n,s:,c:,i:,t:,d:,r:,x:*21", Explicit = true, Reason = UnvalidatedUnsupportedField )]
     [TestCase( "r,s:,c:,i:,t:,d:,n:,x:*21", Explicit = true, Reason = UnvalidatedUnsupportedField )]
     [TestCase( "x,s:,c:,i:,t:,d:,n:,r:*21", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    public void allow_tag_block_empty_fields_but_invalid_field( string tagBlock )
+    public void AllowTagBlockEmptyFields_still_rejects_field_without_colon( string tagBlock )
     {
         Util.Invokable( () => { _ = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: true ); } )
             .ShouldThrow<ArgumentException>()
@@ -249,7 +249,7 @@ public class NmeaTagBlockParserTests
     [TestCase( "n*54", Explicit = true, Reason = UnvalidatedUnsupportedField )]
     [TestCase( "r*48", Explicit = true, Reason = UnvalidatedUnsupportedField )]
     [TestCase( "x*42", Explicit = true, Reason = UnvalidatedUnsupportedField )]
-    public void disallow_tag_block_empty_fields( string tagBlock )
+    public void Empty_fields_are_rejected_without_AllowTagBlockEmptyFields( string tagBlock )
     {
         Util.Invokable( () => { _ = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: false ); } )
             .ShouldThrow<ArgumentException>()
@@ -260,7 +260,7 @@ public class NmeaTagBlockParserTests
     // Fixed: the SpecFlow step "no error message reported" checked a processor that this scenario never fed.
     // The check is now that building the parser does not throw.
     [Test]
-    public void group_field_is_the_last_of_the_tag_block()
+    public void Group_field_at_the_end_of_tag_block_is_parsed()
     {
         const string tagBlock = "i:<O>IRL</O>,c:1738367940,g:2-2-1470*2F";
         Util.Invokable( () => { _ = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: true ); } ).ShouldNotThrow();
@@ -277,7 +277,7 @@ public class NmeaTagBlockParserTests
     // complete ("g:2-2-1470"), so no error is the correct behaviour and the test has been renamed accordingly.
     // As above, the "no error message reported" step is replaced by checking that building the parser does not throw.
     [Test]
-    public void group_field_is_the_last_of_the_tag_block_and_is_parsed_when_allowTagBlockEmptyFields_is_false()
+    public void Group_field_at_the_end_of_tag_block_is_parsed_without_AllowTagBlockEmptyFields()
     {
         const string tagBlock = "i:<O>IRL</O>,c:1738367940,g:2-2-1470*2F";
         Util.Invokable( () => { _ = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: false ); } ).ShouldNotThrow();

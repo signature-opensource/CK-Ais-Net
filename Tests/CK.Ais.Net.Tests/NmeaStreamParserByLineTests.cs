@@ -39,7 +39,7 @@ public class NmeaStreamParserByLineTests
 
     // An empty stream: no line, OnCompleted called.
     [Test]
-    public async Task empty_file_Async()
+    public async Task Empty_file_Async()
     {
         var p = await ParseByLineAsync( "" );
         p.OnNextCalls.ShouldBeEmpty();
@@ -48,7 +48,7 @@ public class NmeaStreamParserByLineTests
 
     // A single blank CRLF line: no line, OnCompleted called.
     [Test]
-    public async Task single_CRLF_blank_line_only_Async()
+    public async Task Single_CRLF_blank_line_only_Async()
     {
         var p = await ParseByLineAsync( CrLf( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -57,7 +57,7 @@ public class NmeaStreamParserByLineTests
 
     // A single blank LF line: no line, OnCompleted called.
     [Test]
-    public async Task single_LF_blank_line_only_Async()
+    public async Task Single_LF_blank_line_only_Async()
     {
         var p = await ParseByLineAsync( Lf( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -66,7 +66,7 @@ public class NmeaStreamParserByLineTests
 
     // A single blank CR line: no line, OnCompleted called.
     [Test]
-    public async Task single_CR_blank_line_only_Async()
+    public async Task Single_CR_blank_line_only_Async()
     {
         var p = await ParseByLineAsync( Cr( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -75,7 +75,7 @@ public class NmeaStreamParserByLineTests
 
     // Three blank CRLF lines: no line, OnCompleted called.
     [Test]
-    public async Task multiple_CRLF_blank_lines_only_Async()
+    public async Task Multiple_CRLF_blank_lines_only_Async()
     {
         var p = await ParseByLineAsync( CrLf( "" ) + CrLf( "" ) + CrLf( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -84,7 +84,7 @@ public class NmeaStreamParserByLineTests
 
     // Three blank LF lines: no line, OnCompleted called.
     [Test]
-    public async Task multiple_LF_blank_lines_only_Async()
+    public async Task Multiple_LF_blank_lines_only_Async()
     {
         var p = await ParseByLineAsync( Lf( "" ) + Lf( "" ) + Lf( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -93,7 +93,7 @@ public class NmeaStreamParserByLineTests
 
     // Three blank CR lines: no line, OnCompleted called.
     [Test]
-    public async Task multiple_CR_blank_lines_only_Async()
+    public async Task Multiple_CR_blank_lines_only_Async()
     {
         var p = await ParseByLineAsync( Cr( "" ) + Cr( "" ) + Cr( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -102,7 +102,7 @@ public class NmeaStreamParserByLineTests
 
     // Blank lines with mixed terminators (CRLF, LF, CRLF, CR): no line, OnCompleted called.
     [Test]
-    public async Task multiple_mixed_blank_lines_only_Async()
+    public async Task Multiple_mixed_blank_lines_only_Async()
     {
         var p = await ParseByLineAsync( CrLf( "" ) + Lf( "" ) + CrLf( "" ) + Cr( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -111,7 +111,7 @@ public class NmeaStreamParserByLineTests
 
     // One LF line: one line reported, split in its tag block and its sentence.
     [Test]
-    public async Task single_line_Async()
+    public async Task Single_line_Async()
     {
         var p = await ParseByLineAsync( Lf( RealLine0 ) );
         p.OnNextCalls.Count.ShouldBe( 1 );
@@ -122,7 +122,7 @@ public class NmeaStreamParserByLineTests
 
     // One line without terminator: it is reported like a terminated one.
     [Test]
-    public async Task single_line_without_newline_only_Async()
+    public async Task Single_line_without_newline_only_Async()
     {
         var p = await ParseByLineAsync( RealLine0 );
         p.OnNextCalls.Count.ShouldBe( 1 );
@@ -133,7 +133,7 @@ public class NmeaStreamParserByLineTests
 
     // Four LF lines: the four lines are reported in order.
     [Test]
-    public async Task multiple_lines_Async()
+    public async Task Multiple_lines_Async()
     {
         var p = await ParseByLineAsync( Lf( RealLine0 ) + Lf( RealLine1 ) + Lf( RealLine2 ) + Lf( RealLine3 ) );
         ShouldHaveTheFourRealLines( p );
@@ -141,7 +141,7 @@ public class NmeaStreamParserByLineTests
 
     // Four CR lines: the four lines are reported in order.
     [Test]
-    public async Task multiple_CR_lines_Async()
+    public async Task Multiple_CR_lines_Async()
     {
         var p = await ParseByLineAsync( Cr( RealLine0 ) + Cr( RealLine1 ) + Cr( RealLine2 ) + Cr( RealLine3 ) );
         ShouldHaveTheFourRealLines( p );
@@ -149,7 +149,7 @@ public class NmeaStreamParserByLineTests
 
     // Four lines, the last one unterminated: the four lines are reported in order.
     [Test]
-    public async Task multiple_lines_where_final_line_has_no_newline_Async()
+    public async Task Multiple_lines_where_final_line_has_no_newline_Async()
     {
         var p = await ParseByLineAsync( Lf( RealLine0 ) + Lf( RealLine1 ) + Lf( RealLine2 ) + RealLine3 );
         ShouldHaveTheFourRealLines( p );
@@ -157,7 +157,7 @@ public class NmeaStreamParserByLineTests
 
     // Three blank lines then four lines: the blank lines are skipped.
     [Test]
-    public async Task multiple_lines_with_blanks_at_start_Async()
+    public async Task Multiple_lines_with_blanks_at_start_Async()
     {
         var p = await ParseByLineAsync( Lf( "" ) + Lf( "" ) + Lf( "" )
                                         + Lf( RealLine0 ) + Lf( RealLine1 ) + Lf( RealLine2 ) + Lf( RealLine3 ) );
@@ -166,7 +166,7 @@ public class NmeaStreamParserByLineTests
 
     // Three blank lines between the 2nd and the 3rd line: the blank lines are skipped.
     [Test]
-    public async Task multiple_lines_with_blanks_in_middle_Async()
+    public async Task Multiple_lines_with_blanks_in_middle_Async()
     {
         var p = await ParseByLineAsync( Lf( RealLine0 ) + Lf( RealLine1 )
                                         + Lf( "" ) + Lf( "" ) + Lf( "" )
@@ -176,7 +176,7 @@ public class NmeaStreamParserByLineTests
 
     // Four lines then three blank lines: the blank lines are skipped.
     [Test]
-    public async Task multiple_lines_with_blanks_at_end_Async()
+    public async Task Multiple_lines_with_blanks_at_end_Async()
     {
         var p = await ParseByLineAsync( Lf( RealLine0 ) + Lf( RealLine1 ) + Lf( RealLine2 ) + Lf( RealLine3 )
                                         + Lf( "" ) + Lf( "" ) + Lf( "" ) );
@@ -185,7 +185,7 @@ public class NmeaStreamParserByLineTests
 
     // A line that is not NMEA: no line, one error with the line, the "expected '!'" exception and line number 1.
     [Test]
-    public async Task single_unparseable_line_Async()
+    public async Task Single_unparseable_line_Async()
     {
         var p = await ParseByLineAsync( Lf( "I am not an NMEA message" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -198,7 +198,7 @@ public class NmeaStreamParserByLineTests
 
     // A good line then a line that is not NMEA: the good line is reported, the bad one is an error on line 2.
     [Test]
-    public async Task one_unparseable_line_and_one_good_line_Async()
+    public async Task One_unparseable_line_and_one_good_line_Async()
     {
         var p = await ParseByLineAsync( Lf( RealLine0 ) + Lf( "I am not an NMEA message" ) );
         p.OnNextCalls.Count.ShouldBe( 1 );
@@ -213,7 +213,7 @@ public class NmeaStreamParserByLineTests
 
     // AllowUnreconizedTalkerId = true: a line with the unknown "B2" talker id is reported without error.
     [Test]
-    public async Task allow_unreconized_talker_id_Async()
+    public async Task Allow_unreconized_talker_id_Async()
     {
         var options = new NmeaParserOptions { AllowUnreconizedTalkerId = true };
         var p = await ParseByLineAsync( Lf( @"\i:<O>NOR</O>,s:2573105,c:1668997143*00\!B2VDM,1,1,9,A,H3mWb5P5HT4pD00000000000000,2*0A" ), options );
@@ -224,7 +224,7 @@ public class NmeaStreamParserByLineTests
 
     // AllowUnreconizedTalkerId = false: the "B1" and "B2" talker ids are errors that name the invalid last char (as a byte value).
     [Test]
-    public async Task disallow_unreconized_talker_id_Async()
+    public async Task Disallow_unreconized_talker_id_Async()
     {
         var options = new NmeaParserOptions { AllowUnreconizedTalkerId = false };
         var p = await ParseByLineAsync( Lf( @"\i:<O>NOR</O>,s:2573105,c:1668997147*04\!B1VDM,2,1,9,A,53m6J4p00000dp=@E=@dp=@E=@0000000000000000000t00000P00000000,0*20" )
@@ -241,7 +241,7 @@ public class NmeaStreamParserByLineTests
     // The title is misleading: the option set is AllowUnreconizedDataOrigin (and "AIVDI" has an invalid data origin "VDI",
     // not an invalid talker id). AllowUnreconizedDataOrigin = false: the line is an error about the data origin.
     [Test]
-    public async Task invalid_data_origin_with_AllowUnreconizedDataOrigin_to_false_is_an_error_Async()
+    public async Task Invalid_data_origin_with_AllowUnreconizedDataOrigin_to_false_is_an_error_Async()
     {
         var options = new NmeaParserOptions { AllowUnreconizedDataOrigin = false };
         var p = await ParseByLineAsync( Lf( @"\c:1725231098,t:TER*78\!AIVDI,1,1,,B,37Oftm3Oh:bcIrUkmmv5`Qfp01o0,0*05" ), options );
@@ -259,7 +259,7 @@ public class NmeaStreamParserByLineTests
     [TestCase( @"\c:1725176210,t:TER*7A\!AIvDM,1,1,,A,402;bK1vR@wTgPbmd4HVqs700l76,0*7A", TalkerId.MobileStation, VesselDataOrigin.Unreconized, "!AIvDM" )]
     [TestCase( @"\c:1725181228,t:TERA*38\!AIVFM,1,1,,A,33f?cT?P00PfpT8I6=:>4?vl2>`<,0*08", TalkerId.MobileStation, VesselDataOrigin.Unreconized, "!AIVFM" )]
     [TestCase( @"\i:<O>NOR</O>,s:2573105,c:1668997143*00\!B2VDM,1,1,9,A,H3mWb5P5HT4pD00000000000000,2*0A", TalkerId.Unreconized, VesselDataOrigin.Vdm, "!B2VDM" )]
-    public async Task unreconized_talker_id_or_data_origin_is_allowed_when_configured_Async( string line,
+    public async Task Unreconized_talker_id_or_data_origin_is_allowed_when_configured_Async( string line,
                                                                                              TalkerId talkerId,
                                                                                              VesselDataOrigin dataOrigin,
                                                                                              string sentenceFormatter )
@@ -277,7 +277,7 @@ public class NmeaStreamParserByLineTests
     // ChecksumOption.ValidateStandardFormat: a tag block without checksum and a sentence without checksum
     // are both "checksum not present" errors.
     [Test]
-    public async Task missing_checksum_Async()
+    public async Task Missing_checksum_Async()
     {
         var options = new NmeaParserOptions { ChecksumOption = ChecksumOption.ValidateStandardFormat };
         var p = await ParseByLineAsync( Lf( @"\s:rMT9999,c:1747907742\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09" )
@@ -297,7 +297,7 @@ public class NmeaStreamParserByLineTests
     [TestCase( @"\s:rMT9999,c:1747907742*5DD\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09" )]
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*" )]
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*099" )]
-    public async Task invalid_checksum_format_Async( string line )
+    public async Task Invalid_checksum_format_Async( string line )
     {
         var options = new NmeaParserOptions { ChecksumOption = ChecksumOption.CheckValidity };
         var p = await ParseByLineAsync( Lf( line ), options );
@@ -314,7 +314,7 @@ public class NmeaStreamParserByLineTests
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*" )]
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*0" )]
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*099" )]
-    public async Task invalid_strict_checksum_format_Async( string line )
+    public async Task Invalid_strict_checksum_format_Async( string line )
     {
         var options = new NmeaParserOptions { ChecksumOption = ChecksumOption.ValidateStandardFormat };
         var p = await ParseByLineAsync( Lf( line ), options );
@@ -330,7 +330,7 @@ public class NmeaStreamParserByLineTests
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*" )]
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*0" )]
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*099" )]
-    public async Task invalid_checksum_skipped_Async( string line )
+    public async Task Invalid_checksum_skipped_Async( string line )
     {
         var options = new NmeaParserOptions { ChecksumOption = ChecksumOption.AllowInvalidForamt };
         var p = await ParseByLineAsync( Lf( line ), options );
@@ -345,7 +345,7 @@ public class NmeaStreamParserByLineTests
     [TestCase( @"\s:rMT9999,c:1747907742*H5\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", 'H' )]
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*0X", 'X' )]
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*O0", 'O' )]
-    public async Task invalid_checksum_value_Async( string line, char invalidChar )
+    public async Task Invalid_checksum_value_Async( string line, char invalidChar )
     {
         var options = new NmeaParserOptions { ChecksumOption = ChecksumOption.ValidateStandardFormat | ChecksumOption.CheckValidity };
         var p = await ParseByLineAsync( Lf( line ), options );
@@ -364,7 +364,7 @@ public class NmeaStreamParserByLineTests
     [TestCase( @"\s:rMT9999,c:1747907742*B\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09", "5D", "0B", ChecksumOption.CheckValidity )]
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*3", "09", "03", ChecksumOption.CheckValidity )]
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*A", "09", "0A", ChecksumOption.CheckValidity )]
-    public async Task invalid_checksum_result_Async( string line, string result, string expect, ChecksumOption checksumOption )
+    public async Task Invalid_checksum_result_Async( string line, string result, string expect, ChecksumOption checksumOption )
     {
         var options = new NmeaParserOptions { ChecksumOption = checksumOption };
         var p = await ParseByLineAsync( Lf( line ), options );
@@ -375,7 +375,7 @@ public class NmeaStreamParserByLineTests
 
     // ChecksumOption.CheckValidity (non strict format): a valid 1-digit checksum ("*9" for 0x09) is accepted.
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*9" )]
-    public async Task validate_checksum_with_one_digit_Async( string line )
+    public async Task Validate_checksum_with_one_digit_Async( string line )
     {
         var options = new NmeaParserOptions { ChecksumOption = ChecksumOption.CheckValidity };
         var p = await ParseByLineAsync( Lf( line ), options );
@@ -391,7 +391,7 @@ public class NmeaStreamParserByLineTests
     [TestCase( @"\s:rMT1667,c:1747704784*5C\!AIVDM,1,1,,A,ENkb;0<Hah@@@@@@@@@@@@@@@@@;Wd6F:ewt800003vP003,2*2A" )]
     [TestCase( @"\s:rMT7800,c:1747704786*57\!AIVDM,1,1,,A,8@2<HW@0BkdhF0dcH50h3j8412VrGwdfwwwwwwwwwwwwwwwwwwwwwwwwwt0,2*3F" )]
     [TestCase( @"\s:rMT5465,c:1747908456*56\!AIVDM,1,1,,A,Dh400QAMe>fp,0*2E" )]
-    public async Task validate_checksum_with_two_digits_Async( string line )
+    public async Task Validate_checksum_with_two_digits_Async( string line )
     {
         var options = new NmeaParserOptions { ChecksumOption = ChecksumOption.ValidateStandardFormat | ChecksumOption.CheckValidity };
         var p = await ParseByLineAsync( Lf( line ), options );

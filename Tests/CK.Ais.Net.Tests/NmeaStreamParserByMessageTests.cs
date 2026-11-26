@@ -38,7 +38,7 @@ public class NmeaStreamParserByMessageTests
 
     // An empty stream: no message, OnCompleted called.
     [Test]
-    public async Task empty_file_Async()
+    public async Task Empty_file_Async()
     {
         var p = await ParseByMessageAsync( "" );
         p.OnNextCalls.ShouldBeEmpty();
@@ -47,7 +47,7 @@ public class NmeaStreamParserByMessageTests
 
     // A single blank CRLF line: no message, OnCompleted called.
     [Test]
-    public async Task single_CRLF_blank_line_only_Async()
+    public async Task Single_CRLF_blank_line_only_Async()
     {
         var p = await ParseByMessageAsync( CrLf( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -56,7 +56,7 @@ public class NmeaStreamParserByMessageTests
 
     // A single blank LF line: no message, OnCompleted called.
     [Test]
-    public async Task single_LF_blank_line_only_Async()
+    public async Task Single_LF_blank_line_only_Async()
     {
         var p = await ParseByMessageAsync( Lf( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -65,7 +65,7 @@ public class NmeaStreamParserByMessageTests
 
     // A single blank CR line: no message, OnCompleted called.
     [Test]
-    public async Task single_CR_blank_line_only_Async()
+    public async Task Single_CR_blank_line_only_Async()
     {
         var p = await ParseByMessageAsync( Cr( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -74,7 +74,7 @@ public class NmeaStreamParserByMessageTests
 
     // Three blank CRLF lines: no message, OnCompleted called.
     [Test]
-    public async Task multiple_CRLF_blank_lines_only_Async()
+    public async Task Multiple_CRLF_blank_lines_only_Async()
     {
         var p = await ParseByMessageAsync( CrLf( "" ) + CrLf( "" ) + CrLf( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -83,7 +83,7 @@ public class NmeaStreamParserByMessageTests
 
     // Three blank LF lines: no message, OnCompleted called.
     [Test]
-    public async Task multiple_LF_blank_lines_only_Async()
+    public async Task Multiple_LF_blank_lines_only_Async()
     {
         var p = await ParseByMessageAsync( Lf( "" ) + Lf( "" ) + Lf( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -92,7 +92,7 @@ public class NmeaStreamParserByMessageTests
 
     // Blank lines with mixed terminators (CRLF, LF, CRLF, CR): no message, OnCompleted called.
     [Test]
-    public async Task multiple_mixed_blank_lines_only_Async()
+    public async Task Multiple_mixed_blank_lines_only_Async()
     {
         var p = await ParseByMessageAsync( CrLf( "" ) + Lf( "" ) + CrLf( "" ) + Cr( "" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -101,7 +101,7 @@ public class NmeaStreamParserByMessageTests
 
     // One LF line: one message with its payload and padding.
     [Test]
-    public async Task single_line_Async()
+    public async Task Single_line_Async()
     {
         var p = await ParseByMessageAsync( Lf( RealLine0 ) );
         p.OnNextCalls.Count.ShouldBe( 1 );
@@ -112,7 +112,7 @@ public class NmeaStreamParserByMessageTests
 
     // One line without terminator: the message is reported like with a terminated line.
     [Test]
-    public async Task single_line_without_newline_only_Async()
+    public async Task Single_line_without_newline_only_Async()
     {
         var p = await ParseByMessageAsync( RealLine0 );
         p.OnNextCalls.Count.ShouldBe( 1 );
@@ -123,7 +123,7 @@ public class NmeaStreamParserByMessageTests
 
     // Four LF lines: the four messages are reported in order.
     [Test]
-    public async Task multiple_lines_Async()
+    public async Task Multiple_lines_Async()
     {
         var p = await ParseByMessageAsync( Lf( RealLine0 ) + Lf( RealLine1 ) + Lf( RealLine2 ) + Lf( RealLine3 ) );
         ShouldHaveTheFourRealMessages( p );
@@ -131,7 +131,7 @@ public class NmeaStreamParserByMessageTests
 
     // Four CR lines: the four messages are reported in order.
     [Test]
-    public async Task multiple_CR_lines_Async()
+    public async Task Multiple_CR_lines_Async()
     {
         var p = await ParseByMessageAsync( Cr( RealLine0 ) + Cr( RealLine1 ) + Cr( RealLine2 ) + Cr( RealLine3 ) );
         ShouldHaveTheFourRealMessages( p );
@@ -139,7 +139,7 @@ public class NmeaStreamParserByMessageTests
 
     // Four lines, the last one unterminated: the four messages are reported in order.
     [Test]
-    public async Task multiple_lines_where_final_line_has_no_newline_Async()
+    public async Task Multiple_lines_where_final_line_has_no_newline_Async()
     {
         var p = await ParseByMessageAsync( Lf( RealLine0 ) + Lf( RealLine1 ) + Lf( RealLine2 ) + RealLine3 );
         ShouldHaveTheFourRealMessages( p );
@@ -147,7 +147,7 @@ public class NmeaStreamParserByMessageTests
 
     // Three blank lines then four lines: the blank lines are skipped.
     [Test]
-    public async Task multiple_lines_with_blanks_at_start_Async()
+    public async Task Multiple_lines_with_blanks_at_start_Async()
     {
         var p = await ParseByMessageAsync( Lf( "" ) + Lf( "" ) + Lf( "" )
                                            + Lf( RealLine0 ) + Lf( RealLine1 ) + Lf( RealLine2 ) + Lf( RealLine3 ) );
@@ -156,7 +156,7 @@ public class NmeaStreamParserByMessageTests
 
     // Three blank lines between the 2nd and the 3rd line: the blank lines are skipped.
     [Test]
-    public async Task multiple_lines_with_blanks_in_middle_Async()
+    public async Task Multiple_lines_with_blanks_in_middle_Async()
     {
         var p = await ParseByMessageAsync( Lf( RealLine0 ) + Lf( RealLine1 )
                                            + Lf( "" ) + Lf( "" ) + Lf( "" )
@@ -166,7 +166,7 @@ public class NmeaStreamParserByMessageTests
 
     // Four lines then three blank lines: the blank lines are skipped.
     [Test]
-    public async Task multiple_lines_with_blanks_at_end_Async()
+    public async Task Multiple_lines_with_blanks_at_end_Async()
     {
         var p = await ParseByMessageAsync( Lf( RealLine0 ) + Lf( RealLine1 ) + Lf( RealLine2 ) + Lf( RealLine3 )
                                            + Lf( "" ) + Lf( "" ) + Lf( "" ) );
@@ -175,7 +175,7 @@ public class NmeaStreamParserByMessageTests
 
     // A line that is not NMEA: no message, one error with the line, the "expected '!'" exception and line number 1.
     [Test]
-    public async Task single_unparseable_line_Async()
+    public async Task Single_unparseable_line_Async()
     {
         var p = await ParseByMessageAsync( Lf( "I am not an NMEA message" ) );
         p.OnNextCalls.ShouldBeEmpty();
@@ -185,7 +185,7 @@ public class NmeaStreamParserByMessageTests
 
     // A line truncated in its payload: no message, one "message appears to be missing some characters" error.
     [Test]
-    public async Task single_truncated_line_Async()
+    public async Task Single_truncated_line_Async()
     {
         // ais.kystverket.no
         const string line = @"\s:42,c:1567684904*38\!AIVDM,1,1,,A,B";
@@ -197,7 +197,7 @@ public class NmeaStreamParserByMessageTests
 
     // A line without padding field: no message, one "padding field not present" error.
     [Test]
-    public async Task single_line_where_padding_is_missing_Async()
+    public async Task Single_line_where_padding_is_missing_Async()
     {
         // ais.kystverket.no
         const string line = @"\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06*78";
@@ -209,7 +209,7 @@ public class NmeaStreamParserByMessageTests
 
     // A line with an empty padding field (",*78"): no message, one "padding field not present" error.
     [Test]
-    public async Task single_line_where_padding_comma_present_but_value_missing_Async()
+    public async Task Single_line_where_padding_comma_present_but_value_missing_Async()
     {
         // ais.kystverket.no
         const string line = @"\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,*78";
@@ -221,7 +221,7 @@ public class NmeaStreamParserByMessageTests
 
     // A line that ends right after the comma that precedes the padding: no message, one "padding field not present" error.
     [Test]
-    public async Task single_line_where_line_truncated_at_padding_comma_Async()
+    public async Task Single_line_where_line_truncated_at_padding_comma_Async()
     {
         // ais.kystverket.no
         const string line = @"\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,";
@@ -233,7 +233,7 @@ public class NmeaStreamParserByMessageTests
 
     // A line without sentence checksum: no message, one "checksum not present" error.
     [Test]
-    public async Task single_line_where_checksum_is_missing_Async()
+    public async Task Single_line_where_checksum_is_missing_Async()
     {
         // ais.kystverket.no
         const string line = @"\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0";
@@ -245,7 +245,7 @@ public class NmeaStreamParserByMessageTests
 
     // A good line then a line that is not NMEA: the message is reported, the bad line is an error on line 2.
     [Test]
-    public async Task one_unparseable_line_and_one_good_line_Async()
+    public async Task One_unparseable_line_and_one_good_line_Async()
     {
         var p = await ParseByMessageAsync( Lf( RealLine0 ) + Lf( "I am not an NMEA message" ) );
         p.OnNextCalls.Count.ShouldBe( 1 );
@@ -258,7 +258,7 @@ public class NmeaStreamParserByMessageTests
     // A tag block with the non-standard "q:u" field and default options (ThrowWhenTagBlockContainsUnknownFields = true):
     // no message, one ArgumentException "Unknown field type:..." error.
     [Test]
-    public async Task single_line_with_non_standard_tag_block_field_with_exceptions_enabled_Async()
+    public async Task Single_line_with_non_standard_tag_block_field_with_exceptions_enabled_Async()
     {
         // ais.kystverket.no
         const string line = @"\s:42,c:1567684904,q:u*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78";
@@ -273,7 +273,7 @@ public class NmeaStreamParserByMessageTests
 
     // Same line with ThrowWhenTagBlockContainsUnknownFields = false: the message is reported.
     [Test]
-    public async Task single_line_with_non_standard_tag_block_field_with_exceptions_disabled_Async()
+    public async Task Single_line_with_non_standard_tag_block_field_with_exceptions_disabled_Async()
     {
         // ais.kystverket.no
         var p = await ParseByMessageAsync( Lf( @"\s:42,c:1567684904,q:u*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78" ),
@@ -289,7 +289,7 @@ public class NmeaStreamParserByMessageTests
     // A tag block with the standard but unsupported "n:1" field and default options: no message,
     // one NotSupportedException "Unsupported field type:..." error.
     [Test]
-    public async Task single_line_with_standard_but_unsupported_tag_block_field_with_exceptions_enabled_Async()
+    public async Task Single_line_with_standard_but_unsupported_tag_block_field_with_exceptions_enabled_Async()
     {
         // ais.kystverket.no
         const string line = @"\s:42,c:1567684904,n:1*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78";
@@ -304,7 +304,7 @@ public class NmeaStreamParserByMessageTests
 
     // Same line with ThrowWhenTagBlockContainsUnknownFields = false: the message is reported.
     [Test]
-    public async Task single_line_with_standard_but_unsupported_tag_block_field_with_exceptions_disabled_Async()
+    public async Task Single_line_with_standard_but_unsupported_tag_block_field_with_exceptions_disabled_Async()
     {
         // ais.kystverket.no
         var p = await ParseByMessageAsync( Lf( @"\s:42,c:1567684904,n:1*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78" ),
