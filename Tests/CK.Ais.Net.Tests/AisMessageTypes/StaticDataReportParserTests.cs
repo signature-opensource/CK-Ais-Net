@@ -317,10 +317,19 @@ public class StaticDataReportParserTests
     }
 
     // Part B: type of electronic position fixing device, 4 bits (162-165).
-    // Both rows expect Undefined (0): the second one sets the lowest spare bit (167) and checks that it does not leak
-    // into the field. There is no row with a non-zero fix type (kept as in the SpecFlow source).
+    // The last payload character holds bits 162-167: its 6-bit value is (EPFD << 2) | spare.
+    // The first two rows come from the SpecFlow source: both expect Undefined (0), the second one sets the lowest
+    // spare bit (167) and checks that it does not leak into the field.
+    // The following rows only change the last character to check the offset and width of the field:
+    // '4' (4) sets the lowest EPFD bit (165), 'P' (32) the highest one (162), 't' (60) all four bits,
+    // and '7' (7) checks that a full spare does not leak into the field.
     [TestCase( "H000004000000000000000000000", 0u, (EpfdFixType)0 )]
     [TestCase( "H000004000000000000000000001", 0u, (EpfdFixType)0 )]
+    [TestCase( "H000004000000000000000000004", 0u, EpfdFixType.Gps )]
+    [TestCase( "H00000400000000000000000000L", 0u, EpfdFixType.Surveyed )]
+    [TestCase( "H00000400000000000000000000P", 0u, EpfdFixType.Galileo )]
+    [TestCase( "H00000400000000000000000000t", 0u, (EpfdFixType)15 )]
+    [TestCase( "H000004000000000000000000007", 0u, EpfdFixType.Gps )]
     public void PartB_EpfdFixType_is_decoded( string payload, uint padding, EpfdFixType expected )
     {
         var parser = new NmeaAisStaticDataReportParserPartB( Encoding.ASCII.GetBytes( payload ), padding );
@@ -328,8 +337,11 @@ public class StaticDataReportParserTests
     }
 
     // Part B: spare, 2 bits (166-167).
+    // The last row sets all the EPFD bits (162-165) and checks that they do not leak into the spare.
     [TestCase( "H000004000000000000000000000", 0u, 0u )]
     [TestCase( "H000004000000000000000000001", 0u, 1u )]
+    [TestCase( "H000004000000000000000000003", 0u, 3u )]
+    [TestCase( "H00000400000000000000000000t", 0u, 0u )]
     public void PartB_Spare_is_decoded( string payload, uint padding, uint expected )
     {
         var parser = new NmeaAisStaticDataReportParserPartB( Encoding.ASCII.GetBytes( payload ), padding );
