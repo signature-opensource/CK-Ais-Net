@@ -6,6 +6,7 @@
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="Tests/CK.Ais.Net.Specs/CK.Ais.Net.Specs.csproj" />
+    <Project Path="Tests/CK.Ais.Net.Tests/CK.Ais.Net.Tests.csproj" />
   </Folder>
   <Project Path="CK.Ais.Net/CK.Ais.Net.csproj" />
 </Solution>
