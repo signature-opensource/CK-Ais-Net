@@ -44,7 +44,7 @@ static class AivdmExamples
     /// <summary>
     /// Same as <see cref="MessageFragmentFormat"/> but without the group in the tag block.
     /// </summary>
-    public const string MessageFragmentWithoutGroupInHeaderFormat = @"\s:42,c:1567684904*4E\!AIVDM,{1},{0},{2},A,53mSc8400000h<pH0008E8qBm=@DTp580000000N1P614t0Ht7P000000000,0*01";  // ais.kystverket.no
+    public const string MessageFragmentWithoutGroupInHeaderFormat = @"\s:42,c:1567684904*38\!AIVDM,{1},{0},{2},A,53mSc8400000h<pH0008E8qBm=@DTp580000000N1P614t0Ht7P000000000,0*01";  // ais.kystverket.no
 
     /// <summary>
     /// A single-sentence message with a tag block.

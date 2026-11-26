@@ -68,11 +68,10 @@ public class NmeaTagBlockParserTests
     }
 
     // The IEC standard parses its '<int>G<int>:<int>' grouping.
-    // (The checksum value is not validated by ChecksumOption.ValidateStandardFormat, only its format.)
     [Test]
     public void IEC_tag_block_single_line_with_group()
     {
-        var parser = Parse( "1G2:7764,s:AIS,c:1706800480*13", TagBlockStandard.IEC );
+        var parser = Parse( "1G2:7764,s:AIS,c:1706800480*33", TagBlockStandard.IEC );
         Encoding.ASCII.GetString( parser.Source ).ShouldBe( "AIS" );
         parser.UnixTimestamp.ShouldBe( 1706800480L );
         CheckGrouping( parser, 1, 2, 7764 );
@@ -113,7 +112,7 @@ public class NmeaTagBlockParserTests
     [Test]
     public async Task Nmea_tag_block_but_IEC_group_Async()
     {
-        var processor = await ParseLineByMessageAsync( @"\1G2:9628,s:AIS,c:1701650788*13\!AIVDM,2,1,2,B,55Mv3A`00001L=SKOG9@tlmV0F2222222222220l189446lgN5j3mDm3kc56,0*4E",
+        var processor = await ParseLineByMessageAsync( @"\1G2:9628,s:AIS,c:1701650788*33\!AIVDM,2,1,2,B,55Mv3A`00001L=SKOG9@tlmV0F2222222222220l189446lgN5j3mDm3kc56,0*4E",
                                                        throwWhenTagBlockContainsUnknownFields: false,
                                                        TagBlockStandard.Nmea );
         processor.OnErrorCalls[0].Error.Message.ShouldBe( "Tag block sentence grouping should be <int>-<int>-<int>, but first part was not a decimal integer" );
@@ -207,22 +206,22 @@ public class NmeaTagBlockParserTests
     // passed when nothing was thrown. It now requires an ArgumentException with the expected message.
     // The 'd', 'n', 'r' and 'x' fields are ignored (ThrowWhenTagBlockContainsUnknownFields is false here) but their format
     // is checked like the other ones: the library used to skip them without any check.
-    [TestCase( "c:,i:,t:,d:,n:,r:,x:,s*21" )]
-    [TestCase( "s:,i:,t:,d:,n:,r:,x:,c*21" )]
-    [TestCase( "s:,c:,t:,d:,n:,r:,x:,i*21" )]
-    [TestCase( "s:,c:,i:,d:,n:,r:,x:,t*21" )]
-    [TestCase( "s:,c:,i:,t:,n:,r:,x:,d*21" )]
-    [TestCase( "s:,c:,i:,t:,d:,r:,x:,n*21" )]
-    [TestCase( "s:,c:,i:,t:,d:,n:,x:,r*21" )]
-    [TestCase( "s:,c:,i:,t:,d:,n:,r:,x*21" )]
-    [TestCase( "s,c:,i:,t:,d:,n:,r:,x:*21" )]
-    [TestCase( "c,s:,i:,t:,d:,n:,r:,x:*21" )]
-    [TestCase( "i,s:,c:,t:,d:,n:,r:,x:*21" )]
-    [TestCase( "t,s:,c:,i:,d:,n:,r:,x:*21" )]
-    [TestCase( "d,s:,c:,i:,t:,n:,r:,x:*21" )]
-    [TestCase( "n,s:,c:,i:,t:,d:,r:,x:*21" )]
-    [TestCase( "r,s:,c:,i:,t:,d:,n:,x:*21" )]
-    [TestCase( "x,s:,c:,i:,t:,d:,n:,r:*21" )]
+    [TestCase( "c:,i:,t:,d:,n:,r:,x:,s*1B" )]
+    [TestCase( "s:,i:,t:,d:,n:,r:,x:,c*1B" )]
+    [TestCase( "s:,c:,t:,d:,n:,r:,x:,i*1B" )]
+    [TestCase( "s:,c:,i:,d:,n:,r:,x:,t*1B" )]
+    [TestCase( "s:,c:,i:,t:,n:,r:,x:,d*1B" )]
+    [TestCase( "s:,c:,i:,t:,d:,r:,x:,n*1B" )]
+    [TestCase( "s:,c:,i:,t:,d:,n:,x:,r*1B" )]
+    [TestCase( "s:,c:,i:,t:,d:,n:,r:,x*1B" )]
+    [TestCase( "s,c:,i:,t:,d:,n:,r:,x:*1B" )]
+    [TestCase( "c,s:,i:,t:,d:,n:,r:,x:*1B" )]
+    [TestCase( "i,s:,c:,t:,d:,n:,r:,x:*1B" )]
+    [TestCase( "t,s:,c:,i:,d:,n:,r:,x:*1B" )]
+    [TestCase( "d,s:,c:,i:,t:,n:,r:,x:*1B" )]
+    [TestCase( "n,s:,c:,i:,t:,d:,r:,x:*1B" )]
+    [TestCase( "r,s:,c:,i:,t:,d:,n:,x:*1B" )]
+    [TestCase( "x,s:,c:,i:,t:,d:,n:,r:*1B" )]
     public void AllowTagBlockEmptyFields_still_rejects_field_without_colon( string tagBlock )
     {
         Util.Invokable( () => { _ = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: true ); } )
@@ -250,14 +249,14 @@ public class NmeaTagBlockParserTests
 
     // Without AllowTagBlockEmptyFields, a field without ':' ('s') is rejected (as it is with the option).
     // Fixed: same as above, the SpecFlow step passed when nothing was thrown.
-    [TestCase( "s*49" )]
-    [TestCase( "c*59" )]
-    [TestCase( "i*53" )]
-    [TestCase( "t*4E" )]
-    [TestCase( "d*5E" )]
-    [TestCase( "n*54" )]
-    [TestCase( "r*48" )]
-    [TestCase( "x*42" )]
+    [TestCase( "s*73" )]
+    [TestCase( "c*63" )]
+    [TestCase( "i*69" )]
+    [TestCase( "t*74" )]
+    [TestCase( "d*64" )]
+    [TestCase( "n*6E" )]
+    [TestCase( "r*72" )]
+    [TestCase( "x*78" )]
     public void Fields_without_colon_are_rejected_without_AllowTagBlockEmptyFields( string tagBlock )
     {
         Util.Invokable( () => { _ = Parse( tagBlock, TagBlockStandard.Unspecified, allowTagBlockEmptyFields: false ); } )

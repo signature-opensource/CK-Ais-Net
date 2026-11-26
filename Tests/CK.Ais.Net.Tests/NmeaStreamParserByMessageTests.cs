@@ -30,9 +30,9 @@ public class NmeaStreamParserByMessageTests
     // ais.kystverket.no
     const string RealLine0 = @"\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78";
     // ais.kystverket.no
-    const string RealLine1 = @"\s:3,c:1567692251*01\!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*54";
+    const string RealLine1 = @"\s:3,c:1567692251*01\!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*4D";
     // ais.kystverket.no
-    const string RealLine2 = @"\s:24,c:1567692878*35\!AIVDM,1,1,,B,13o`9@701j1Ej3vc;o3q@7SJ0D02,0*21";
+    const string RealLine2 = @"\s:24,c:1567692878*35\!AIVDM,1,1,,B,13o`9@701j1Ej3vc;o3q@7SJ0D02,0*3B";
     // ais.kystverket.no
     const string RealLine3 = @"\s:772,c:1567693246*07\!AIVDM,1,1,,,13o7g2001P0Lv<rSdVHf2h3N0000,0*25";
 
@@ -261,7 +261,7 @@ public class NmeaStreamParserByMessageTests
     public async Task Single_line_with_non_standard_tag_block_field_with_exceptions_enabled_Async()
     {
         // ais.kystverket.no
-        const string line = @"\s:42,c:1567684904,q:u*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78";
+        const string line = @"\s:42,c:1567684904,q:u*2A\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78";
         var p = await ParseByMessageAsync( Lf( line ) );
         p.OnNextCalls.ShouldBeEmpty();
         p.OnErrorCalls.Count.ShouldBe( 1 );
@@ -276,7 +276,7 @@ public class NmeaStreamParserByMessageTests
     public async Task Single_line_with_non_standard_tag_block_field_with_exceptions_disabled_Async()
     {
         // ais.kystverket.no
-        var p = await ParseByMessageAsync( Lf( @"\s:42,c:1567684904,q:u*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78" ),
+        var p = await ParseByMessageAsync( Lf( @"\s:42,c:1567684904,q:u*2A\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78" ),
                                            new NmeaParserOptions { ThrowWhenTagBlockContainsUnknownFields = false } );
         p.OnNextCalls.Count.ShouldBe( 1 );
         // ais.kystverket.no
@@ -292,7 +292,7 @@ public class NmeaStreamParserByMessageTests
     public async Task Single_line_with_standard_but_unsupported_tag_block_field_with_exceptions_enabled_Async()
     {
         // ais.kystverket.no
-        const string line = @"\s:42,c:1567684904,n:1*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78";
+        const string line = @"\s:42,c:1567684904,n:1*71\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78";
         var p = await ParseByMessageAsync( Lf( line ) );
         p.OnNextCalls.ShouldBeEmpty();
         p.OnErrorCalls.Count.ShouldBe( 1 );
@@ -307,7 +307,7 @@ public class NmeaStreamParserByMessageTests
     public async Task Single_line_with_standard_but_unsupported_tag_block_field_with_exceptions_disabled_Async()
     {
         // ais.kystverket.no
-        var p = await ParseByMessageAsync( Lf( @"\s:42,c:1567684904,n:1*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78" ),
+        var p = await ParseByMessageAsync( Lf( @"\s:42,c:1567684904,n:1*71\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78" ),
                                            new NmeaParserOptions { ThrowWhenTagBlockContainsUnknownFields = false } );
         p.OnNextCalls.Count.ShouldBe( 1 );
         // ais.kystverket.no

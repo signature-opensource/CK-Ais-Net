@@ -64,7 +64,7 @@ public class NmeaLineToAisStreamAdapterTests
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
-        h.Receive( @"\s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
+        h.Receive( @"\s:99,c:1567685556*34\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
         var p = h.Complete();
         p.OnNextCalls.ShouldBeEmpty();
     }
@@ -91,9 +91,9 @@ public class NmeaLineToAisStreamAdapterTests
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
-        h.Receive( @"\s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
+        h.Receive( @"\s:99,c:1567685556*34\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
         // ais.kystverket.no
-        h.Receive( @"\s:99*55\!AIVDM,2,2,6,B,j`888888880,2*2B" );
+        h.Receive( @"\s:99*49\!AIVDM,2,2,6,B,j`888888880,2*2B" );
         var p = h.Complete();
         p.OnNextCalls.Count.ShouldBe( 1 );
         // ais.kystverket.no
@@ -127,11 +127,11 @@ public class NmeaLineToAisStreamAdapterTests
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
-        h.Receive( @"\s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
+        h.Receive( @"\s:99,c:1567685556*34\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
         // ais.kystverket.no
         h.Receive( @"\s:42,c:1567684904*38\!AIVDM,1,1,,B,33m9UtPP@50wwE:VJW6LS67H01<@,0*3C" );
         // ais.kystverket.no
-        h.Receive( @"\s:99*55\!AIVDM,2,2,6,B,j`888888880,2*2B" );
+        h.Receive( @"\s:99*49\!AIVDM,2,2,6,B,j`888888880,2*2B" );
         var p = h.Complete();
         p.OnNextCalls.Count.ShouldBe( 2 );
         // ais.kystverket.no
@@ -163,11 +163,11 @@ public class NmeaLineToAisStreamAdapterTests
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
-        h.Receive( @"\s:27,c:1567686150*40\!AIVDM,3,1,9,A,544MR0827oeaD<u0000lDdP4pTf0duAA,0*17" );
+        h.Receive( @"\s:27,c:1567686150*30\!AIVDM,3,1,9,A,544MR0827oeaD<u0000lDdP4pTf0duAA,0*17" );
         // ais.kystverket.no
-        h.Receive( @"\s:27*5F\!AIVDM,3,2,9,A,<uH000167pF=2=nG0:0DRj0CQiC4jh00,0*4A" );
+        h.Receive( @"\s:27*4C\!AIVDM,3,2,9,A,<uH000167pF=2=nG0:0DRj0CQiC4jh00,0*4A" );
         // ais.kystverket.no
-        h.Receive( @"\s:27*5E\!AIVDM,3,3,9,A,0000000,0*2F" );
+        h.Receive( @"\s:27*4C\!AIVDM,3,3,9,A,0000000,0*2F" );
         var p = h.Complete();
         p.OnNextCalls.Count.ShouldBe( 1 );
         // ais.kystverket.no
@@ -205,15 +205,15 @@ public class NmeaLineToAisStreamAdapterTests
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
-        h.Receive( @"\s:27,c:1567686150*40\!AIVDM,3,1,9,A,544MR0827oeaD<u0000lDdP4pTf0duAA,0*17" );
+        h.Receive( @"\s:27,c:1567686150*30\!AIVDM,3,1,9,A,544MR0827oeaD<u0000lDdP4pTf0duAA,0*17" );
         // ais.kystverket.no
-        h.Receive( @"\s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
+        h.Receive( @"\s:99,c:1567685556*34\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
         // ais.kystverket.no
-        h.Receive( @"\s:27,*5F\!AIVDM,3,2,9,A,<uH000167pF=2=nG0:0DRj0CQiC4jh00,0*4A" );
+        h.Receive( @"\s:27,*60\!AIVDM,3,2,9,A,<uH000167pF=2=nG0:0DRj0CQiC4jh00,0*4A" );
         // ais.kystverket.no
-        h.Receive( @"\s:99,*55\!AIVDM,2,2,6,B,j`888888880,2*2B" );
+        h.Receive( @"\s:99,*65\!AIVDM,2,2,6,B,j`888888880,2*2B" );
         // ais.kystverket.no
-        h.Receive( @"\s:27*5E\!AIVDM,3,3,9,A,0000000,0*2F" );
+        h.Receive( @"\s:27*4C\!AIVDM,3,3,9,A,0000000,0*2F" );
         var p = h.Complete();
         p.OnNextCalls.Count.ShouldBe( 2 );
         // ais.kystverket.no
@@ -231,11 +231,11 @@ public class NmeaLineToAisStreamAdapterTests
         // ais.kystverket.no
         h.Receive( @"\g:1-3-3451,s:27,c:1567686150*40\!AIVDM,3,1,9,A,544MR0827oeaD<u0000lDdP4pTf0duAA,0*17" );
         // ais.kystverket.no
-        h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,9,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
+        h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,9,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*7D" );
         // ais.kystverket.no
         h.Receive( @"\g:2-3-3451*5F\!AIVDM,3,2,9,A,<uH000167pF=2=nG0:0DRj0CQiC4jh00,0*4A" );
         // ais.kystverket.no
-        h.Receive( @"\g:2-2-8055*55\!AIVDM,2,2,9,B,j`888888880,2*2B" );
+        h.Receive( @"\g:2-2-8055*55\!AIVDM,2,2,9,B,j`888888880,2*24" );
         // ais.kystverket.no
         h.Receive( @"\g:3-3-3451*5E\!AIVDM,3,3,9,A,0000000,0*2F" );
         var p = h.Complete();
@@ -259,25 +259,25 @@ public class NmeaLineToAisStreamAdapterTests
         // ais.kystverket.no
         h.Receive( @"\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78" );
         // ais.kystverket.no
-        h.Receive( @"\s:3,c:1567692251*01\!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*54" );
+        h.Receive( @"\s:3,c:1567692251*01\!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*4D" );
         // ais.kystverket.no
         h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
         // ais.kystverket.no
-        h.Receive( @"\s:24,c:1567692878*35\!AIVDM,1,1,,B,13o`9@701j1Ej3vc;o3q@7SJ0D02,0*21" );
+        h.Receive( @"\s:24,c:1567692878*35\!AIVDM,1,1,,B,13o`9@701j1Ej3vc;o3q@7SJ0D02,0*3B" );
         // ais.kystverket.no
         h.Receive( @"\g:2-3-3451*5F\!AIVDM,3,2,9,A,<uH000167pF=2=nG0:0DRj0CQiC4jh00,0*4A" );
         // ais.kystverket.no
-        h.Receive( @"\s:67,c:1567693000*34\!AIVDM,1,1,,,3CnWHf50000ga40TCHE0D0@R003B,0*4B" );
+        h.Receive( @"\s:67,c:1567693000*34\!AIVDM,1,1,,,3CnWHf50000ga40TCHE0D0@R003B,0*0A" );
         // ais.kystverket.no
         h.Receive( @"\s:772,c:1567693246*07\!AIVDM,1,1,,,13o7g2001P0Lv<rSdVHf2h3N0000,0*25" );
         // ais.kystverket.no
         h.Receive( @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B" );
         // ais.kystverket.no
-        h.Receive( @"\s:722,c:1567693372*04\!AIVDM,1,1,,A,13m63A?P00P`@GFTK3s>4?wR20Sf,0*71" );
+        h.Receive( @"\s:722,c:1567693372*04\!AIVDM,1,1,,A,13m63A?P00P`@GFTK3s>4?wR20Sf,0*6B" );
         // ais.kystverket.no
         h.Receive( @"\g:3-3-3451*5E\!AIVDM,3,3,9,A,0000000,0*2F" );
         // ais.kystverket.no
-        h.Receive( @"\s:808,c:1567693618*0A\!AIVDM,1,1,,B,B3o8B<00F8:0h694gOtbgwqUoP06,0*73" );
+        h.Receive( @"\s:808,c:1567693618*0A\!AIVDM,1,1,,B,B3o8B<00F8:0h694gOtbgwqUoP06,0*69" );
         var p = h.Complete();
         p.OnNextCalls.Count.ShouldBe( 10 );
         // ais.kystverket.no
@@ -315,29 +315,27 @@ public class NmeaLineToAisStreamAdapterTests
         // ais.kystverket.no
         h.Receive( @"\s:42,c:1567684904*38\!AIVDM,1,1,,A,B3m:H900AP@b:79ae6:<OwnUoP06,0*78" );
         // ais.kystverket.no
-        h.Receive( @"\s:3,c:1567692251*01\!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*54" );
+        h.Receive( @"\s:3,c:1567692251*01\!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*4D" );
         // ais.kystverket.no
         h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
-        // Odd data, kept as is: the real checksum of this line is *21 (see the other tests), not *07. This also
-        // looks unintentional and is accepted because checksum values are not checked by default.
         // ais.kystverket.no
-        h.Receive( @"\s:24,c:1567692878*35\!AIVDM,1,1,,B,13o`9@701j1Ej3vc;o3q@7SJ0D02,0*07" );
+        h.Receive( @"\s:24,c:1567692878*35\!AIVDM,1,1,,B,13o`9@701j1Ej3vc;o3q@7SJ0D02,0*3B" );
         h.ReceiveProgress( false, 6, 1234, 6, 1234 );
         // ais.kystverket.no
         h.Receive( @"\g:2-3-3451*5F\!AIVDM,3,2,9,A,<uH000167pF=2=nG0:0DRj0CQiC4jh00,0*4A" );
         // ais.kystverket.no
-        h.Receive( @"\s:67,c:1567693000*34\!AIVDM,1,1,,,3CnWHf50000ga40TCHE0D0@R003B,0*4B" );
+        h.Receive( @"\s:67,c:1567693000*34\!AIVDM,1,1,,,3CnWHf50000ga40TCHE0D0@R003B,0*0A" );
         // ais.kystverket.no
         h.Receive( @"\s:772,c:1567693246*07\!AIVDM,1,1,,,13o7g2001P0Lv<rSdVHf2h3N0000,0*25" );
         // ais.kystverket.no
         h.Receive( @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B" );
         h.ReceiveProgress( false, 10, 2345, 4, 1111 );
         // ais.kystverket.no
-        h.Receive( @"\s:722,c:1567693372*04\!AIVDM,1,1,,A,13m63A?P00P`@GFTK3s>4?wR20Sf,0*71" );
+        h.Receive( @"\s:722,c:1567693372*04\!AIVDM,1,1,,A,13m63A?P00P`@GFTK3s>4?wR20Sf,0*6B" );
         // ais.kystverket.no
         h.Receive( @"\g:3-3-3451*5E\!AIVDM,3,3,9,A,0000000,0*2F" );
         // ais.kystverket.no
-        h.Receive( @"\s:808,c:1567693618*0A\!AIVDM,1,1,,B,B3o8B<00F8:0h694gOtbgwqUoP06,0*73" );
+        h.Receive( @"\s:808,c:1567693618*0A\!AIVDM,1,1,,B,B3o8B<00F8:0h694gOtbgwqUoP06,0*69" );
         h.ReceiveProgress( true, 13, 2445, 3, 100 );
         var p = h.Complete();
         p.ProgressCalls.Count.ShouldBe( 3 );
@@ -386,13 +384,13 @@ public class NmeaLineToAisStreamAdapterTests
     {
         var h = new AdapterHarness();
         // ais.kystverket.no
-        h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,1*72" );
+        h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,1*73" );
         // ais.kystverket.no
         h.Receive( @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B" );
         var p = h.Complete();
         p.OnErrorCalls.Count.ShouldBe( 1 );
         // ais.kystverket.no
-        p.OnErrorCalls[0].Line.ShouldBe( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,1*72" );
+        p.OnErrorCalls[0].Line.ShouldBe( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,1*73" );
         p.OnErrorCalls[0].Error.ShouldBeAssignableTo<ArgumentException>()!.Message.ShouldBe( "Can only handle non-zero padding on the final message in a fragment" );
         p.OnErrorCalls[0].LineNumber.ShouldBe( 1 );
         // Added: the old scenario did not check that the faulty message is not reported.
@@ -408,11 +406,11 @@ public class NmeaLineToAisStreamAdapterTests
         // ais.kystverket.no
         h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
         // ais.kystverket.no
-        h.Receive( @"\g:1-2-8055*55\!AIVDM,2,1,6,B,j`888888880,0*2B" );
+        h.Receive( @"\g:1-2-8055*56\!AIVDM,2,1,6,B,j`888888880,0*2A" );
         var p = h.Complete();
         p.OnErrorCalls.Count.ShouldBe( 1 );
         // ais.kystverket.no
-        p.OnErrorCalls[0].Line.ShouldBe( @"\g:1-2-8055*55\!AIVDM,2,1,6,B,j`888888880,0*2B" );
+        p.OnErrorCalls[0].Line.ShouldBe( @"\g:1-2-8055*56\!AIVDM,2,1,6,B,j`888888880,0*2A" );
         p.OnErrorCalls[0].Error.ShouldBeAssignableTo<ArgumentException>()!.Message.ShouldStartWith( "Already received sentence ", caseSensitivity: Case.Sensitive );
         p.OnErrorCalls[0].LineNumber.ShouldBe( 2 );
     }
@@ -429,7 +427,7 @@ public class NmeaLineToAisStreamAdapterTests
         // ais.kystverket.no
         h.Receive( @"\s:42,c:1567684904*38\!AIVDM,1,1,,B,33m9UtPP@50wwE:VJW6LS67H01<@,0*3C" );
         // ais.kystverket.no
-        h.Receive( @"\s:3,c:1567692251*01\!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*54" );
+        h.Receive( @"\s:3,c:1567692251*01\!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*4D" );
         // ais.kystverket.no
         h.Receive( @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B" );
         var p = h.Complete();
@@ -559,7 +557,7 @@ public class NmeaLineToAisStreamAdapterTests
     public void Sentence_without_exclamation_mark_is_allowed()
     {
         var h = new AdapterHarness( new NmeaParserOptions { ThrowWhenNoExclamationMark = false } );
-        h.Receive( @"\s:808,c:1567693618*0A\$AIVDM,1,1,,B,B3o8B<00F8:0h694gOtbgwqUoP06,0*73" );
+        h.Receive( @"\s:808,c:1567693618*0A\$AIVDM,1,1,,B,B3o8B<00F8:0h694gOtbgwqUoP06,0*69" );
         var p = h.Complete();
         p.OnNextCalls.Count.ShouldBe( 1 );
         // Added: the old scenario only counted the messages.
