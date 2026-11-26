@@ -89,14 +89,13 @@ public sealed class TestProcessor : INmeaAisMessageStreamProcessor<DefaultExtraF
             firstLine.TagBlock.SentenceGrouping.HasValue ? firstLine.TagBlock.SentenceGrouping.Value.SentencesInGroup : 0 ) );
     }
 
-    public void Progress(
-        bool done,
-        int totalNmeaLines,
-        int totalAisMessages,
-        int totalTicks,
-        int nmeaLinesSinceLastUpdate,
-        int aisMessagesSinceLastUpdate,
-        int ticksSinceLastUpdate )
+    public void Progress( bool done,
+                          int totalNmeaLines,
+                          int totalAisMessages,
+                          int totalTicks,
+                          int nmeaLinesSinceLastUpdate,
+                          int aisMessagesSinceLastUpdate,
+                          int ticksSinceLastUpdate )
     {
         ProgressCalls.Add( new ProgressReport( done, totalNmeaLines, totalAisMessages, totalTicks, nmeaLinesSinceLastUpdate, aisMessagesSinceLastUpdate, ticksSinceLastUpdate ) );
     }

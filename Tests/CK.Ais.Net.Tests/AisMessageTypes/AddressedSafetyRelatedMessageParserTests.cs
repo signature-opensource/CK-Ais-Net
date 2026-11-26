@@ -3,7 +3,6 @@
 // </copyright>
 
 using NUnit.Framework;
-using Shouldly;
 using System.Text;
 
 namespace Ais.Net.Tests.AisMessageTypes;
