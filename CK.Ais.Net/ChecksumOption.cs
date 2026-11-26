@@ -69,7 +69,7 @@ static class ChecksumOptionExtensions
     {
         >= (byte)'0' and <= (byte)'9' => (byte)(b - (byte)'0'),
         >= (byte)'A' and <= (byte)'F' => (byte)(b - (byte)'A' + 10),
-        _ => throw new ArgumentException( $"Section checksum should contains hexadecimal digit but receice '{(char)b}'." )
+        _ => throw new ArgumentException( $"Section checksum should contain hexadecimal digits but received '{(char)b}'." )
     };
 
     static void InternalCheck( ReadOnlySpan<byte> span, byte checksum )
@@ -81,7 +81,7 @@ static class ChecksumOptionExtensions
         }
         if( sum != checksum )
         {
-            throw new ArgumentException( $"Section checksum not match checksum. Exepcted {checksum:X2} but value is {sum:X2}." );
+            throw new ArgumentException( $"Invalid section checksum: read {checksum:X2} but computed {sum:X2} from the content." );
         }
     }
 }
