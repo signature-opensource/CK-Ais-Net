@@ -124,7 +124,7 @@ public readonly ref struct NmeaAisStaticDataReportParserPartB
     public EpfdFixType EpfdFixType => (EpfdFixType)_bits.GetUnsignedInteger( 4, 162 );
 
     /// <summary>
-    /// Gets the value of the 'spare' bits at 162.
+    /// Gets the value of the 'spare' bits at 166.
     /// </summary>
-    public uint Spare162 => _bits.GetUnsignedInteger( 2, 166 );
+    public uint SpareBits166 => _bits.GetUnsignedInteger( 2, 166 );
 }

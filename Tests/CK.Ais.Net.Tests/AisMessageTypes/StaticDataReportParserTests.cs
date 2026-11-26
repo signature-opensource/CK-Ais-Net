@@ -173,10 +173,10 @@ public class StaticDataReportParserTests
     [TestCase( "H000000000000000000000000010", 0u, 64u )]
     [TestCase( "H000000000000000000000000020", 0u, 128u )]
     [TestCase( "H00000000000000000000000003w", 0u, 255u )]
-    public void PartA_Spare_is_decoded( string payload, uint padding, uint expected )
+    public void PartA_SpareBits160_are_decoded( string payload, uint padding, uint expected )
     {
         var parser = new NmeaAisStaticDataReportParserPartA( Encoding.ASCII.GetBytes( payload ), padding );
-        parser.Spare160.ShouldBe( expected );
+        parser.SpareBits160.ShouldBe( expected );
     }
 
     // Part B: ship type, 8 bits (40-47). 0 means "not available".
@@ -342,9 +342,9 @@ public class StaticDataReportParserTests
     [TestCase( "H000004000000000000000000001", 0u, 1u )]
     [TestCase( "H000004000000000000000000003", 0u, 3u )]
     [TestCase( "H00000400000000000000000000t", 0u, 0u )]
-    public void PartB_Spare_is_decoded( string payload, uint padding, uint expected )
+    public void PartB_SpareBits166_are_decoded( string payload, uint padding, uint expected )
     {
         var parser = new NmeaAisStaticDataReportParserPartB( Encoding.ASCII.GetBytes( payload ), padding );
-        parser.Spare162.ShouldBe( expected );
+        parser.SpareBits166.ShouldBe( expected );
     }
 }

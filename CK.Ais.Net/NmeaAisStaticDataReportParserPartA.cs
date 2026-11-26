@@ -62,5 +62,5 @@ public readonly ref struct NmeaAisStaticDataReportParserPartA
     /// <summary>
     /// Gets the value of the 'spare' bits at 160.
     /// </summary>
-    public uint Spare160 => _bits.BitCount == 168 ? _bits.GetUnsignedInteger( 8, 160 ) : 0;
+    public uint SpareBits160 => _bits.BitCount == 168 ? _bits.GetUnsignedInteger( 8, 160 ) : 0;
 }
