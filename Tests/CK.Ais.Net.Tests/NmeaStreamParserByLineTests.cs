@@ -323,7 +323,7 @@ public class NmeaStreamParserByLineTests
         p.IsComplete.ShouldBeTrue();
     }
 
-    // ChecksumOption.AllowInvalidForamt: badly formatted checksums are ignored, the line is reported without error.
+    // ChecksumOption.AllowInvalidFormat: badly formatted checksums are ignored, the line is reported without error.
     [TestCase( @"\s:rMT9999,c:1747907742*\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09" )]
     [TestCase( @"\s:rMT9999,c:1747907742*5\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09" )]
     [TestCase( @"\s:rMT9999,c:1747907742*5DD\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*09" )]
@@ -332,7 +332,7 @@ public class NmeaStreamParserByLineTests
     [TestCase( @"\s:rMT9999,c:1747907742*5D\!BSVDM,1,1,,A,33mI?D5P00PkU>BU6kw`:gwB2Dmr,0*099" )]
     public async Task Invalid_checksum_skipped_Async( string line )
     {
-        var options = new NmeaParserOptions { ChecksumOption = ChecksumOption.AllowInvalidForamt };
+        var options = new NmeaParserOptions { ChecksumOption = ChecksumOption.AllowInvalidFormat };
         var p = await ParseByLineAsync( Lf( line ), options );
         p.OnErrorCalls.ShouldBeEmpty();
         // Added: "no error" alone is satisfied by a parser that silently drops the line. The line must be reported.

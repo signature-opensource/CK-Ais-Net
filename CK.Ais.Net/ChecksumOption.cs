@@ -3,21 +3,27 @@ using System;
 namespace Ais.Net;
 
 /// <summary>
-/// Defines the checksum policy.
+/// Defines how the <c>*XX</c> checksum that ends an NMEA sentence or a tag block is checked.
+/// The checksum is the XOR of all the characters between the start delimiter and the <c>*</c>,
+/// written in hexadecimal.
 /// </summary>
 [Flags]
 public enum ChecksumOption
 {
     /// <summary>
-    /// Allow invalid checksum without any checking.
+    /// The checksum is neither format-checked nor validated: only the presence of the <c>*</c> is required.
     /// </summary>
-    AllowInvalidForamt = 0,
+    AllowInvalidFormat = 0,
+
     /// <summary>
-    /// Only allow checksum with two digit.
+    /// The checksum must be made of exactly two hexadecimal digits (<c>*XX</c>).
+    /// Its value is not validated unless <see cref="CheckValidity"/> is also set.
     /// </summary>
     ValidateStandardFormat = 1,
-    /// <summary>.
-    /// The checksum must have a validate integity of the sequence.
+
+    /// <summary>
+    /// The checksum value must match the content of the section.
+    /// Without <see cref="ValidateStandardFormat"/>, a one-digit checksum (<c>*X</c>) is accepted.
     /// </summary>
     CheckValidity = 2
 }
