@@ -12,3 +12,6 @@ Tests/**/*.trx
 CodeCakeBuilder/MemoryKey.*.txt
 Tests/**/Logs/
 Tests/**/CKSetup-WorkingDir/
+
+# SpecFlow generates these files at build time from the .feature files.
+*.feature.cs
