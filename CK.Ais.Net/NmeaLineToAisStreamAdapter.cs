@@ -147,6 +147,8 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                     parsedLine.Line,
                     new ArgumentException( $"Already received sentence {oneBasedSentenceNumber} for group {groupId}" ),
                     lineNumber );
+                // The new sentence replaces the previous one: its buffer is returned to the pool.
+                ArrayPool<byte>.Shared.Return( fragmentBuffers[oneBasedSentenceNumber - 1], _options.ClearReturnedBuffer );
             }
 
             byte[] buffer = ArrayPool<byte>.Shared.Rent( parsedLine.Line.Length );
