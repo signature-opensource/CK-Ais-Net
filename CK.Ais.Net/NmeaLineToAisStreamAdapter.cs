@@ -155,6 +155,7 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
             fragmentBuffers[oneBasedSentenceNumber - 1] = buffer;
             parsedLine.Line.CopyTo( buffer );
             fragmentBuffersLength[oneBasedSentenceNumber - 1] = parsedLine.Line.Length;
+            fragments.LineNumbers[oneBasedSentenceNumber - 1] = lineNumber;
 
             bool allFragmentsReceived = true;
             int totalPayloadSize = 0;
@@ -268,12 +269,15 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
         // Last operator, but this we way avoid the allocations inherent in Last,
         // although since this is a case we don't expect to hit much in normal
         // operation, it's not clear how much that matters.)
+        // The line number reported is the one of this fragment (and not the one of the first received fragment).
         byte[]? lastFragmentBuffer = null;
         int lastFragmentBufferLength = default;
+        int lastFragmentLineNumber = default;
         for( int o = fragmentBuffers.Length - 1; lastFragmentBuffer is null; --o )
         {
             lastFragmentBuffer = fragmentBuffers[o];
             lastFragmentBufferLength = fragmentedMessage.BuffersLength[o];
+            lastFragmentLineNumber = fragmentedMessage.LineNumbers[o];
         }
 
         ReadOnlySpan<byte> line = lastFragmentBuffer.AsSpan( 0, lastFragmentBufferLength );
@@ -281,7 +285,7 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
         _messageProcessor.OnError(
             line,
             new ArgumentException( "Received incomplete fragmented message." ),
-            fragmentedMessage.LineNumber );
+            lastFragmentLineNumber );
 
         FreeMessageFragments( groupId );
     }
@@ -337,6 +341,8 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
 
         ArrayPool<int>.Shared.Return( fragmentedMessage.RentedBufferArrayLength, _options.ClearReturnedBuffer );
 
+        ArrayPool<int>.Shared.Return( fragmentedMessage.RentedLineNumbers, _options.ClearReturnedBuffer );
+
         _messageFragments.Remove( groupId );
     }
 
@@ -350,9 +356,11 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
             BufferCount = count;
             LineNumber = lineNumber;
             RentedBufferArrayLength = ArrayPool<int>.Shared.Rent( count );
+            RentedLineNumbers = ArrayPool<int>.Shared.Rent( count );
 
             Buffers.Clear();
             BuffersLength.Clear();
+            LineNumbers.Clear();
         }
 
         /// <summary>
@@ -397,10 +405,20 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
         /// </remarks>
         public readonly Span<byte[]> Buffers => RentedBufferArray.AsSpan( 0, BufferCount );
 
+        /// <summary>
+        /// Gets the line number of the first received fragment: the age of the message is computed from it.
+        /// </summary>
         public int LineNumber { get; }
 
         public readonly int[] RentedBufferArrayLength { get; }
 
         public readonly Span<int> BuffersLength => RentedBufferArrayLength.AsSpan( 0, BufferCount );
+
+        public readonly int[] RentedLineNumbers { get; }
+
+        /// <summary>
+        /// Gets the line number of each received fragment.
+        /// </summary>
+        public readonly Span<int> LineNumbers => RentedLineNumbers.AsSpan( 0, BufferCount );
     }
 }

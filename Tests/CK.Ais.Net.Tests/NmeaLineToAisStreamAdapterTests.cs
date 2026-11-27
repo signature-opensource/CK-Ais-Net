@@ -444,7 +444,7 @@ public class NmeaLineToAisStreamAdapterTests
 
     // The first fragment received twice (same group id, same position): an "Already received sentence" error on the
     // second one (line 2). The second one replaces the first one, and the message is never completed: it is reported
-    // as an incomplete message (with the second line and the line number of the first one) when the stream completes.
+    // as an incomplete message (with the second line and its line number) when the stream completes.
     [Test]
     public void Line_stream_parser_passes_the_same_sentence_of_a_two_part_message_twice()
     {
@@ -460,7 +460,7 @@ public class NmeaLineToAisStreamAdapterTests
         p.OnErrorCalls[0].Error.ShouldBeAssignableTo<ArgumentException>()!.Message.ShouldStartWith( "Already received sentence ", caseSensitivity: Case.Sensitive );
         p.OnErrorCalls[0].LineNumber.ShouldBe( 2 );
         // ais.kystverket.no
-        ShouldBeIncompleteMessageError( p.OnErrorCalls[1], @"\g:1-2-8055*56\!AIVDM,2,1,6,B,j`888888880,0*2A", 1 );
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[1], @"\g:1-2-8055*56\!AIVDM,2,1,6,B,j`888888880,0*2A", 2 );
     }
 
     // MaximumUnmatchedFragmentAge = 1: two single-fragment messages between the 2 fragments. The single ones are
@@ -569,6 +569,28 @@ public class NmeaLineToAisStreamAdapterTests
         // ais.kystverket.no
         ShouldBeMessage( p.OnNextCalls[0], "53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4lj`888888880", 2, 99, 1567685556 );
         p.OnErrorCalls.ShouldBeEmpty();
+    }
+
+    // Only the first 2 fragments of a 3-fragment message, a single-fragment message in the middle, then the end of
+    // the stream: the incomplete message is reported with its 2nd fragment and the line number of this fragment (3).
+    // (Before, the line number was the one of the 1st fragment (1), which did not match the reported line.)
+    [Test]
+    public void Incomplete_message_is_reported_with_the_line_number_of_the_reported_fragment()
+    {
+        var h = new AdapterHarness();
+        // ais.kystverket.no
+        h.Receive( @"\g:1-3-3451,s:27,c:1567686150*40\!AIVDM,3,1,9,A,544MR0827oeaD<u0000lDdP4pTf0duAA,0*17" );
+        // ais.kystverket.no
+        h.Receive( @"\s:42,c:1567684904*38\!AIVDM,1,1,,B,33m9UtPP@50wwE:VJW6LS67H01<@,0*3C" );
+        // ais.kystverket.no
+        h.Receive( @"\g:2-3-3451*5F\!AIVDM,3,2,9,A,<uH000167pF=2=nG0:0DRj0CQiC4jh00,0*4A" );
+        var p = h.Complete();
+        p.OnNextCalls.Count.ShouldBe( 1 );
+        // ais.kystverket.no
+        ShouldBeMessage( p.OnNextCalls[0], "33m9UtPP@50wwE:VJW6LS67H01<@", 0, 42, 1567684904 );
+        p.OnErrorCalls.Count.ShouldBe( 1 );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[0], @"\g:2-3-3451*5F\!AIVDM,3,2,9,A,<uH000167pF=2=nG0:0DRj0CQiC4jh00,0*4A", 3 );
     }
 
     // EmptyGroupTolerance.AutoFix: a 3-sentence group where only the first line has a (complete, 1/1) sentence and the
@@ -710,13 +732,13 @@ public class NmeaLineToAisStreamAdapterTests
         e.LineNumber.ShouldBe( 42 );
     }
 
-    // An incomplete fragmented message is reported with its last received fragment and the line number of the
-    // first received one.
-    static void ShouldBeIncompleteMessageError( TestProcessor.ErrorReport e, string lastReceivedFragment, int firstFragmentLineNumber )
+    // An incomplete fragmented message is reported with its received fragment of highest number and the line number
+    // of this fragment.
+    static void ShouldBeIncompleteMessageError( TestProcessor.ErrorReport e, string fragment, int fragmentLineNumber )
     {
-        e.Line.ShouldBe( lastReceivedFragment );
+        e.Line.ShouldBe( fragment );
         e.Error.ShouldBeAssignableTo<ArgumentException>()!.Message.ShouldBe( "Received incomplete fragmented message." );
-        e.LineNumber.ShouldBe( firstFragmentLineNumber );
+        e.LineNumber.ShouldBe( fragmentLineNumber );
     }
 
     /// <summary>
