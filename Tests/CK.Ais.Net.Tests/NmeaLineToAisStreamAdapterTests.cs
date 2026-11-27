@@ -442,6 +442,50 @@ public class NmeaLineToAisStreamAdapterTests
         p.OnNextCalls.ShouldBeEmpty();
     }
 
+    // A first fragment with a padding of 1, never completed, then the end of the stream: only the padding error.
+    // The message has already been reported as an error: it is not reported again as an incomplete message.
+    [Test]
+    public void Message_with_padding_in_first_fragment_is_not_reported_again_as_incomplete_at_the_end_of_the_stream()
+    {
+        var h = new AdapterHarness();
+        // ais.kystverket.no
+        h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,1*73" );
+        var p = h.Complete();
+        p.OnNextCalls.ShouldBeEmpty();
+        p.OnErrorCalls.Count.ShouldBe( 1 );
+        p.OnErrorCalls[0].Error.ShouldBeAssignableTo<ArgumentException>()!.Message.ShouldBe( "Can only handle non-zero padding on the final message in a fragment" );
+        p.OnErrorCalls[0].LineNumber.ShouldBe( 1 );
+    }
+
+    // MaximumUnmatchedFragmentAge = 1: a first fragment with a padding of 1, two single-fragment messages, then the
+    // 2nd fragment. The first fragment expires on the 3rd line without a second error (only the padding error).
+    // The 2nd fragment, too late, starts a new message of the same group id: this one has no padding error, so it is
+    // reported as incomplete (line number 4) when the stream completes.
+    [Test]
+    public void Message_with_padding_in_first_fragment_is_not_reported_again_as_incomplete_when_it_expires()
+    {
+        var h = new AdapterHarness( new NmeaParserOptions { MaximumUnmatchedFragmentAge = 1 } );
+        // ais.kystverket.no
+        h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,1*73" );
+        // ais.kystverket.no
+        h.Receive( @"\s:42,c:1567684904*38\!AIVDM,1,1,,B,33m9UtPP@50wwE:VJW6LS67H01<@,0*3C" );
+        // ais.kystverket.no
+        h.Receive( @"\s:3,c:1567692251*01\!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*4D" );
+        // ais.kystverket.no
+        h.Receive( @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B" );
+        var p = h.Complete();
+        p.OnNextCalls.Count.ShouldBe( 2 );
+        // ais.kystverket.no
+        ShouldBeMessage( p.OnNextCalls[0], "33m9UtPP@50wwE:VJW6LS67H01<@", 0, 42, 1567684904 );
+        // ais.kystverket.no
+        ShouldBeMessage( p.OnNextCalls[1], "13m9WS001d0K==pR=D?HB6WD0pJV", 0, 3, 1567692251 );
+        p.OnErrorCalls.Count.ShouldBe( 2 );
+        p.OnErrorCalls[0].Error.ShouldBeAssignableTo<ArgumentException>()!.Message.ShouldBe( "Can only handle non-zero padding on the final message in a fragment" );
+        p.OnErrorCalls[0].LineNumber.ShouldBe( 1 );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[1], @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B", 4 );
+    }
+
     // The first fragment received twice (same group id, same position): an "Already received sentence" error on the
     // second one (line 2). The second one replaces the first one, and the message is never completed: it is reported
     // as an incomplete message (with the second line and its line number) when the stream completes.

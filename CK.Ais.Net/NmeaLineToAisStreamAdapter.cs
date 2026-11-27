@@ -24,6 +24,9 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
     readonly INmeaAisMessageStreamProcessor<TExtraFieldParser> _messageProcessor;
     readonly NmeaParserOptions _options;
     readonly Dictionary<int, FragmentedMessage> _messageFragments = [];
+    // The groups whose message has already been reported as an error (non-zero padding in a non-last fragment):
+    // they must not be reported again as incomplete messages.
+    readonly HashSet<int> _alreadyReportedGroups = [];
     int _messagesProcessed = 0;
     int _messagesProcessedAtLastUpdate = 0;
 
@@ -130,6 +133,8 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
                     lineNumber );
                 // To not throw an "Received incomplete fragmented message." error, collect all fragments
                 // from this group and when all fragments are received, just not call OnNext.
+                // If the group is never completed, it is dropped without error (one error per message).
+                _alreadyReportedGroups.Add( groupId );
             }
 
             if( !_messageFragments.TryGetValue( groupId, out FragmentedMessage fragments ) )
@@ -262,6 +267,12 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
 
     void ReportIncompleteMessage( int groupId )
     {
+        if( _alreadyReportedGroups.Contains( groupId ) )
+        {
+            FreeMessageFragments( groupId );
+            return;
+        }
+
         FragmentedMessage fragmentedMessage = _messageFragments[groupId];
         Span<byte[]> fragmentBuffers = fragmentedMessage.Buffers;
 
@@ -344,6 +355,7 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
         ArrayPool<int>.Shared.Return( fragmentedMessage.RentedLineNumbers, _options.ClearReturnedBuffer );
 
         _messageFragments.Remove( groupId );
+        _alreadyReportedGroups.Remove( groupId );
     }
 
     readonly struct FragmentedMessage
