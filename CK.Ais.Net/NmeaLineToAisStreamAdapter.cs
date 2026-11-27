@@ -51,9 +51,21 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
         _options = options.Copy();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Reports the fragmented messages that are still incomplete as errors (the same way as when they
+    /// exceed the <see cref="NmeaParserOptions.MaximumUnmatchedFragmentAge"/>), in the order of their
+    /// first received fragment, then completes the message processor.
+    /// </summary>
     public void OnCompleted()
     {
+        if( _messageFragments.Count > 0 )
+        {
+            var pendingGroupIds = _messageFragments.OrderBy( kv => kv.Value.LineNumber ).Select( kv => kv.Key ).ToArray();
+            foreach( int groupId in pendingGroupIds )
+            {
+                ReportIncompleteMessage( groupId );
+            }
+        }
         _messageProcessor.OnCompleted();
     }
 
@@ -240,32 +252,36 @@ public class NmeaLineToAisStreamAdapter<TExtraFieldParser> : INmeaLineStreamProc
 
             for( int i = 0; i < fragmentToRemoveCount; ++i )
             {
-                int groupId = fragmentGroupIdsToRemove[i];
-                FragmentedMessage fragmentedMessage = _messageFragments[groupId];
-                Span<byte[]> fragmentBuffers = fragmentedMessage.Buffers;
-
-                // Find the last non-null entry in the list. (It would be easier to use LINQ's
-                // Last operator, but this we way avoid the allocations inherent in Last,
-                // although since this is a case we don't expect to hit much in normal
-                // operation, it's not clear how much that matters.)
-                byte[]? lastFragmentBuffer = null;
-                int lastFragmentBufferLength = default;
-                for( int o = fragmentBuffers.Length - 1; lastFragmentBuffer is null; --o )
-                {
-                    lastFragmentBuffer = fragmentBuffers[o];
-                    lastFragmentBufferLength = fragmentedMessage.BuffersLength[o];
-                }
-
-                ReadOnlySpan<byte> line = lastFragmentBuffer.AsSpan( 0, lastFragmentBufferLength );
-
-                _messageProcessor.OnError(
-                    line,
-                    new ArgumentException( "Received incomplete fragmented message." ),
-                    fragmentedMessage.LineNumber );
-
-                FreeMessageFragments( groupId );
+                ReportIncompleteMessage( fragmentGroupIdsToRemove[i] );
             }
         }
+    }
+
+    void ReportIncompleteMessage( int groupId )
+    {
+        FragmentedMessage fragmentedMessage = _messageFragments[groupId];
+        Span<byte[]> fragmentBuffers = fragmentedMessage.Buffers;
+
+        // Find the last non-null entry in the list. (It would be easier to use LINQ's
+        // Last operator, but this we way avoid the allocations inherent in Last,
+        // although since this is a case we don't expect to hit much in normal
+        // operation, it's not clear how much that matters.)
+        byte[]? lastFragmentBuffer = null;
+        int lastFragmentBufferLength = default;
+        for( int o = fragmentBuffers.Length - 1; lastFragmentBuffer is null; --o )
+        {
+            lastFragmentBuffer = fragmentBuffers[o];
+            lastFragmentBufferLength = fragmentedMessage.BuffersLength[o];
+        }
+
+        ReadOnlySpan<byte> line = lastFragmentBuffer.AsSpan( 0, lastFragmentBufferLength );
+
+        _messageProcessor.OnError(
+            line,
+            new ArgumentException( "Received incomplete fragmented message." ),
+            fragmentedMessage.LineNumber );
+
+        FreeMessageFragments( groupId );
     }
 
     /// <inheritdoc/>

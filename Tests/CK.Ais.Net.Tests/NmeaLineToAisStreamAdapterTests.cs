@@ -47,7 +47,9 @@ public class NmeaLineToAisStreamAdapterTests
         ShouldBeMessage( p.OnNextCalls[0], "33m9UtPP@50wwE:VJW6LS67H01<@", 0, 42, 1567684904 );
     }
 
-    // Only the first fragment (with tag block grouping) of a 2-fragment message: no message.
+    // Only the first fragment (with tag block grouping) of a 2-fragment message, then the end of the stream:
+    // no message, and the incomplete message is reported as an error when the stream completes (the same error as
+    // when it exceeds the MaximumUnmatchedFragmentAge).
     [Test]
     public void First_fragment_of_two_part_message_received()
     {
@@ -56,9 +58,14 @@ public class NmeaLineToAisStreamAdapterTests
         h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
         var p = h.Complete();
         p.OnNextCalls.ShouldBeEmpty();
+        // Added: before, the incomplete message was silently dropped at the end of the stream.
+        p.OnErrorCalls.Count.ShouldBe( 1 );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[0], @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72", 1 );
     }
 
-    // Only the first fragment (without tag block grouping) of a 2-fragment message: no message.
+    // Only the first fragment (without tag block grouping) of a 2-fragment message, then the end of the stream:
+    // no message, and the incomplete message is reported as an error when the stream completes.
     [Test]
     public void First_fragment_of_two_part_message_without_grouping_in_header_received()
     {
@@ -67,6 +74,34 @@ public class NmeaLineToAisStreamAdapterTests
         h.Receive( @"\s:99,c:1567685556*34\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
         var p = h.Complete();
         p.OnNextCalls.ShouldBeEmpty();
+        // Added: before, the incomplete message was silently dropped at the end of the stream.
+        p.OnErrorCalls.Count.ShouldBe( 1 );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[0], @"\s:99,c:1567685556*34\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72", 1 );
+    }
+
+    // Two incomplete messages (one grouped by the tag block, one by the AIS sentence) and a complete one at the end
+    // of the stream: the complete message is reported, and each incomplete one is reported as an error, in the order
+    // of their first fragment, before the processor is completed.
+    [Test]
+    public void End_of_stream_with_several_incomplete_messages()
+    {
+        var h = new AdapterHarness();
+        // ais.kystverket.no
+        h.Receive( @"\s:99,c:1567685556*34\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
+        // ais.kystverket.no
+        h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
+        // ais.kystverket.no
+        h.Receive( @"\s:42,c:1567684904*38\!AIVDM,1,1,,B,33m9UtPP@50wwE:VJW6LS67H01<@,0*3C" );
+        var p = h.Complete();
+        p.OnNextCalls.Count.ShouldBe( 1 );
+        // ais.kystverket.no
+        ShouldBeMessage( p.OnNextCalls[0], "33m9UtPP@50wwE:VJW6LS67H01<@", 0, 42, 1567684904 );
+        p.OnErrorCalls.Count.ShouldBe( 2 );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[0], @"\s:99,c:1567685556*34\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72", 1 );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[1], @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72", 2 );
     }
 
     // The 2 fragments (with tag block grouping) one after the other: one reassembled message
@@ -351,10 +386,12 @@ public class NmeaLineToAisStreamAdapterTests
         var h = new AdapterHarness();
         var error = h.ReceiveErrorReport( "foobar", 42 );
         var p = h.Complete();
-        ShouldHaveForwardedError( p, error );
+        p.OnErrorCalls.Count.ShouldBe( 1 );
+        ShouldHaveForwardedError( p.OnErrorCalls[0], error );
     }
 
-    // An error reported by the line parser, then a fragment: the error is forwarded as is.
+    // An error reported by the line parser, then a fragment: the error is forwarded as is. The fragment is never
+    // completed: it is reported as an incomplete message when the stream completes.
     [Test]
     public void Line_stream_parser_reports_error_in_first_fragment_of_two_part_message()
     {
@@ -364,10 +401,14 @@ public class NmeaLineToAisStreamAdapterTests
         // ais.kystverket.no
         h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
         var p = h.Complete();
-        ShouldHaveForwardedError( p, error );
+        p.OnErrorCalls.Count.ShouldBe( 2 );
+        ShouldHaveForwardedError( p.OnErrorCalls[0], error );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[1], @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72", 1 );
     }
 
     // The first fragment of a 2-fragment message, then an error reported by the line parser: the error is forwarded as is.
+    // The fragment is never completed: it is reported as an incomplete message when the stream completes.
     [Test]
     public void Line_stream_parser_reports_error_in_second_fragment_of_two_part_message()
     {
@@ -375,7 +416,10 @@ public class NmeaLineToAisStreamAdapterTests
         h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
         var error = h.ReceiveErrorReport( "foobar", 42 );
         var p = h.Complete();
-        ShouldHaveForwardedError( p, error );
+        p.OnErrorCalls.Count.ShouldBe( 2 );
+        ShouldHaveForwardedError( p.OnErrorCalls[0], error );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[1], @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72", 1 );
     }
 
     // A first fragment with a padding of 1: an "only on the final message" error on the first line (line 1).
@@ -398,7 +442,8 @@ public class NmeaLineToAisStreamAdapterTests
     }
 
     // The first fragment received twice (same group id, same position): an "Already received sentence" error on the
-    // second one (line 2).
+    // second one (line 2). The second one replaces the first one, and the message is never completed: it is reported
+    // as an incomplete message (with the second line and the line number of the first one) when the stream completes.
     [Test]
     public void Line_stream_parser_passes_the_same_sentence_of_a_two_part_message_twice()
     {
@@ -408,16 +453,19 @@ public class NmeaLineToAisStreamAdapterTests
         // ais.kystverket.no
         h.Receive( @"\g:1-2-8055*56\!AIVDM,2,1,6,B,j`888888880,0*2A" );
         var p = h.Complete();
-        p.OnErrorCalls.Count.ShouldBe( 1 );
+        p.OnErrorCalls.Count.ShouldBe( 2 );
         // ais.kystverket.no
         p.OnErrorCalls[0].Line.ShouldBe( @"\g:1-2-8055*56\!AIVDM,2,1,6,B,j`888888880,0*2A" );
         p.OnErrorCalls[0].Error.ShouldBeAssignableTo<ArgumentException>()!.Message.ShouldStartWith( "Already received sentence ", caseSensitivity: Case.Sensitive );
         p.OnErrorCalls[0].LineNumber.ShouldBe( 2 );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[1], @"\g:1-2-8055*56\!AIVDM,2,1,6,B,j`888888880,0*2A", 1 );
     }
 
     // MaximumUnmatchedFragmentAge = 1: two single-fragment messages between the 2 fragments. The single ones are
     // reported, the first fragment expires on the 3rd line: an "incomplete fragmented message" error with the first
-    // line and line number 1. (The 2nd fragment then starts a new incomplete message that is never reported.)
+    // line and line number 1. The 2nd fragment then starts a new message that is never completed: it is reported as an
+    // incomplete message (line number 4) when the stream completes.
     [Test]
     public void Two_fragment_message_fragments_received_too_many_sentences_in_the_middle()
     {
@@ -436,11 +484,11 @@ public class NmeaLineToAisStreamAdapterTests
         ShouldBeMessage( p.OnNextCalls[0], "33m9UtPP@50wwE:VJW6LS67H01<@", 0, 42, 1567684904 );
         // ais.kystverket.no
         ShouldBeMessage( p.OnNextCalls[1], "13m9WS001d0K==pR=D?HB6WD0pJV", 0, 3, 1567692251 );
-        p.OnErrorCalls.Count.ShouldBe( 1 );
+        p.OnErrorCalls.Count.ShouldBe( 2 );
         // ais.kystverket.no
-        p.OnErrorCalls[0].Line.ShouldBe( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
-        p.OnErrorCalls[0].Error.ShouldBeAssignableTo<ArgumentException>()!.Message.ShouldBe( "Received incomplete fragmented message." );
-        p.OnErrorCalls[0].LineNumber.ShouldBe( 1 );
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[0], @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72", 1 );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[1], @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B", 4 );
     }
 
     // EmptyGroupTolerance.AutoFix: a 3-sentence group where only the first line has a (complete, 1/1) sentence and the
@@ -492,7 +540,8 @@ public class NmeaLineToAisStreamAdapterTests
     }
 
     // EmptyGroupTolerance.None: the empty lines cannot be parsed ("missing some characters"); the line parser reports
-    // them as errors, they are forwarded and no message is reported.
+    // them as errors, they are forwarded and no message is reported. The group of the first line is never completed:
+    // it is reported as an incomplete message when the stream completes.
     // (The source feature had commented-out steps here that did the same through "I parse the content by message".)
     [Test]
     public void Three_fragment_message_with_only_one_sentence_and_empty_sentence_is_not_allowed()
@@ -503,11 +552,12 @@ public class NmeaLineToAisStreamAdapterTests
         h.ReceiveErrorReportForInvalidContent( @"\g:3-3-1481*51\", 3 );
         var p = h.Complete();
         p.OnNextCalls.ShouldBeEmpty();
-        p.OnErrorCalls.Count.ShouldBe( 2 );
+        p.OnErrorCalls.Count.ShouldBe( 3 );
         p.OnErrorCalls[0].Line.ShouldBe( @"\g:2-3-1481*50\" );
         p.OnErrorCalls[0].Error.Message.ShouldBe( "Invalid data. The message appears to be missing some characters - it may have been corrupted or truncated." );
         p.OnErrorCalls[1].Line.ShouldBe( @"\g:3-3-1481*51\" );
         p.OnErrorCalls[1].Error.Message.ShouldBe( "Invalid data. The message appears to be missing some characters - it may have been corrupted or truncated." );
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[2], @"\g:1-3-1481,s:99,c:1718701847*41\!AIVDM,1,1,,A,13Ef?<3006wt9WlEMhi1S6uJ00Rq,0*41", 1 );
     }
 
     // AllowNonZeroPaddingInNonLastFragment = false: a first fragment with a padding of 2 is an error, no message.
@@ -573,12 +623,20 @@ public class NmeaLineToAisStreamAdapterTests
         m.UnixTimestamp.ShouldBe( timestamp );
     }
 
-    static void ShouldHaveForwardedError( TestProcessor p, Exception error )
+    static void ShouldHaveForwardedError( TestProcessor.ErrorReport e, Exception error )
     {
-        p.OnErrorCalls.Count.ShouldBe( 1 );
-        p.OnErrorCalls[0].Line.ShouldBe( "foobar" );
-        p.OnErrorCalls[0].Error.ShouldBeSameAs( error );
-        p.OnErrorCalls[0].LineNumber.ShouldBe( 42 );
+        e.Line.ShouldBe( "foobar" );
+        e.Error.ShouldBeSameAs( error );
+        e.LineNumber.ShouldBe( 42 );
+    }
+
+    // An incomplete fragmented message is reported with its last received fragment and the line number of the
+    // first received one.
+    static void ShouldBeIncompleteMessageError( TestProcessor.ErrorReport e, string lastReceivedFragment, int firstFragmentLineNumber )
+    {
+        e.Line.ShouldBe( lastReceivedFragment );
+        e.Error.ShouldBeAssignableTo<ArgumentException>()!.Message.ShouldBe( "Received incomplete fragmented message." );
+        e.LineNumber.ShouldBe( firstFragmentLineNumber );
     }
 
     /// <summary>
