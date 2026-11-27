@@ -21,8 +21,9 @@ namespace Ais.Net.Tests;
 // to an INmeaAisMessageStreamProcessor (here a TestProcessor):
 // - non-fragmented messages are forwarded as is;
 // - multi-fragment messages are reassembled, the fragments being grouped by the tag block "g:" grouping when present,
-//   by the AIS sentence group id otherwise; interleaved messages are supported, within MaximumUnmatchedFragmentAge
-//   lines, after which the incomplete message is an error;
+//   by the AIS sentence group id otherwise; the fragments may be received in any order and interleaved messages are
+//   supported, within MaximumUnmatchedFragmentAge lines, after which the incomplete message is an error (as is an
+//   incomplete message at the end of the stream);
 // - the reassembled message has the payload of all the fragments, the padding of the last one and the tag block of
 //   the first line (source, timestamp, grouping);
 // - errors reported by the line parser are forwarded, and the adapter reports its own errors (padding on a non-last
@@ -489,6 +490,85 @@ public class NmeaLineToAisStreamAdapterTests
         ShouldBeIncompleteMessageError( p.OnErrorCalls[0], @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72", 1 );
         // ais.kystverket.no
         ShouldBeIncompleteMessageError( p.OnErrorCalls[1], @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B", 4 );
+    }
+
+    // The 2nd fragment (with tag block grouping) received alone, then the end of the stream: no message, the
+    // 2nd fragment is reported as an incomplete message (line number 1) when the stream completes.
+    [Test]
+    public void Second_fragment_received_without_the_first_one()
+    {
+        var h = new AdapterHarness();
+        // ais.kystverket.no
+        h.Receive( @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B" );
+        var p = h.Complete();
+        p.OnNextCalls.ShouldBeEmpty();
+        p.OnErrorCalls.Count.ShouldBe( 1 );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[0], @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B", 1 );
+    }
+
+    // MaximumUnmatchedFragmentAge = 1: the 2nd fragment, two single-fragment messages, then the 1st fragment.
+    // The single ones are reported; the 2nd fragment expires on the 3rd line: an "incomplete fragmented message" error
+    // with the 2nd fragment and line number 1. The 1st fragment, too late, is not reassembled with the expired 2nd one:
+    // it starts a new message that is reported as incomplete (line number 4) when the stream completes.
+    [Test]
+    public void Second_fragment_received_without_the_first_one_expires()
+    {
+        var h = new AdapterHarness( new NmeaParserOptions { MaximumUnmatchedFragmentAge = 1 } );
+        // ais.kystverket.no
+        h.Receive( @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B" );
+        // ais.kystverket.no
+        h.Receive( @"\s:42,c:1567684904*38\!AIVDM,1,1,,B,33m9UtPP@50wwE:VJW6LS67H01<@,0*3C" );
+        // ais.kystverket.no
+        h.Receive( @"\s:3,c:1567692251*01\!AIVDM,1,1,,A,13m9WS001d0K==pR=D?HB6WD0pJV,0*4D" );
+        // ais.kystverket.no
+        h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
+        var p = h.Complete();
+        p.OnNextCalls.Count.ShouldBe( 2 );
+        // ais.kystverket.no
+        ShouldBeMessage( p.OnNextCalls[0], "33m9UtPP@50wwE:VJW6LS67H01<@", 0, 42, 1567684904 );
+        // ais.kystverket.no
+        ShouldBeMessage( p.OnNextCalls[1], "13m9WS001d0K==pR=D?HB6WD0pJV", 0, 3, 1567692251 );
+        p.OnErrorCalls.Count.ShouldBe( 2 );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[0], @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B", 1 );
+        // ais.kystverket.no
+        ShouldBeIncompleteMessageError( p.OnErrorCalls[1], @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72", 4 );
+    }
+
+    // The 2 fragments (with tag block grouping) in reverse order: the fragments are stored by their number, not by
+    // their arrival order, so the message is reassembled as when they are received in order (padding of the last
+    // fragment, source and timestamp of the 1st fragment, even if it is the last received line).
+    [Test]
+    public void Two_fragment_message_fragments_received_in_reverse_order()
+    {
+        var h = new AdapterHarness();
+        // ais.kystverket.no
+        h.Receive( @"\g:2-2-8055*55\!AIVDM,2,2,6,B,j`888888880,2*2B" );
+        // ais.kystverket.no
+        h.Receive( @"\g:1-2-8055,s:99,c:1567685556*4E\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
+        var p = h.Complete();
+        p.OnNextCalls.Count.ShouldBe( 1 );
+        // ais.kystverket.no
+        ShouldBeMessage( p.OnNextCalls[0], "53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4lj`888888880", 2, 99, 1567685556 );
+        p.OnErrorCalls.ShouldBeEmpty();
+    }
+
+    // The 2 fragments (without tag block grouping, grouped by the AIS sentence) in reverse order: one reassembled
+    // message. The 2nd fragment has no timestamp: the one of the message comes from the 1st fragment.
+    [Test]
+    public void Two_fragment_message_fragments_without_grouping_in_header_received_in_reverse_order()
+    {
+        var h = new AdapterHarness();
+        // ais.kystverket.no
+        h.Receive( @"\s:99*49\!AIVDM,2,2,6,B,j`888888880,2*2B" );
+        // ais.kystverket.no
+        h.Receive( @"\s:99,c:1567685556*34\!AIVDM,2,1,6,B,53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4l,0*72" );
+        var p = h.Complete();
+        p.OnNextCalls.Count.ShouldBe( 1 );
+        // ais.kystverket.no
+        ShouldBeMessage( p.OnNextCalls[0], "53oGfN42=WRDhlHn221<4i@Dr22222222222220`1@O6640Ht50Skp4mR`4lj`888888880", 2, 99, 1567685556 );
+        p.OnErrorCalls.ShouldBeEmpty();
     }
 
     // EmptyGroupTolerance.AutoFix: a 3-sentence group where only the first line has a (complete, 1/1) sentence and the
